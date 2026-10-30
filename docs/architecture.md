@@ -1,11 +1,12 @@
 # Architecture
 
-League Remote is one Windows process. It talks to the League client on one side and to paired phones on the other.
+League Remote is one Windows process, shipped as one file (`LeagueRemote.exe`, built from `src/LeagueRemote.Connector`).
+It talks to the League client on one side and to paired phones on the other.
 
 ```mermaid
 flowchart LR
     Phone["Phone (Vue 3 web app)"] -- "HTTPS :5443, WebSocket /hub" --> Hub
-    subgraph Exe["LeagueRemote.Connector.exe"]
+    subgraph Exe["LeagueRemote.exe"]
         Hub["PhoneHub (SignalR)"]
         Exec["CommandExecutor"]
         Stores["State stores"]
@@ -77,8 +78,15 @@ Everything is under `%LOCALAPPDATA%\league-remote\`. Tests use temporary folders
 | `auto-pick.json` | Auto pick and ban presets. |
 | `client-sounds\` | Sounds and music read from your League install. |
 | `logs\` | `connector.log` plus up to four older files, 2 MB each. Same privacy rules as the console: no chat text, tokens, pairing codes or LCU password. |
+| `settings.json` | Optional user settings (tray **Open Settings File** writes the defaults). |
 
-Settings are in `appsettings.json` next to the exe. See the [README](../README.md#configuration).
+Nothing is read from or written next to the exe, so it can be moved or replaced freely. Settings load in this order,
+later wins: the defaults in code (options classes, `ConnectorSettings.LogLevels`), `settings.json`, environment
+variables, the command line (`ConnectorSettings`). The keys are in the [README](../README.md#configuration).
+
+The exe also embeds the web app (`web/dist`), the app icon, `LICENSE` and `THIRD_PARTY_NOTICES.md` (served to phones at
+`/licenses.txt`). Tray **Start with Windows** writes a value under `HKCU\...\CurrentVersion\Run`; **Allow on Private
+Networks** reads the firewall rules (no admin) and adds one inbound TCP rule for the two ports through a UAC prompt.
 
 ## Rules that shape the code
 

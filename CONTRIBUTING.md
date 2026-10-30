@@ -20,6 +20,9 @@ Open `http://localhost:5179/?demo=<scenario>` to see a screen with fake data and
 
 Running the real app uses ports 5080 and 5443. Do not start a second copy while one is running.
 
+The app ships as one file, `LeagueRemote.exe`. Keep it that way: defaults belong in code, user settings in
+`%LOCALAPPDATA%\league-remote\settings.json` (a new key also goes into `ConnectorSettings.DefaultJson` and the README).
+
 ## Where things are
 
 | Path | What |

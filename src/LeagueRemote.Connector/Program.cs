@@ -38,8 +38,8 @@ internal static class Program
             return 0;
         }
 
-        // appsettings.json is read from the exe's folder (not the working directory), so a double-clicked or
-        // autostarted single-file exe finds the one published next to it. Always Production: the server faces the LAN.
+        // Nothing is read from the exe's folder or the working directory: defaults are in code, the user's own settings in
+        // the data folder (ConnectorSettings). Always Production: the server faces the LAN.
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = hostArgs,
@@ -48,6 +48,7 @@ internal static class Program
             EnvironmentName = Environments.Production,
         });
         builder.WebHost.UseSetting(WebHostDefaults.PreventHostingStartupKey, "true");
+        var settingsProblem = ConnectorSettings.Apply(builder.Configuration, AppDataFolder.Settings);
         headless |= builder.Configuration.GetValue<bool>("Connector:Headless");
 
         // Console for headless runs, plus a rolling file in the data folder so a tray run leaves a log for bug reports.
@@ -103,6 +104,8 @@ internal static class Program
         var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger(typeof(Program));
         var started = false;
         logger.LogInformation("{Name} {Version} starting ({Mode})", AppShell.Name, Version(), headless ? "headless" : "tray");
+        if (settingsProblem is not null)
+            logger.LogWarning("{Problem} ({Path})", settingsProblem, AppDataFolder.Settings);
         AppDomain.CurrentDomain.UnhandledException += (_, e) =>
         {
             // The process is about to end: get the crash into the file first.
@@ -135,7 +138,8 @@ internal static class Program
 
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        using (var tray = new TrayApplicationContext(status))
+        var serverOptions = app.Services.GetRequiredService<IOptions<ServerOptions>>().Value;
+        using (var tray = new TrayApplicationContext(status, serverOptions, settingsProblem))
         {
             instance.ListenForActivation(tray.ShowPairingWindow);
             using var stopping = app.Lifetime.ApplicationStopping.Register(tray.RequestExit);

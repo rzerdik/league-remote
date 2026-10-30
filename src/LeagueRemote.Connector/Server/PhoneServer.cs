@@ -71,7 +71,7 @@ internal static class PhoneServer
         return builder;
     }
 
-    /// <summary>Security headers, the LAN front, the embedded PWA, <c>/hub</c>, <c>/healthz</c>, <c>/client-sounds</c> and the SPA fallback.</summary>
+    /// <summary>Security headers, the LAN front, the embedded PWA, <c>/hub</c>, <c>/healthz</c>, <c>/licenses.txt</c>, <c>/client-sounds</c> and the SPA fallback.</summary>
     public static WebApplication MapPhoneServer(this WebApplication app)
     {
         var options = app.Services.GetRequiredService<IOptions<ServerOptions>>().Value;
@@ -95,6 +95,7 @@ internal static class PhoneServer
         app.UseStaticFiles(staticFiles);
 
         app.MapGet("/healthz", () => Results.Ok(new { status = "ok" }));
+        app.MapLicenses();
         app.MapHub<PhoneHub>(HubMethods.Path);
         app.MapClientSounds(app.Services.GetService<ClientSoundLibrary>());
         app.MapFallbackToFile("index.html", staticFiles); // SPA routes (and the /?pair= deep link) → index.html
@@ -104,7 +105,7 @@ internal static class PhoneServer
     /// <summary>A message for the tray and the log when the server could not start: a busy port says which one.</summary>
     public static string StartFailure(Exception ex, ServerOptions options) =>
         PortInUse(ex, options) is { } port
-            ? $"Port {port} is in use by another program. Set Server:{(port == options.HttpsPort ? "HttpsPort" : "HttpPort")} in appsettings.json to a free port."
+            ? $"Port {port} is in use by another program. Set Server:{(port == options.HttpsPort ? "HttpsPort" : "HttpPort")} to a free port in {ConnectorSettings.FileName} (tray menu: Open Settings File)."
             : $"The phone server could not start: {ex.Message}";
 
     /// <summary>The configured port Kestrel couldn't bind, or null when the failure was something else.</summary>

@@ -15,6 +15,8 @@ Update this file in the same change as the work it describes.
 - **Phone app:** iOS-style design system, light and dark, large text, Reduce Motion, demo scenarios for every screen.
 - **Open-source clean-up:** one process, one test project, shared package versions, warnings as errors, and docs
   checked against the code.
+- **Single exe (v0.2.0):** the release is just `LeagueRemote.exe` + `SHA256SUMS.txt`; no `appsettings.json`, optional
+  `settings.json` in the data folder, licenses served at `/licenses.txt` and shown in Settings › About.
 
 ## Needs a live check 🔧
 
@@ -23,6 +25,8 @@ Built and tested with mocks. Not yet tried against a real client or phone.
 - **Phone server in the connector:** the app has not run as one process on a real PC with a phone yet. That covers
   HTTPS with the local CA, pairing by QR, code or link, several phones, unpair, Web Push and client sounds.
   Tests run the real server on loopback.
+- **Tray setup items:** Start with Windows (Run key, follows a moved exe), Allow on Private Networks (hides once a rule
+  lets phones in; UAC prompt, cancel is fine) and Open Settings File on a real PC.
 - **Log file:** a tray run writes `logs\connector.log` (rolling, 5 × 2 MB) and the tray's Open Log Folder opens it.
 - **Hardening:** the security headers (CSP included) don't block anything on iPhone or Android, and push still works
   with the DPAPI-protected VAPID key (phones re-subscribe once).
@@ -41,7 +45,7 @@ Built and tested with mocks. Not yet tried against a real client or phone.
 
 ## Next 🗓️
 
-- Code signing, an installer and autostart for the exe.
+- Code signing for the exe.
 - Check the League client's certificate against Riot's chain instead of by host.
 - End-to-end encryption between phone and PC.
 - Trends over more than the last 20 games.

@@ -80,6 +80,22 @@ public sealed class PhoneServerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Licenses_are_served_as_plain_text_from_the_exe()
+    {
+        using var client = new HttpClient(TrustingLocalCa());
+
+        using var licenses = await client.GetAsync(new Uri(_host.Https, Licenses.Path));
+
+        Assert.Equal(HttpStatusCode.OK, licenses.StatusCode);
+        Assert.Equal("text/plain", licenses.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(SecurityHeaders.ContentSecurityPolicy, Header(licenses, "Content-Security-Policy"));
+        var text = await licenses.Content.ReadAsStringAsync();
+        Assert.StartsWith("MIT License", text);
+        Assert.Contains("# Third-party notices", text);
+        Assert.Contains("SIL OPEN FONT LICENSE", text);
+    }
+
+    [Fact]
     public async Task Http_port_serves_setup_and_ca_and_lets_loopback_through()
     {
         using var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false });

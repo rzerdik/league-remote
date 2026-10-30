@@ -9,6 +9,7 @@ import LrAlert from '../components/lr/LrAlert.vue'
 import LrButton from '../components/lr/LrButton.vue'
 import LrSwitch from '../components/lr/LrSwitch.vue'
 import Sheet from '../components/lr/Sheet.vue'
+import AboutSettings from '../components/settings/AboutSettings.vue'
 import NotificationSettings from '../components/settings/NotificationSettings.vue'
 import SoundSettings from '../components/settings/SoundSettings.vue'
 import { clientStatus, pcStatus } from '../connection'
@@ -27,7 +28,7 @@ onMounted(() => AutoPickView.prefetch())
 
 /**
  * Settings tab: auto pick and ban (a pushed view, only once the PC sends its state), notifications, haptics, sound and
- * music, connection status, this phone. Pair Again is a sheet.
+ * music, connection status, this phone, about (version, licenses). Pair Again is a sheet.
  */
 const pairOpen = ref(false)
 
@@ -83,6 +84,8 @@ async function confirmUnpair() {
       <ListRow title="Pair Again…" variant="accent" tappable text @click="pairOpen = true" />
       <ListRow v-if="store.grant" title="Unpair This Phone" variant="danger" tappable text @click="unpairAlert = true" />
     </ListSection>
+
+    <AboutSettings />
 
     <!-- Inside the one root the tab transition needs; the sheet renders in <body> (teleport). -->
     <Sheet v-model:open="pairOpen" modal :detents="['large']" title="Pair Again" body-class="lr-sheet-body--lists">

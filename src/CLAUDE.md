@@ -25,7 +25,9 @@
 
 - `LeagueRemote.Connector` targets `net10.0-windows`; Contracts targets `net10.0` and must stay cross-platform.
 - Building the connector builds `web/` (MSBuild runs `npm ci` / `npm run build`); `-p:SkipWebBuild=true` skips it.
-- The connector's `appsettings.json` is read from the exe's folder, not the working directory.
+- The connector builds `LeagueRemote.exe` (`AssemblyName`; namespaces stay `LeagueRemote.Connector`). No
+  `appsettings.json`: defaults are in code, user settings in `%LOCALAPPDATA%\league-remote\settings.json`
+  (`ConnectorSettings`). Nothing may need a file next to the exe.
 - LCU GETs return null on 404 — that means "not in that phase", not an error.
 - Each slice has its own refresh loop: one slice's events must not rebuild another (`RefreshesFor` decides).
 - Hubs are transient: no instance fields. Anything that outlives a call goes through `IHubContext<PhoneHub>` or a singleton.

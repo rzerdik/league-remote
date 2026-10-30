@@ -52,9 +52,13 @@ function serviceWorkerVersion(): Plugin {
  */
 const devConnector = process.env.LR_DEV_CONNECTOR?.trim() || 'http://localhost:5080'
 
+/** Shown in Settings › About. The release workflow sets LR_VERSION from the tag, so it matches the PC app's version. */
+const appVersion = process.env.LR_VERSION?.trim() || 'dev'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), serviceWorkerVersion()],
+  define: { __APP_VERSION__: JSON.stringify(appVersion) },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
@@ -65,6 +69,11 @@ export default defineConfig({
       '/hub': {
         target: devConnector,
         ws: true,
+        changeOrigin: true,
+      },
+      // The PC app's license and third-party notices (Settings › About).
+      '/licenses.txt': {
+        target: devConnector,
         changeOrigin: true,
       },
       // The League client's own sounds and music (manifest + files).

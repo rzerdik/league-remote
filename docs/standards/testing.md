@@ -16,7 +16,8 @@ environment variable and skips otherwise (`LEAGUEREMOTE_REAL_INSTALL` for the cl
 
 One project, `tests/LeagueRemote.Connector.Tests` (`net10.0-windows`), with a folder per feature: `Whitelist/`, `Lcu/`,
 `GameState/`, `ChampSelect/`, `Commands/`, `Chat/`, `Friends/`, `Profile/`, `PostGame/`, `LiveGame/`, `AutoPick/`,
-`ClientSounds/`, `Https/`, `Server/`, `Pairing/`, `Push/`, `Logging/`. Shared helpers are in `Fakes/` and recorded JSON in `Samples/`.
+`ClientSounds/`, `Https/`, `Server/`, `Pairing/`, `Push/`, `Logging/`, `Settings/`, `Tray/` (Start with Windows against a
+scratch HKCU key it deletes, firewall rules as pure data; never the real Run key or firewall). Shared helpers are in `Fakes/` and recorded JSON in `Samples/`.
 
 The `Server/` tests start the real phone server with `PhoneServerHost`: Kestrel on loopback, random ports, a temp data
 folder, a fake command runner and a fake push sender. Only `LanHttpMiddlewareTests` uses an in-memory test server.

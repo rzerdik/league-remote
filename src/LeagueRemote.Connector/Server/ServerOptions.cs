@@ -1,6 +1,6 @@
 namespace LeagueRemote.Connector.Server;
 
-/// <summary>Configuration section <c>Server</c>: where phones reach this PC. Keep the defaults in sync with appsettings.json.</summary>
+/// <summary>Configuration section <c>Server</c>: where phones reach this PC. The defaults here are the app's (see <see cref="ConnectorSettings"/>).</summary>
 internal sealed class ServerOptions
 {
     public const string Section = "Server";

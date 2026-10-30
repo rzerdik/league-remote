@@ -9,6 +9,7 @@ import { nav } from '../../navigation'
 import { devPush, pushStatus, type PushStatus } from '../../push'
 import { devCommands } from '../../hub'
 import { store, toast } from '../../store'
+import { demoLicenses } from './about'
 import { armAutoPickOnOpen, autoPickArm, autoPickState, autoPickUserHovered, demoAutoPick, openAutoPickDemo, pushAutoPick } from './autoPick'
 import {
   aramAllySwaps,
@@ -174,6 +175,8 @@ if (scenario && scenario !== 'pair') {
   // ?demo=settings: the Settings tab with notifications on (the alert toggles and test button show); `&push=default`,
   // `denied`, `needs-install` or `unsupported` shows the other states.
   if (scenario === 'settings') nav.tab = 'settings'
+  // Settings › About › Licenses answers from demo text in every scenario (`&licenses=fail` for the error state).
+  demoLicenses()
   // `&push=default` on `play` shows Play's notifications tip (if it wasn't dismissed in this browser).
   const pushParam = params.get('push')
   if (scenario === 'settings' || pushParam) pushStatus.value = devPush.status = (pushParam ?? 'enabled') as PushStatus

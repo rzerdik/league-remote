@@ -77,7 +77,7 @@ internal sealed class PhoneServerHost : IAsyncDisposable
             ContentRootPath = AppContext.BaseDirectory,
             EnvironmentName = Environments.Production,
         });
-        builder.Configuration.Sources.Clear(); // nothing from the machine's environment or the app's appsettings.json
+        builder.Configuration.Sources.Clear(); // nothing from the machine's environment or a settings file
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
             [$"{ServerOptions.Section}:{nameof(ServerOptions.HttpPort)}"] = "0",

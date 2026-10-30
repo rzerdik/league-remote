@@ -35,15 +35,11 @@ The phone can only do what is listed in [docs/commands.md](docs/commands.md).
 
 You need Windows, a League client and a phone on the same Wi-Fi.
 
-1. Download `LeagueRemote-<version>-win-x64.zip` from [Releases](https://github.com/rzerdik/league-remote/releases),
-   unzip it and run `LeagueRemote.Connector.exe`. A tray icon appears.
+1. Download `LeagueRemote.exe` from [Releases](https://github.com/rzerdik/league-remote/releases) and run it from any
+   folder. A tray icon appears. Nothing else is needed next to it.
    The exe is not code-signed, so Windows SmartScreen may warn you. Choose **More info**, then **Run anyway**.
-2. Allow it through the firewall on **Private** networks. Accept the Windows prompt, or run this in an administrator PowerShell:
-
-   ```powershell
-   New-NetFirewallRule -DisplayName "League Remote" -Direction Inbound -Protocol TCP -LocalPort 5080,5443 -Action Allow -Profile Private
-   ```
-
+2. Let phones in: in the tray menu choose **Allow on Private Networks** and confirm the Windows prompt. Or, if Windows
+   asks about the firewall first, allow it on **Private** networks. The menu item goes away once phones can connect.
 3. On the phone, open `http://<pc-ip>:5080/setup` (the tray menu shows the address) and install the certificate. This
    lets the phone trust the PC over HTTPS. Do it once per phone.
    - **Android:** Settings, Security, Encryption and credentials, Install a certificate, CA certificate.
@@ -52,11 +48,14 @@ You need Windows, a League client and a phone on the same Wi-Fi.
 4. Double-click the tray icon and scan the QR code with the phone camera. The app opens and pairs.
 5. Add it to the Home Screen. Push notifications on iPhone need the Home Screen app (iOS 16.4 or later).
 
-If port 5080 or 5443 is taken, change it in `appsettings.json` (below).
+Optional: tick **Start with Windows** in the tray menu. If you move the exe later, start it once from the new place.
+
+If port 5080 or 5443 is taken, change it in the settings file (below).
 
 ## Configuration
 
-Edit `appsettings.json` next to the exe and restart.
+Settings are optional. They live in `%LOCALAPPDATA%\league-remote\settings.json`, so they stay when you replace or move
+the exe. Tray menu **Open Settings File** creates it with the defaults and opens it. Restart League Remote after you save.
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -65,20 +64,27 @@ Edit `appsettings.json` next to the exe and restart.
 | `Server:PwaUrl` | empty | Address in the QR code. Empty means `https://<pc-ip>:<HttpsPort>`. |
 | `Lcu:InstallPath` | `C:\Riot Games\League of Legends` | Your League install folder. |
 | `Connector:Headless` | `false` | `true` (or `--console`) runs without the tray and logs the pairing link. |
+| `Logging:LogLevel:Default` | `Information` | How much goes into the log (`Debug` for more). |
 
-Pairings, certificates, push keys and auto pick presets live in `%LOCALAPPDATA%\league-remote\`. Delete the folder to
-start over.
+Environment variables (`Server__HttpPort=6080`) and command-line arguments (`--Server:HttpPort=6080`) override the file.
+
+Pairings, certificates, push keys, auto pick presets and `settings.json` live in `%LOCALAPPDATA%\league-remote\`.
+Delete the folder to start over.
 
 ## Troubleshooting
 
 - **Logs.** The app writes `%LOCALAPPDATA%\league-remote\logs\connector.log` (tray menu: **Open Log Folder**). Older logs
   are `connector.1.log` to `connector.4.log`, 2 MB each at most. To watch it live, quit the tray app and run
-  `LeagueRemote.Connector.exe --console` from a terminal.
+  `LeagueRemote.exe --console` from a terminal.
 - **The phone can't reach the PC.** Phone and PC must be on the same Wi-Fi. In Windows, set the network to **Private**
-  (Settings, Network & internet, your network, Network profile type) and allow the app through the firewall
-  (Quick start, step 2). Some guest and public networks block devices from seeing each other.
-- **"Cannot start" in the tray.** Another program uses port 5080 or 5443. Change `Server:HttpPort` /
-  `Server:HttpsPort` in `appsettings.json`, update the firewall rule, and restart.
+  (Settings, Network & internet, your network, Network profile type). If the tray menu shows **Allow on Private
+  Networks**, the firewall still blocks phones: choose it and confirm. Some guest and public networks block devices from
+  seeing each other.
+- **"Cannot start" in the tray.** Another program uses port 5080 or 5443. Tray menu **Open Settings File**, change
+  `Server:HttpPort` / `Server:HttpsPort`, save and restart. Then choose **Allow on Private Networks** again for the new
+  ports.
+- **Settings are ignored.** A balloon at start says when `settings.json` has an error; the log has the details. Fix the
+  file or delete it to go back to the defaults.
 - **Certificate not trusted or "not private" warning.** Install the certificate from `http://<pc-ip>:5080/setup`
   again. On iPhone also turn on full trust (Quick start, step 3). If you deleted the data folder, the PC made a new
   certificate authority: remove the old one from the phone and install the new one.
@@ -94,7 +100,7 @@ One process on your PC does everything.
 flowchart LR
     Phone["Phone (web app)"] -- "HTTPS :5443, WebSocket /hub" --> Exe
     subgraph PC["Windows PC"]
-        subgraph Exe["LeagueRemote.Connector.exe"]
+        subgraph Exe["LeagueRemote.exe"]
             Server["Web server and hub"] <--> Core["State and whitelisted commands"]
         end
         Core <-- "HTTPS and WebSocket, 127.0.0.1" --> LCU["League client"]
@@ -132,8 +138,9 @@ dotnet test LeagueRemote.sln
 dotnet publish src/LeagueRemote.Connector -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o publish/connector
 ```
 
-The build runs `npm ci` and `npm run build` in `web/` and embeds the web app in the exe. Add `-p:SkipWebBuild=true`
-to skip that.
+The output is one file, `publish/connector/LeagueRemote.exe` (plus optional `.pdb` files). The build runs `npm ci` and
+`npm run build` in `web/` and embeds the web app, `LICENSE` and `THIRD_PARTY_NOTICES.md` in the exe. Add
+`-p:SkipWebBuild=true` to skip the web build.
 
 ## Contributing
 
