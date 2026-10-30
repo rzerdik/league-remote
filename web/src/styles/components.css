@@ -1,0 +1,26 @@
+/*
+  League Remote — the lr- component classes, one file per part (Vite inlines the imports; their order is the cascade).
+  Every colour, radius, space, shadow and easing comes from tokens.css (as --<token-name>); text sizes come from the
+  type-style classes (.body, .headline, …) set in the markup. Sizes come from tokens too (rem, so they grow with
+  Dynamic Type). A size the tokens don't name yet gets a token in design/tokens.json, never a literal here.
+  Hairlines, rings and blurs stay in px: they are the constants at the top of components/base.css.
+*/
+@import './components/base.css';
+@import './components/glass.css';
+@import './components/nav.css';
+@import './components/buttons.css';
+@import './components/action-bar.css';
+@import './components/tab-bar.css';
+@import './components/lists.css';
+@import './components/controls.css';
+@import './components/sheets.css';
+@import './components/banners.css';
+@import './components/content.css';
+@import './components/art.css';
+@import './components/champ-select.css';
+@import './components/timers.css';
+@import './components/pairing.css';
+@import './components/covers.css';
+@import './components/live-game.css';
+@import './components/motion.css';
+@import './components/accessibility.css';

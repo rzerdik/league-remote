@@ -1,0 +1,145 @@
+/* ───────────────────────── Action bar (bottom, floating) ─────────────────────────
+   The thumb zone. Holds the ONE primary action of the screen, plus an optional accessory
+   (queue timer, waiting state) above it — like the Music mini-player above the tab bar. */
+.lr-actionbar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: var(--z-chrome);
+  padding: 0 var(--lr-inset-right) calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px)) var(--lr-inset-left);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+  transform: translateY(calc(-1 * var(--lr-keyboard, 0px)));
+}
+.lr-actionbar > * {
+  pointer-events: auto;
+}
+.lr-actionbar-row {
+  display: flex;
+  gap: var(--space-2);
+}
+.lr-actionbar--over-sheet {
+  z-index: var(--z-over-sheet);
+}
+.lr-actionbar-row > .lr-btn {
+  flex: 1;
+}
+/* A secondary button after the primary (block) one keeps its own width (Leave next to Find Match): the primary takes
+   all the room left over. When both no longer fit (large text) the secondary one wraps onto its own row and spans it.
+   An icon button keeps its circle. */
+.lr-actionbar-row:has(> .lr-btn--block + .lr-btn:not(.lr-btn--block, .lr-btn--icon)) {
+  flex-wrap: wrap;
+}
+.lr-actionbar-row > .lr-btn--block:has(+ .lr-btn:not(.lr-btn--block, .lr-btn--icon)) {
+  flex: 1000 1 auto;
+  width: auto;
+}
+.lr-actionbar-row > .lr-btn--block ~ .lr-btn:not(.lr-btn--block, .lr-btn--icon) {
+  flex: 1 0 auto;
+}
+.lr-actionbar-row > .lr-btn--icon {
+  flex: none;
+}
+.lr-actionbar-row--compact {
+  justify-content: center;
+}
+.lr-actionbar-row--compact > .lr-btn {
+  flex: none;
+  max-width: 100%;
+}
+/* A label whose last part drops off when the whole doesn't fit ("Lock In Aurelion Sol" → "Lock In"): the parts
+   wrap, and only the first line shows. Never a truncated name. Later parts start with a no-break space (a word
+   space on the line, nothing once they've wrapped out of sight). */
+.lr-fit-label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 0;
+  max-height: 1lh;
+  overflow: hidden;
+}
+.lr-fit-label > * {
+  white-space: nowrap;
+}
+/* A disabled action ("Tap a Champion") still floats over content: keep it on glass so it stays legible. */
+.lr-actionbar .lr-btn:disabled {
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--lr-glass-blur-thick);
+  backdrop-filter: var(--lr-glass-blur-thick);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+  color: var(--label-secondary);
+}
+.lr-accessory {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-lg);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+}
+.lr-accessory-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+/* Bar chrome, like an iOS toolbar: one line, a long detail truncates instead of running under the timer. */
+.lr-accessory-main > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lr-accessory-main > :last-child:not(:first-child) {
+  color: var(--label-secondary);
+}
+.lr-accessory .lr-timer-value {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+/* Large text sizes (the bar narrower than ~16 of its ems): the status words wrap rather than truncate ("Finaliz…"),
+   the timer moves under them when they need the row, and the capsule becomes a rounded card. */
+.lr-actionbar {
+  container: lr-actionbar / inline-size;
+}
+@container lr-actionbar (max-width: 16em) {
+  .lr-accessory {
+    flex-wrap: wrap;
+    border-radius: var(--radius-xl);
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+  }
+  .lr-accessory-main {
+    flex: 1 1 auto;
+    min-width: min-content;
+  }
+  .lr-accessory-main > * {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  /* The secondary button that wrapped onto its own row (Leave under Find Match) is a size smaller, so the two leave
+     more of the screen to content. */
+  .lr-actionbar-row > .lr-btn--block ~ .lr-btn:not(.lr-btn--block, .lr-btn--icon) {
+    --h: var(--control-md);
+    padding: 0 var(--space-5);
+  }
+}
+/* Soft scroll-edge behind the action bar so the last rows fade instead of hard-cutting */
+.lr-edge-bottom {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: calc(var(--safe-bottom) + var(--edge-fade) + var(--lr-tabbar-space, 0px));
+  z-index: var(--z-edge);
+  pointer-events: none;
+  -webkit-backdrop-filter: var(--lr-blur-soft);
+  backdrop-filter: var(--lr-blur-soft);
+  /* A mask: only the alpha counts. */
+  -webkit-mask-image: linear-gradient(transparent, #000 60%);
+  mask-image: linear-gradient(transparent, #000 60%);
+}
+.lr-content {
+  padding-bottom: calc(var(--safe-bottom) + var(--control-lg) + var(--space-12) + var(--lr-tabbar-space, 0px));
+}
+.lr-content--accessory {
+  padding-bottom: calc(var(--safe-bottom) + var(--control-lg) * 2 + var(--space-12) + var(--lr-tabbar-space, 0px));
+}

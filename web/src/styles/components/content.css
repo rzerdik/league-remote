@@ -1,0 +1,176 @@
+/* ───────────────────────── Content unavailable (empty state) ───────────────────────── */
+.lr-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-10) var(--space-8);
+}
+.lr-empty-symbol {
+  color: var(--label-secondary);
+  margin-bottom: var(--space-2);
+}
+.lr-empty-symbol svg {
+  width: var(--symbol-hero);
+  height: var(--symbol-hero);
+}
+.lr-empty p {
+  color: var(--label-secondary);
+  max-width: var(--measure-narrow);
+}
+.lr-empty .lr-btn {
+  margin-top: var(--space-3);
+}
+
+/* ───────────────────────── Activity indicator / progress ───────────────────────── */
+/* Sizes 14 (in text), 18 (in buttons), 20 (rows), 36 (empty states): ActivityIndicator sets --s. */
+.lr-spinner {
+  --s: var(--symbol);
+  width: var(--s);
+  height: var(--s);
+  color: var(--label-secondary);
+  animation: lr-spin var(--dur-spin) steps(8) infinite;
+  flex: none;
+}
+@keyframes lr-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.lr-progress {
+  height: var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--fill);
+  overflow: hidden;
+}
+.lr-progress > i {
+  display: block;
+  height: 100%;
+  width: 34%;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: lr-indeterminate var(--dur-progress) var(--spring-smooth) infinite;
+}
+/* Determinate (LrProgress): the fill's width is the value, set as --lr-progress. */
+.lr-progress--value > b {
+  display: block;
+  height: 100%;
+  width: var(--lr-progress, 0%);
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width var(--dur-smooth) var(--spring-smooth);
+}
+@keyframes lr-indeterminate {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(310%);
+  }
+}
+
+/* ───────────────────────── Avatar & tags ───────────────────────── */
+.lr-avatar {
+  --s: var(--avatar);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: var(--fill-secondary);
+  color: var(--label-secondary);
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.lr-avatar {
+  position: relative;
+  overflow: hidden;
+}
+.lr-avatar > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-avatar > img.is-loaded {
+  opacity: 1;
+}
+.lr-avatar--lg {
+  --s: var(--profile-icon);
+}
+.lr-avatar--symbol {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.lr-avatar--symbol svg {
+  width: var(--symbol);
+  height: var(--symbol);
+}
+.lr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tag-h);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+  color: var(--label-secondary);
+  white-space: nowrap;
+}
+.lr-tag svg {
+  width: var(--symbol-xs);
+  height: var(--symbol-xs);
+}
+.lr-tag--accent {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+.lr-tag--red {
+  background: var(--fill-tertiary);
+  color: var(--red-text);
+}
+.lr-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-1);
+}
+
+/* Stats grid (StatGrid.vue): value-over-label cells in one list item, as many columns as fit (fewer at large text). */
+.lr-list > li.lr-stats {
+  padding-left: var(--space-5);
+}
+.lr-stats-grid {
+  margin: 0;
+  padding: var(--space-4) var(--space-5) var(--space-4) 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--stat-min), 1fr));
+  gap: var(--space-3) var(--space-2);
+  box-shadow: inset 0 calc(-1 * var(--lr-hairline)) 0 var(--separator);
+}
+.lr-list > :last-child .lr-stats-grid {
+  box-shadow: none;
+}
+.lr-stats-cell {
+  display: flex;
+  /* The label reads first (dt before dd); the value is drawn on top. */
+  flex-direction: column-reverse;
+  min-width: 0;
+}
+.lr-stats-cell dt {
+  color: var(--label-secondary);
+  overflow-wrap: break-word;
+}
+.lr-stats-cell dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: break-word;
+}
+.lr-stats-cell.is-accent dd {
+  color: var(--accent-text);
+}

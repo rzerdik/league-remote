@@ -1,0 +1,89 @@
+/* ───────────────────────── Tab bar (bottom, floating) ─────────────────────────
+   iOS 26: a glass capsule over the content with the app's sections. The action bar and the content add
+   --lr-tabbar-space while it is shown. */
+/* --lr-chrome-bottom: gap between the screen's bottom edge and the lowest floating chrome. With the tab bar shown it
+   sits the same gap above the bottom as from its sides, or just above the home indicator where there is one. */
+:root {
+  --lr-tabbar-h: var(--tabbar-h);
+  --lr-tabbar-gap: var(--space-4);
+  --lr-chrome-bottom: max(calc(var(--safe-bottom) + var(--space-1)), var(--space-5));
+}
+:root.lr-has-tabbar {
+  --lr-tabbar-space: calc(var(--lr-tabbar-h) + var(--space-3));
+  --lr-chrome-bottom: max(var(--lr-tabbar-gap), calc(var(--safe-bottom) - var(--space-2)));
+}
+.lr-tabbar {
+  position: fixed;
+  left: max(calc(var(--lr-tabbar-gap) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
+  right: max(calc(var(--lr-tabbar-gap) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
+  bottom: var(--lr-chrome-bottom);
+  z-index: var(--z-chrome);
+  height: var(--lr-tabbar-h);
+  display: grid;
+  /* One equal column per tab, however many there are. */
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: stretch;
+  padding: var(--space-1);
+  border-radius: var(--radius-full);
+  transform: translateY(calc(-1 * var(--lr-keyboard, 0px)));
+}
+.lr-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-0-5);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--label-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fade) var(--ease-fade),
+    color var(--dur-fade) var(--ease-fade),
+    transform var(--dur-snappy) var(--spring-snappy);
+  -webkit-touch-callout: none;
+}
+.lr-tab:active {
+  transform: scale(0.94);
+  transition-duration: var(--dur-press);
+}
+.lr-tab.is-selected {
+  color: var(--accent-text);
+  background: var(--fill-tertiary);
+}
+.lr-tab-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.lr-tab-icon svg {
+  width: var(--tab-symbol);
+  height: var(--tab-symbol);
+}
+
+/* ───────────────────────── Badge (unread count) ─────────────────────────
+   Red on a symbol (tab bar, nav button: --on, top-trailing corner); accent at the end of a row. */
+.lr-badge {
+  --s: var(--badge);
+  min-width: var(--s);
+  height: var(--s);
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--on-accent);
+  display: inline-grid;
+  place-items: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.lr-badge--on {
+  --s: var(--badge-sm);
+  position: absolute;
+  top: calc(-1 * var(--space-1));
+  right: calc(-1 * var(--space-2));
+  background: var(--red);
+  color: var(--on-red);
+}

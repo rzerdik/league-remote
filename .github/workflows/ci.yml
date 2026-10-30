@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        run: npm --prefix web ci
+
+      - name: Build web app (type-check and bundle)
+        run: npm --prefix web run build
+
+      - name: Build
+        run: dotnet build LeagueRemote.sln -c Release -p:SkipWebBuild=true
+
+      - name: Test
+        run: dotnet test LeagueRemote.sln -c Release --no-build -p:SkipWebBuild=true

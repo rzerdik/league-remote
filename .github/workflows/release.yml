@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Version from tag
+        shell: pwsh
+        run: |
+          $version = $env:GITHUB_REF_NAME.TrimStart('v')
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build web app
+        run: |
+          npm --prefix web ci
+          npm --prefix web run build
+
+      - name: Test
+        run: dotnet test LeagueRemote.sln -c Release -p:SkipWebBuild=true
+
+      - name: Publish
+        run: >
+          dotnet publish src/LeagueRemote.Connector -c Release -r win-x64 --self-contained
+          -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true
+          -p:Version=${{ env.VERSION }} -p:SkipWebBuild=true
+          -o publish/connector
+
+      - name: Package
+        shell: pwsh
+        run: |
+          $name = "LeagueRemote-$env:VERSION-win-x64"
+          New-Item -ItemType Directory -Path "dist/$name" -Force | Out-Null
+          Copy-Item publish/connector/LeagueRemote.Connector.exe, publish/connector/appsettings.json, LICENSE, THIRD_PARTY_NOTICES.md, README.md, SECURITY.md -Destination "dist/$name"
+          # The README links into docs/ (pages and screenshots), so the zip carries it too.
+          Copy-Item docs -Destination "dist/$name/docs" -Recurse
+          Compress-Archive -Path "dist/$name/*" -DestinationPath "dist/$name.zip"
+          $hash = (Get-FileHash "dist/$name.zip" -Algorithm SHA256).Hash.ToLower()
+          "$hash  $name.zip" | Out-File -FilePath dist/SHA256SUMS.txt -Encoding ascii
+
+      - name: Create release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $name = "LeagueRemote-$env:VERSION-win-x64"
+          $flags = @()
+          if ($env:VERSION -match '-') { $flags += '--prerelease' }
+          gh release create $env:GITHUB_REF_NAME "dist/$name.zip" "dist/SHA256SUMS.txt" --title $env:GITHUB_REF_NAME --generate-notes @flags

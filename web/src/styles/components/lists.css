@@ -1,0 +1,258 @@
+/* ───────────────────────── Inset-grouped list ───────────────────────── */
+.lr-section {
+  margin: var(--space-10) var(--lr-inset-right) 0 var(--lr-inset-left);
+}
+.lr-largetitle + .lr-section,
+.lr-section:first-child {
+  margin-top: var(--space-5);
+}
+.lr-section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0 var(--space-2) var(--space-3);
+}
+.lr-section-header .lr-secondary {
+  font-weight: 400;
+}
+.lr-section-footer {
+  padding: var(--space-3) var(--space-5) 0;
+  color: var(--label-secondary);
+}
+.lr-list {
+  /* Rows ask how wide the list is in ems (large text sizes): see .lr-row-text. */
+  container: lr-list / inline-size;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.lr-row {
+  display: flex;
+  align-items: stretch;
+  padding-left: var(--space-5);
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  color: inherit;
+  transition: background-color var(--dur-fade) var(--ease-fade);
+}
+button.lr-row,
+a.lr-row,
+.lr-row--action {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+button.lr-row:disabled {
+  cursor: default;
+}
+button.lr-row:active:not(:disabled),
+a.lr-row:active,
+.lr-row--action:active,
+.lr-row.is-pressed {
+  background: var(--row-pressed);
+  transition-duration: 0ms;
+}
+.lr-row-lead {
+  display: flex;
+  align-items: center;
+  margin-right: var(--space-4);
+  padding: var(--space-3) 0;
+}
+.lr-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--row-min);
+  padding: var(--space-3) var(--space-5) var(--space-3) 0;
+  box-shadow: inset 0 calc(-1 * var(--lr-hairline)) 0 var(--separator);
+}
+.lr-row--text .lr-row-main {
+  min-height: var(--row-min-text);
+}
+.lr-list > :last-child .lr-row-main,
+.lr-list > .lr-row:last-child .lr-row-main {
+  box-shadow: none;
+}
+.lr-row-text {
+  /* Trailing content (values, spells, tags, switches) shares the title's line as long as the title's longest word
+     fits beside it: the basis is the title's min-content, so "Rune Page" + "Electrocute Mid" stay on one line. At
+     large text sizes (the list narrower than ~16 of its ems) the basis is about seven body characters instead, so
+     trailing content wraps under a title like "Auto Pick & Ban" rather than squeezing it to a word per line, and
+     "Notifications" never breaks mid-word next to a switch. Engines without intrinsic flex-basis keep the latter.
+     No hyphenation at regular sizes: Safari counts hyphenation points in min-content, so the basis would shrink to a
+     syllable and titles would hyphenate beside their value ("Elec-trocute"). */
+  flex: 1 1 calc(var(--font-size-body) * 7);
+  flex-basis: min-content;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+/* Titles wrap (large text sizes grow rows, never truncate a name); subtitles stay on one line. */
+.lr-row-text > :first-child {
+  overflow-wrap: break-word;
+}
+@container lr-list (max-width: 16em) {
+  .lr-row-text {
+    flex-basis: calc(var(--font-size-body) * 7);
+  }
+  /* A word wider than the row splits at a syllable ("Notifica-tions"), not before its last letter. */
+  .lr-row-text > :first-child {
+    hyphens: auto;
+  }
+}
+.lr-row-text > :nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* A one-line subtitle (a chat preview) takes the column's width but doesn't widen the row text's min-content:
+     it truncates instead of pushing the trailing content onto its own line. */
+  contain: inline-size;
+}
+.lr-row-text > :nth-child(2) {
+  color: var(--label-secondary);
+}
+.lr-row-text--wrap > *,
+.lr-row-text--wrap > :nth-child(2) {
+  white-space: normal;
+}
+/* Wraps instead of truncating when it ends up on its own line (large text). */
+.lr-row-value {
+  color: var(--label-secondary);
+  overflow-wrap: break-word;
+}
+/* A value and its marker (pop-up marker, chevron, checkmark) wrap as one; a long value wraps its words beside the marker. */
+.lr-row-end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  max-width: 100%;
+}
+.lr-row-end > .lr-row-value {
+  min-width: 0;
+  text-align: end;
+}
+/* Stacked trailing details of a conversation row: the time over the unread badge. */
+/* Trailing items that belong together (spells, a tag, the actions button) wrap as one. */
+.lr-row-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+/* A subtitle with state tags after its text ("Hovering Lee Sin [Picking]"): the tags wrap under it when tight. */
+.lr-row-subline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+/* An empty slot the size of a small icon button (a row without the actions button others have). */
+.lr-row-slot {
+  flex: none;
+  width: var(--control-sm);
+  height: var(--control-sm);
+}
+.lr-row-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+  color: var(--label-secondary);
+}
+.lr-row-chevron {
+  color: var(--label-tertiary);
+  width: var(--chevron);
+  height: var(--chevron);
+  flex: none;
+}
+.lr-row-chevron--popup {
+  width: var(--symbol-sm);
+  height: var(--symbol-sm);
+}
+.lr-row-check {
+  color: var(--accent-text);
+  width: var(--symbol);
+  height: var(--symbol);
+  flex: none;
+}
+.lr-row--accent .lr-row-text > :first-child {
+  color: var(--accent-text);
+}
+.lr-row--danger .lr-row-text > :first-child {
+  color: var(--red-text);
+}
+.lr-row--you {
+  background: var(--accent-soft);
+}
+.lr-row--you .lr-row-text > :first-child {
+  color: var(--accent-text);
+}
+/* A disabled (or busy) row grays as a whole: its title and its value. */
+button.lr-row:disabled .lr-row-text > :first-child,
+button.lr-row:disabled .lr-row-value {
+  color: var(--label-tertiary);
+}
+
+/* Settings-style icon tile */
+.lr-tile {
+  width: var(--icon-tile);
+  height: var(--icon-tile);
+  border-radius: var(--radius-sm);
+  display: grid;
+  place-items: center;
+  color: var(--on-tile);
+  background: var(--gray);
+  flex: none;
+}
+.lr-tile svg {
+  width: calc(var(--icon-tile) * 0.625);
+  height: calc(var(--icon-tile) * 0.625);
+}
+.lr-tile--accent {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.lr-tile--red {
+  background: var(--red);
+}
+.lr-tile--orange {
+  background: var(--orange);
+}
+.lr-tile--green {
+  background: var(--green);
+}
+.lr-tile--blue {
+  background: var(--blue);
+}
+.lr-tile--cyan {
+  background: var(--cyan);
+}
+.lr-tile--mint {
+  background: var(--mint);
+}
+.lr-tile--indigo {
+  background: var(--indigo);
+}
+.lr-tile--purple {
+  background: var(--purple);
+}
+.lr-tile--pink {
+  background: var(--pink);
+}
+.lr-tile--gray {
+  background: var(--gray);
+}
+.lr-tile--dark {
+  background: var(--tile-dark);
+}

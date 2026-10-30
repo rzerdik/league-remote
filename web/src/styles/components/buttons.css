@@ -1,0 +1,120 @@
+/* ───────────────────────── Buttons ───────────────────────── */
+.lr-btn {
+  --h: var(--control-md);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--h);
+  min-width: var(--h);
+  padding: 0 var(--space-5);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--fill-secondary);
+  color: var(--label);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform var(--dur-snappy) var(--spring-snappy),
+    filter var(--dur-press) linear,
+    opacity var(--dur-fade) var(--ease-fade),
+    background-color var(--dur-fade) var(--ease-fade);
+  -webkit-touch-callout: none;
+}
+/* Respond on press, not on release (pointer-down → instant). Release springs back. */
+.lr-btn:active:not(:disabled),
+.lr-btn.is-pressed {
+  transform: scale(0.96);
+  transition-duration: var(--dur-press);
+  filter: brightness(1.12);
+}
+.lr-btn:disabled {
+  cursor: default;
+}
+.lr-btn--glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--lr-glass-blur);
+  backdrop-filter: var(--lr-glass-blur);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+}
+.lr-btn--prominent {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+}
+.lr-btn--destructive {
+  background: var(--red);
+  color: var(--on-red);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+}
+.lr-btn--success {
+  background: var(--green);
+  color: var(--on-green);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+}
+.lr-btn--gray {
+  background: var(--fill-secondary);
+  color: var(--label);
+}
+.lr-btn--plain {
+  background: transparent;
+  color: var(--accent-text);
+  padding: 0 var(--space-2);
+}
+.lr-btn--plain.lr-btn--danger {
+  color: var(--red-text);
+}
+.lr-btn--prominent:disabled,
+.lr-btn--destructive:disabled,
+.lr-btn--success:disabled,
+.lr-btn--gray:disabled {
+  background: var(--fill-tertiary);
+  color: var(--label-tertiary);
+  box-shadow: none;
+}
+.lr-btn--glass:disabled,
+.lr-btn--plain:disabled {
+  color: var(--label-tertiary);
+}
+.lr-btn--sm {
+  --h: var(--control-sm);
+  padding: 0 var(--space-4);
+}
+/* A small visual still gets a 44pt hit region. */
+.lr-btn--sm::after {
+  content: '';
+  position: absolute;
+  inset: calc((var(--control-sm) - var(--hit-min)) / 2) 0;
+}
+.lr-btn--lg {
+  --h: var(--control-lg);
+  padding: 0 var(--space-6);
+}
+.lr-btn--block {
+  display: flex;
+  width: 100%;
+}
+.lr-btn--icon {
+  padding: 0;
+  width: var(--h);
+}
+.lr-btn--icon.lr-btn--sm::after {
+  inset: calc((var(--control-sm) - var(--hit-min)) / 2);
+}
+.lr-btn .lr-spinner {
+  color: inherit;
+}
+/* Clear glass: only over the camera feed (Scanner). */
+.lr-btn--clear {
+  background: var(--glass-clear);
+  color: var(--on-camera);
+  -webkit-backdrop-filter: var(--lr-glass-blur);
+  backdrop-filter: var(--lr-glass-blur);
+  box-shadow: var(--glass-rim);
+}
+/* A toggle that is on (`pressed`: the flashlight). */
+.lr-btn[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}

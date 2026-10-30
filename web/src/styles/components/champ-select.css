@@ -1,0 +1,140 @@
+/* ───────────────────────── Loadout (summoner spell slots) ───────────────────────── */
+.lr-list > li.lr-spell-slots {
+  display: flex;
+  /* At large text sizes the two slots stack (basis below) instead of cutting the spell names short. */
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: inset 0 calc(-1 * var(--lr-hairline)) 0 var(--separator);
+}
+.lr-spell-slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1 1 calc(var(--font-size-body) * 7);
+  min-width: 0;
+  min-height: var(--control-lg);
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bg-tertiary);
+  color: var(--label);
+  cursor: pointer;
+  text-align: left;
+}
+.lr-spell-slot > span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lr-spell-slot:active:not(:disabled),
+.lr-spell-slot.is-pressed {
+  background: var(--row-pressed);
+}
+.lr-spell-slot:disabled {
+  color: var(--label-tertiary);
+}
+
+/* ───────────────────────── Draft board (bans) ───────────────────────── */
+.lr-bans {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* ───────────────────────── Champion picker sheet ───────────────────────── */
+.lr-picker-head {
+  padding: var(--space-1) var(--space-4) 0;
+}
+.lr-picker-body {
+  padding-top: var(--space-3);
+  /* Scroll the last grid row clear of the floating Lock In button. */
+  padding-bottom: calc(var(--control-lg) + var(--space-8) + var(--safe-bottom));
+}
+
+/* ───────────────────────── Turn header (top of the champion picker) ───────────────────────── */
+.lr-turn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-1) var(--space-4);
+}
+.lr-turn-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+.lr-turn-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.lr-turn--pick .lr-turn-text {
+  color: var(--accent-text);
+}
+.lr-turn--ban .lr-turn-text {
+  color: var(--red-text);
+}
+
+/* ───────────────────────── Draft status (who is acting, pick order) ───────────────────────── */
+.lr-draft {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+}
+/* One row at any width: each turn grows with its slot count, portraits shrink down to fit. */
+.lr-draft-order {
+  --pad: var(--space-0-5);
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lr-draft-turn {
+  flex: var(--n, 1) 1 0;
+  min-width: 0;
+  max-width: calc(var(--n, 1) * (var(--champ-ban) + var(--pad)) + var(--pad));
+  display: flex;
+  gap: var(--pad);
+  padding: var(--pad) var(--pad) var(--space-1);
+  border-radius: calc(var(--radius-xs) + var(--pad));
+  box-shadow: inset 0 calc(-1 * var(--lr-stroke)) 0 var(--side);
+  transition: background var(--dur-fade) var(--ease-fade);
+}
+.lr-draft-turn.is-ally {
+  --side: var(--ally);
+}
+.lr-draft-turn.is-enemy {
+  --side: var(--enemy);
+}
+.lr-draft-turn.is-now {
+  background: var(--fill-secondary);
+}
+.lr-draft-slot {
+  position: relative;
+  display: block;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: var(--radius-xs);
+}
+.lr-draft-slot .lr-champ {
+  --s: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.lr-draft-slot.is-acting::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--lr-ring-gap));
+  border-radius: calc(var(--radius-xs) + var(--lr-ring-gap));
+  box-shadow: 0 0 0 var(--lr-stroke) var(--side);
+  animation: lr-pulse var(--dur-pulse) var(--ease-fade) infinite;
+}

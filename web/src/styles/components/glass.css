@@ -1,0 +1,28 @@
+/* ───────────────────────── Liquid Glass ─────────────────────────
+   Controls layer only (nav buttons, action bar, banners, menus, partial sheets).
+   Never on list sections, cards or other content. */
+.lr-glass,
+.lr-glass-thick,
+.lr-glass-clear {
+  -webkit-backdrop-filter: var(--lr-glass-blur);
+  backdrop-filter: var(--lr-glass-blur);
+  box-shadow: var(--glass-rim), var(--glass-lift);
+}
+.lr-glass {
+  background: var(--glass);
+}
+.lr-glass-thick {
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--lr-glass-blur-thick);
+  backdrop-filter: var(--lr-glass-blur-thick);
+}
+.lr-glass-clear {
+  background: var(--glass-clear);
+  color: var(--on-camera);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .lr-glass,
+  .lr-glass-thick {
+    background: var(--bg-elevated);
+  }
+}

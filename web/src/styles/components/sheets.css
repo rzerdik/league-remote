@@ -1,0 +1,245 @@
+/* ───────────────────────── Sheet ─────────────────────────
+   Partial detents: floating glass, inset by space-2, all corners radius-xl.
+   Large detent: edge to edge, opaque bg-elevated, top corners radius-sheet. */
+.lr-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-sheet);
+  background: var(--scrim);
+  opacity: 0;
+  transition: opacity var(--dur-smooth) var(--spring-smooth);
+  pointer-events: none;
+}
+.lr-scrim[data-visible='true'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lr-sheet {
+  position: fixed;
+  left: max(var(--space-2), calc((100% - var(--lr-column)) / 2));
+  right: max(var(--space-2), calc((100% - var(--lr-column)) / 2));
+  bottom: max(var(--space-2), calc(var(--safe-bottom) - var(--space-6)));
+  z-index: var(--z-sheet);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--lr-glass-blur-thick);
+  backdrop-filter: var(--lr-glass-blur-thick);
+  box-shadow: var(--glass-rim), var(--sheet-lift);
+  overflow: hidden;
+  will-change: transform;
+  outline: none;
+  transition:
+    left var(--dur-smooth) var(--spring-smooth),
+    right var(--dur-smooth) var(--spring-smooth),
+    bottom var(--dur-smooth) var(--spring-smooth),
+    border-radius var(--dur-smooth) var(--spring-smooth),
+    background-color var(--dur-smooth) var(--ease-fade),
+    opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-sheet[data-detent='large'] {
+  left: max(0px, calc((100% - var(--lr-column)) / 2));
+  right: max(0px, calc((100% - var(--lr-column)) / 2));
+  bottom: 0;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--bg-elevated);
+  padding-bottom: var(--safe-bottom);
+}
+.lr-sheet-drag {
+  flex: none;
+  touch-action: none;
+}
+.lr-grabber {
+  display: block;
+  width: var(--grabber-w);
+  height: var(--grabber-h);
+  border-radius: var(--radius-full);
+  background: var(--label-tertiary);
+  margin: var(--space-2) auto 0;
+  border: 0;
+  padding: 0;
+  cursor: grab;
+  flex: none;
+  position: relative;
+}
+/* 44pt hit region around the 36×5 grabber */
+.lr-grabber::after {
+  content: '';
+  position: absolute;
+  inset: calc((var(--hit-min) - var(--grabber-h)) / -2) calc((var(--hit-min) - var(--grabber-w)) / -2);
+}
+.lr-sheet-head {
+  display: grid;
+  grid-template-columns: var(--control-md) 1fr var(--control-md);
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-3);
+  flex: none;
+}
+.lr-sheet-head > :nth-child(2) {
+  text-align: center;
+}
+.lr-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 var(--space-5) var(--space-5);
+}
+.lr-sheet-foot {
+  flex: none;
+  /* The sheet's bottom sits behind the keyboard (iOS doesn't resize the layout viewport): lift the footer above it. */
+  margin-bottom: max(0px, calc(var(--lr-keyboard, 0px) - var(--safe-bottom)));
+}
+.lr-sheet-body--lists {
+  padding: 0 0 var(--space-10);
+}
+.lr-sheet-body--lists .lr-section {
+  margin-left: var(--space-5);
+  margin-right: var(--space-5);
+}
+.lr-sheet-body--lists .lr-section:first-child {
+  margin-top: var(--space-2);
+}
+
+/* ───────────────────────── Alert ───────────────────────── */
+.lr-alert-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-alert);
+  background: var(--scrim);
+}
+.lr-alert {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: var(--z-alert);
+  translate: -50% -50%;
+  width: min(var(--measure-narrow), calc(100% - var(--space-8) * 2));
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.lr-alert p {
+  color: var(--label-secondary);
+}
+.lr-alert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+/* Side by side; they stack once a label no longer fits (large text). */
+.lr-alert-actions > .lr-btn {
+  flex: 1 1 calc(var(--control-lg) * 2);
+}
+.lr-alert-wrap[data-state='open'] {
+  animation: lr-fade-in var(--dur-snappy) var(--ease-fade);
+}
+.lr-alert-wrap[data-state='closed'] {
+  animation: lr-fade-out var(--dur-fade) var(--ease-fade);
+}
+.lr-alert[data-state='open'] {
+  animation: lr-alert-in var(--dur-snappy) var(--spring-snappy);
+}
+.lr-alert[data-state='closed'] {
+  animation: lr-fade-out var(--dur-fade) var(--ease-fade);
+}
+@keyframes lr-alert-in {
+  from {
+    opacity: 0;
+    scale: 1.08;
+  }
+}
+@keyframes lr-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes lr-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* ───────────────────────── Menu (anchored, grows from its trigger) ───────────────────────── */
+.lr-menu {
+  --pad: var(--space-2);
+  min-width: var(--menu-min);
+  max-width: min(var(--menu-max), calc(100vw - var(--space-4) * 2));
+  max-height: var(--reka-dropdown-menu-content-available-height, 70vh);
+  overflow-y: auto;
+  border-radius: var(--radius-xl);
+  padding: var(--pad);
+  z-index: var(--z-alert);
+  transform-origin: var(--reka-dropdown-menu-content-transform-origin, top right);
+}
+.lr-menu[data-state='open'] {
+  animation: lr-menu-in var(--dur-snappy) var(--spring-snappy);
+}
+.lr-menu[data-state='closed'] {
+  animation: lr-menu-out var(--dur-fade) var(--ease-fade);
+}
+@keyframes lr-menu-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+@keyframes lr-menu-out {
+  to {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+.lr-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--hit-min);
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border: 0;
+  /* Concentric with the menu: its radius minus its padding. */
+  border-radius: calc(var(--radius-xl) - var(--pad));
+  background: transparent;
+  color: var(--label);
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+}
+.lr-menu-item[data-highlighted],
+.lr-menu-item:active,
+.lr-menu-item.is-pressed {
+  background: var(--fill-tertiary);
+}
+.lr-menu-item > span:not(.lr-menu-check) {
+  flex: 1;
+}
+.lr-menu-check {
+  flex: none;
+  width: var(--symbol-sm);
+  color: var(--label);
+  display: grid;
+  place-items: center;
+}
+.lr-menu-item--danger {
+  color: var(--red-text);
+}
+.lr-menu-item[data-disabled] {
+  color: var(--label-tertiary);
+  cursor: default;
+}
+.lr-menu-sep {
+  height: var(--lr-hairline);
+  background: var(--separator);
+  margin: var(--space-2) var(--space-3);
+}
+.lr-menu-title {
+  padding: var(--space-2) var(--space-3) var(--space-1);
+  color: var(--label-secondary);
+}

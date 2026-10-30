@@ -1,0 +1,189 @@
+/* ───────────────────────── Navigation bar ─────────────────────────
+   Transparent bar with floating glass buttons; the large title lives in the scroll content
+   and hands over to the inline title when it scrolls under the bar. */
+.lr-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-chrome);
+  padding: var(--lr-nav-top) var(--lr-inset-right) 0 var(--lr-inset-left);
+  pointer-events: none;
+}
+.lr-nav-bar {
+  height: var(--lr-nav-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+}
+.lr-nav-bar > * {
+  pointer-events: auto;
+}
+.lr-nav .lr-btn {
+  --h: var(--lr-nav-h);
+}
+.lr-nav .lr-btn .lr-icon {
+  width: var(--symbol-lg);
+  height: var(--symbol-lg);
+}
+.lr-nav-lead {
+  justify-self: start;
+  display: flex;
+  gap: var(--space-2);
+}
+.lr-nav-trail {
+  justify-self: end;
+  display: flex;
+  gap: var(--space-2);
+}
+.lr-nav-title {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(var(--space-2));
+  transition:
+    opacity var(--dur-fade) var(--ease-fade),
+    transform var(--dur-smooth) var(--spring-smooth);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60vw;
+  pointer-events: none;
+}
+.lr-nav[data-collapsed='true'] .lr-nav-title {
+  opacity: 1;
+  transform: none;
+}
+
+/* Scroll-edge effect (top): iOS 27 default "hard" style — a material band with a hairline,
+   shown only while content is scrolled under the bar. */
+.lr-edge-top {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-2));
+  z-index: var(--z-edge);
+  pointer-events: none;
+  background: var(--glass-thick);
+  -webkit-backdrop-filter: var(--lr-glass-blur-thick);
+  backdrop-filter: var(--lr-glass-blur-thick);
+  border-bottom: var(--lr-hairline) solid var(--separator);
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-edge-top[data-visible='true'] {
+  opacity: 1;
+}
+
+/* Edge swipe back (useEdgeSwipeBack): the pushed view's parts follow the finger, then settle on a JS spring. */
+.lr-swipe-follow,
+.lr-nav,
+.lr-edge-top {
+  translate: var(--lr-swipe-x, 0px) 0;
+}
+
+/* Large title block, first thing in the scroll content. Well clear of the status bar and the soft blur iOS lays
+   under it; the trailing slot (title-row controls) sits at the end of the title row. */
+.lr-largetitle {
+  padding: calc(var(--lr-nav-top) + var(--space-8)) var(--lr-inset-right) var(--space-3) var(--lr-inset-left);
+}
+.lr-largetitle h1 {
+  overflow-wrap: break-word;
+}
+/* A button teleported straight into the nav bar (not via LargeTitle #trailing): the large title starts under the nav
+   bar so a long title neither runs under the button nor wraps to make room for it. Screen buttons belong on the
+   title row (#trailing) instead, which leaves no gap above the title. */
+:root:has(#lr-nav-trailing > *) .lr-largetitle:not(.lr-largetitle--trailing) {
+  padding-top: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-1));
+}
+/* A pushed view with a large title (a game in the Profile tab): the title starts under the Back button, as on iOS,
+   with a clear gap (the glass button's shadow and the title's cap height otherwise touch). */
+:root:has(.lr-nav-lead > *) .lr-largetitle {
+  padding-top: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-3));
+}
+.lr-largetitle p {
+  margin-top: var(--space-1);
+  color: var(--label-secondary);
+}
+/* Title-row buttons (LargeTitle #trailing: Add Friend, chat): on the title row at the end, the size of the nav-bar
+   buttons they dock into once the title collapses. The slot keeps its width while docked so the title doesn't reflow.
+   The title never gets narrower than its longest word: when that and the button don't fit side by side (large text
+   sizes), the button moves onto its own row above the title (wrap-reverse) rather than breaking a word. */
+.lr-largetitle--trailing {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  /* wrap-reverse swaps the cross axis: flex-end is the top, so the button lines up with the title's first line
+     rather than the middle of a title that wraps ("Champion Select" at 375 pt) plus its subtitle. */
+  align-items: flex-end;
+  gap: var(--space-2) var(--space-3);
+}
+.lr-largetitle--trailing > :first-child {
+  flex: 1 1 0%;
+  min-width: min-content;
+}
+.lr-largetitle-trail {
+  display: flex;
+  justify-content: flex-end;
+  min-width: var(--lr-nav-h);
+  margin-left: auto;
+}
+.lr-largetitle-dock {
+  display: flex;
+  gap: var(--space-2);
+  animation: lr-dock-in var(--dur-fade) var(--ease-fade);
+}
+.lr-largetitle-dock .lr-btn {
+  --h: var(--lr-nav-h);
+}
+.lr-largetitle-dock .lr-btn .lr-icon {
+  width: var(--symbol-lg);
+  height: var(--symbol-lg);
+}
+@keyframes lr-dock-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Status dot (StatusDot.vue) and status line (StatusLine.vue): a dot or activity indicator before a status word. */
+.lr-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.lr-status > :last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lr-dot {
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: var(--radius-full);
+  flex: none;
+  background: var(--gray);
+}
+.lr-dot--green {
+  background: var(--green);
+}
+.lr-dot--orange {
+  background: var(--orange);
+}
+.lr-dot--red {
+  background: var(--red);
+}
+.lr-dot--blue {
+  background: var(--blue);
+}
+.lr-dot--accent {
+  background: var(--accent);
+}
+.lr-dot--pulse {
+  animation: lr-pulse var(--dur-pulse) var(--ease-fade) infinite;
+}
+@keyframes lr-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}

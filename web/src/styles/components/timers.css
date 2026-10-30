@@ -1,0 +1,135 @@
+/* Timers (TimerText.vue): tabular; orange under 10 s, red with a 1 Hz tick under 5 s. The colour steps with the
+   digits (countdowns never ease): a colour transition inside the glass picker sheet (backdrop-filter, will-change)
+   could leave its timer white on iOS while the draft status timer had already turned orange. */
+.lr-timer-value {
+  font-variant-numeric: tabular-nums;
+}
+.lr-timer-value.is-warning {
+  color: var(--orange-text);
+}
+.lr-timer-value.is-urgent {
+  color: var(--red-text);
+  animation: lr-tick var(--dur-tick) var(--spring-snappy) infinite;
+}
+@keyframes lr-tick {
+  12% {
+    transform: scale(1.06);
+  }
+}
+
+/* Final-seconds side glow (EdgeGlow.vue): one heartbeat ("lub-dub") per countdown tick, restarted by the tick itself
+   so it lands with the sound. Only the left and right edges glow, strongest at the vertical middle and gone well
+   before the top and bottom (status bar, Dynamic Island, the glass bars). A bright core beats; a wide soft halo swells
+   a moment later and decays slower. --lr-glow-level (0 → 1 from the first beat to the last) raises the intensity and
+   the halo's reach. Decorative, never takes touches; Reduce Motion gets a steady glow (below). */
+.lr-edge-glow {
+  --glow-core: var(--glow-pick);
+  --glow-soft: var(--glow-pick-soft);
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-edge-glow);
+  pointer-events: none;
+  opacity: calc(65% + 35% * var(--lr-glow-level, 1));
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-edge-glow--ban {
+  --glow-core: var(--glow-ban);
+  --glow-soft: var(--glow-ban-soft);
+}
+.lr-edge-glow-enter-from,
+.lr-edge-glow-leave-to {
+  opacity: 0;
+}
+.lr-edge-glow-beat {
+  position: absolute;
+  inset: 0;
+}
+.lr-edge-glow-side {
+  --side: 0%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--edge-glow-halo);
+  transform-origin: left center;
+  scale: calc(80% + 30% * var(--lr-glow-level, 1)) 100%;
+}
+.lr-edge-glow-side--right {
+  --side: 100%;
+  left: auto;
+  right: 0;
+  transform-origin: right center;
+}
+.lr-edge-glow-side::before,
+.lr-edge-glow-side::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  transform-origin: inherit;
+}
+/* Halo: the whole side, faint; an ellipse hugging the edge, gone by the top and bottom tenth. */
+.lr-edge-glow-side::before {
+  left: 0;
+  right: 0;
+  background: radial-gradient(ellipse 100% 40% at var(--side) 50%, var(--glow-soft) 0%, transparent 100%);
+  animation: lr-heartbeat-halo var(--dur-tick) var(--ease-fade) both;
+}
+/* Core: the bright band right at the edge. */
+.lr-edge-glow-side::after {
+  left: 0;
+  width: var(--edge-glow-core);
+  background: radial-gradient(
+    ellipse 100% 36% at var(--side) 50%,
+    var(--glow-core) 0%,
+    var(--glow-soft) 45%,
+    transparent 100%
+  );
+  animation: lr-heartbeat-core var(--dur-tick) var(--ease-fade) both;
+}
+.lr-edge-glow-side--right::after {
+  left: auto;
+  right: 0;
+}
+/* Lub (quick, strong) – dub (a little softer) – a long decay into the next beat. */
+@keyframes lr-heartbeat-core {
+  0% {
+    opacity: 30%;
+    scale: 90% 96%;
+  }
+  7% {
+    opacity: 100%;
+    scale: 112% 104%;
+  }
+  15% {
+    opacity: 55%;
+    scale: 98% 99%;
+  }
+  24% {
+    opacity: 90%;
+    scale: 106% 102%;
+  }
+  100% {
+    opacity: 30%;
+    scale: 90% 96%;
+  }
+}
+/* The halo trails the core: it swells through the lub-dub and fades out slower. */
+@keyframes lr-heartbeat-halo {
+  0% {
+    opacity: 35%;
+    scale: 85% 96%;
+  }
+  12% {
+    opacity: 80%;
+    scale: 108% 102%;
+  }
+  30% {
+    opacity: 100%;
+    scale: 114% 104%;
+  }
+  100% {
+    opacity: 35%;
+    scale: 85% 96%;
+  }
+}

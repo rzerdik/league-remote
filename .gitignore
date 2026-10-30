@@ -1,0 +1,17 @@
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+.idea/
+TestResults/
+node_modules/
+web/dist/
+*.log
+.env
+publish/
+
+# Claude Code: personal settings/notes and the desktop app's worktrees stay local
+.claude/settings.local.json
+.claude/worktrees/
+CLAUDE.local.md

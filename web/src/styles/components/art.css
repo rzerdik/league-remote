@@ -1,0 +1,252 @@
+/* ───────────────────────── Champion portraits & spell icons ───────────────────────── */
+.lr-champ {
+  --s: var(--champ-row);
+  --r: var(--radius-md);
+  position: relative;
+  display: block;
+  width: var(--s);
+  height: var(--s);
+  border-radius: var(--r);
+  background: var(--fill-tertiary);
+  overflow: hidden;
+  flex: none;
+}
+.lr-champ > img,
+.lr-spell > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  transition:
+    opacity var(--dur-fade) var(--ease-fade),
+    filter var(--dur-fade) var(--ease-fade);
+}
+.lr-champ--grid {
+  --s: var(--champ-grid);
+  --r: var(--radius-lg);
+}
+.lr-champ--ban {
+  --s: var(--champ-ban);
+  --r: var(--radius-xs);
+}
+.lr-champ--tile {
+  --s: var(--icon-tile);
+  --r: var(--radius-sm);
+}
+/* Hovered, not locked: only in the draft strip (no room for a word there); team lists say "Hovering …" instead. */
+.lr-champ.is-intent > * {
+  opacity: 0.45;
+  filter: saturate(0.4);
+}
+.lr-champ.is-empty {
+  box-shadow: inset 0 0 0 calc(2 * var(--lr-hairline)) var(--separator);
+}
+.lr-champ.is-banned > * {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+/* The red diagonal strike over a banned portrait. */
+.lr-champ.is-banned::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top right,
+    transparent calc(50% - var(--lr-stroke) / 2),
+    var(--red) calc(50% - var(--lr-stroke) / 2),
+    var(--red) calc(50% + var(--lr-stroke) / 2),
+    transparent calc(50% + var(--lr-stroke) / 2)
+  );
+}
+/* Dead (In Game scoreboard): dimmed and gray until the respawn; the row says "Respawns in 0:12" too. */
+.lr-champ.is-dead > * {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+.lr-champ.is-pop {
+  animation: lr-pop var(--dur-bouncy) var(--spring-bouncy);
+}
+@keyframes lr-pop {
+  35% {
+    transform: scale(1.14);
+  }
+}
+
+.lr-spell {
+  --s: var(--spell);
+  position: relative;
+  display: block;
+  width: var(--s);
+  height: var(--s);
+  border-radius: var(--radius-xs);
+  background: var(--fill-tertiary);
+  overflow: hidden;
+  flex: none;
+}
+.lr-spell--slot {
+  --s: var(--spell-slot);
+  border-radius: var(--radius-md);
+}
+.lr-spell--grid {
+  --s: var(--spell-grid);
+  border-radius: var(--radius-lg);
+}
+.lr-spell--sm {
+  --s: var(--art-sm);
+}
+/* Item art in a match-history strip (ItemIcon.vue); an empty slot is a well, like the client's. */
+.lr-item {
+  --s: var(--art-sm);
+  position: relative;
+  display: block;
+  width: var(--s);
+  height: var(--s);
+  border-radius: var(--radius-xs);
+  background: var(--fill-tertiary);
+  overflow: hidden;
+  flex: none;
+}
+/* A keystone / rune tree (RuneIcon.vue): transparent art, so it sits in a circle well. */
+.lr-rune {
+  --s: var(--art-sm);
+  position: relative;
+  display: block;
+  width: var(--s);
+  height: var(--s);
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+  overflow: hidden;
+  flex: none;
+}
+.lr-item > img,
+.lr-rune > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.lr-spells {
+  display: flex;
+  gap: var(--space-1);
+  flex: none;
+}
+
+/* Data Dragon art: shimmer until loaded (v-img-loaded adds .is-loaded). */
+.lr-champ > img:not(.is-loaded),
+.lr-spell > img:not(.is-loaded),
+.lr-item > img:not(.is-loaded),
+.lr-rune > img:not(.is-loaded) {
+  background-color: var(--fill-tertiary);
+  background-image: linear-gradient(100deg, transparent 30%, var(--fill-secondary) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: lr-shimmer var(--dur-shimmer) linear infinite;
+}
+@keyframes lr-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Selection rings: a gap in the ground colour, then a --ring-w ring in --ring-color. The states below only set those. */
+.lr-champ.is-you,
+.lr-champ.is-acting,
+.lr-champ.is-enemy-acting,
+.lr-grid-tile[aria-pressed='true'] .lr-grid-art,
+.lr-draft-slot.is-you {
+  --ring-gap: var(--lr-ring-gap);
+  overflow: visible;
+  box-shadow:
+    0 0 0 var(--ring-gap) var(--bg-elevated),
+    0 0 0 calc(var(--ring-gap) + var(--ring-w, var(--lr-stroke))) var(--ring-color, var(--accent));
+}
+.lr-champ.is-acting,
+.lr-champ.is-enemy-acting {
+  --ring-color: var(--ally);
+  animation: lr-breathe-ring var(--dur-pulse) var(--ease-fade) infinite;
+}
+.lr-champ.is-enemy-acting {
+  --ring-color: var(--enemy);
+}
+.lr-grid-tile[aria-pressed='true'] .lr-grid-art {
+  --ring-w: var(--lr-ring-thick);
+}
+.lr-grid-tile.is-ban[aria-pressed='true'] .lr-grid-art {
+  --ring-color: var(--red);
+}
+.lr-draft-slot.is-you {
+  --ring-gap: var(--lr-ring-thin);
+  --ring-w: var(--lr-ring-thin);
+}
+@keyframes lr-breathe-ring {
+  50% {
+    box-shadow:
+      0 0 0 var(--ring-gap) var(--bg-elevated),
+      0 0 0 calc(var(--ring-gap) + var(--lr-stroke)) transparent;
+  }
+}
+
+/* ───────────────────────── Picker grid (champions, summoner spells) ───────────────────────── */
+.lr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-tile-min), 1fr));
+  gap: var(--space-4) var(--space-2);
+}
+.lr-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3) var(--space-1);
+}
+.lr-grid-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: transparent;
+  color: var(--label-secondary);
+  cursor: pointer;
+  transition: transform var(--dur-snappy) var(--spring-snappy);
+}
+.lr-grid-tile:active,
+.lr-grid-tile.is-pressed {
+  transform: scale(0.92);
+  transition-duration: var(--dur-press);
+}
+.lr-grid-tile > span:last-child {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lr-grid-tile[aria-pressed='true'] {
+  color: var(--label);
+}
+.lr-grid-tile:disabled {
+  cursor: default;
+  transform: none;
+}
+/* A tile you can't choose (a bench champion you can't play): grayed like an unavailable portrait, its name tertiary. */
+.lr-grid-tile.is-unavailable {
+  color: var(--label-tertiary);
+}
+.lr-grid-tile.is-unavailable .lr-grid-art > * {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+.lr-grid-art {
+  display: block;
+  border-radius: var(--radius-lg);
+}
+.lr-grid-empty {
+  padding: var(--space-6) 0;
+  text-align: center;
+  color: var(--label-secondary);
+}

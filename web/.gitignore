@@ -1,0 +1,3 @@
+# node_modules, web/dist and *.log are in the root .gitignore
+dist
+*.local

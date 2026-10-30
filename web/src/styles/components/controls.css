@@ -1,0 +1,302 @@
+/* ───────────────────────── Switch (iOS 26 proportions) ───────────────────────── */
+.lr-switch {
+  --inset: var(--lr-stroke);
+  position: relative;
+  flex: none;
+  width: var(--switch-w);
+  height: var(--switch-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--fill);
+  cursor: pointer;
+  transition: background-color var(--dur-snappy) var(--spring-snappy);
+}
+.lr-switch::before {
+  content: '';
+  position: absolute;
+  inset: calc((var(--hit-min) - var(--switch-h)) / -2) calc(-1 * var(--space-1));
+} /* 44-pt hit region */
+.lr-switch-thumb {
+  position: absolute;
+  top: var(--inset);
+  left: var(--inset);
+  width: var(--switch-thumb);
+  height: calc(100% - 2 * var(--inset));
+  border-radius: var(--radius-full);
+  background: var(--thumb);
+  box-shadow: var(--thumb-shadow);
+  transition:
+    transform var(--dur-snappy) var(--spring-bouncy),
+    width var(--dur-snappy) var(--spring-snappy),
+    background-color var(--dur-press) linear;
+}
+.lr-switch[aria-checked='true'] {
+  background: var(--green);
+}
+.lr-switch[aria-checked='true'] .lr-switch-thumb {
+  transform: translateX(calc(var(--switch-w) - var(--switch-thumb) - 2 * var(--inset)));
+}
+/* While pressed the thumb turns to glass and stretches (iOS 26) */
+.lr-switch:active .lr-switch-thumb {
+  width: var(--switch-thumb-pressed);
+  background: var(--thumb-pressed);
+  -webkit-backdrop-filter: var(--lr-blur-thin);
+  backdrop-filter: var(--lr-blur-thin);
+}
+.lr-switch[aria-checked='true']:active .lr-switch-thumb {
+  transform: translateX(calc(var(--switch-w) - var(--switch-thumb-pressed) - 2 * var(--inset)));
+}
+.lr-switch:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ───────────────────────── Segmented control (LrSegmented.vue) ─────────────────────────
+   A capsule track (fill-tertiary) with a thumb that slides to the selected segment. Segments share the width; at large
+   text sizes they wrap onto more rows and the track turns into a rounded rectangle (is-wrapped, concentric thumb). */
+.lr-segmented {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  padding: var(--space-0-5);
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+}
+.lr-segmented.is-wrapped {
+  border-radius: var(--radius-lg);
+}
+.lr-segmented-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--radius-full);
+  background: var(--segment-thumb);
+  box-shadow: var(--thumb-shadow);
+  pointer-events: none;
+}
+.lr-segmented.is-wrapped .lr-segmented-thumb {
+  border-radius: var(--radius-md);
+}
+.lr-segmented-thumb.is-sliding {
+  transition:
+    transform var(--dur-snappy) var(--spring-snappy),
+    width var(--dur-snappy) var(--spring-snappy),
+    height var(--dur-snappy) var(--spring-snappy);
+}
+/* 44-pt segments: the track's padding plus the segment make up --hit-min (and the hit region below reaches into the
+   padding). Equal widths, like iOS: every segment grows from zero; one wraps to the next row only once its longest
+   word no longer fits (large text). */
+.lr-segment {
+  position: relative;
+  flex: 1 1 0;
+  min-width: min-content;
+  min-height: calc(var(--hit-min) - 2 * var(--space-0-5));
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--label);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: opacity var(--dur-press) linear;
+}
+.lr-segment::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--space-0-5)) 0;
+}
+.lr-segment:active:not([aria-selected='true']),
+.lr-segment.is-pressed:not([aria-selected='true']) {
+  opacity: 0.5;
+  transition-duration: 0ms;
+}
+
+/* ───────────────────────── Slider ───────────────────────── */
+.lr-slider {
+  --lr-value: 50%;
+  flex: 1;
+  min-width: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  height: var(--hit-min);
+  background: transparent;
+  margin: 0;
+  cursor: pointer;
+}
+.lr-slider::-webkit-slider-runnable-track {
+  height: var(--slider-track);
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, var(--accent) var(--lr-value), var(--fill) var(--lr-value));
+}
+.lr-slider::-moz-range-track {
+  height: var(--slider-track);
+  border-radius: var(--radius-full);
+  background: linear-gradient(to right, var(--accent) var(--lr-value), var(--fill) var(--lr-value));
+}
+.lr-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: calc((var(--slider-track) - var(--slider-thumb-h)) / 2);
+  width: var(--switch-thumb);
+  height: var(--slider-thumb-h);
+  border-radius: var(--radius-full);
+  background: var(--thumb);
+  border: 0;
+  box-shadow: var(--thumb-shadow);
+  transition: transform var(--dur-snappy) var(--spring-snappy);
+}
+.lr-slider::-moz-range-thumb {
+  width: var(--switch-thumb);
+  height: var(--slider-thumb-h);
+  border-radius: var(--radius-full);
+  background: var(--thumb);
+  border: 0;
+  box-shadow: var(--thumb-shadow);
+}
+.lr-slider:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+  background: var(--thumb-pressed);
+}
+.lr-slider.is-muted {
+  --lr-value: 0%;
+}
+.lr-slider-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  color: var(--label-secondary);
+}
+.lr-slider-row.is-muted {
+  opacity: 0.5;
+}
+
+/* ───────────────────────── Text field (TextField.vue) ───────────────────────── */
+.lr-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--control-md);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  color: var(--label-secondary);
+}
+/* Inside an elevated surface (a sheet at large) the field is a well. */
+.lr-sheet .lr-field {
+  background: var(--bg-tertiary);
+}
+.lr-field input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--control-md);
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--label);
+  font-size: max(16px, var(--font-size-body));
+}
+.lr-field input::placeholder {
+  color: var(--label-tertiary);
+}
+.lr-field:focus-within {
+  box-shadow: inset 0 0 0 var(--lr-stroke) var(--accent);
+}
+.lr-field.is-invalid {
+  box-shadow: inset 0 0 0 var(--lr-stroke) var(--red);
+}
+
+/* ───────────────────────── Search field ───────────────────────── */
+.lr-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--control-md);
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  gap: var(--space-2);
+  color: var(--label-secondary);
+}
+.lr-search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--label);
+  font-size: max(16px, var(--font-size-body));
+  appearance: none;
+  -webkit-appearance: none;
+}
+.lr-search input::placeholder {
+  color: var(--label-tertiary);
+}
+.lr-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.lr-search:focus-within {
+  outline: var(--lr-stroke) solid transparent;
+}
+.lr-search-clear {
+  width: var(--hit-min);
+  height: var(--hit-min);
+  border: 0;
+  padding: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--label-tertiary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.lr-search-clear span {
+  width: calc(var(--symbol-xs) * 1.5);
+  height: calc(var(--symbol-xs) * 1.5);
+  border-radius: 50%;
+  background: var(--label-tertiary);
+  color: var(--bg-elevated);
+  display: grid;
+  place-items: center;
+}
+.lr-search-clear svg {
+  width: var(--symbol-xs);
+  height: var(--symbol-xs);
+}
+
+/* Class filter (ClassFilter.vue): six icon toggles under the picker's search field, one on at a time. */
+.lr-class-filter {
+  display: flex;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+.lr-class-filter-btn {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--hit-min);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+  color: var(--label-secondary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    background var(--dur-snappy) var(--spring-snappy),
+    color var(--dur-snappy) var(--spring-snappy);
+}
+.lr-class-filter-btn svg {
+  width: var(--symbol-sm);
+  height: var(--symbol-sm);
+}
+.lr-class-filter-btn.is-selected {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lr-class-filter-btn {
+    transition: none;
+  }
+}

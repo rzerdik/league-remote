@@ -1,0 +1,173 @@
+/* ───────────────────────── Banner (replaces toasts) ───────────────────────── */
+.lr-banner-host {
+  container-type: inline-size;
+  position: fixed;
+  /* Below the status bar and the blur iOS lays under it, not in it. */
+  top: calc(var(--safe-top) + var(--banner-top));
+  left: max(calc(var(--space-2) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
+  right: max(calc(var(--space-2) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
+  z-index: var(--z-banner);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+/* iOS notification proportions: the column's width, a generous corner, a bold title line over the message. */
+.lr-banner {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--banner-min);
+  padding: var(--banner-pad);
+  border-radius: var(--radius-banner);
+  touch-action: none;
+}
+.lr-banner > .lr-icon {
+  flex: none;
+  width: var(--symbol-xl);
+  height: var(--symbol-xl);
+}
+.lr-banner-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.lr-banner-text > :nth-child(2) {
+  color: var(--label-secondary);
+}
+/* Large text sizes (the host narrower than ~16 of its ems): a toast keeps only its title on screen, so a stack doesn't
+   fill the screen; VoiceOver still reads the message. Action banners keep theirs (it says what is asked). */
+@container (max-width: 16em) {
+  .lr-banner > .lr-banner-text > :nth-child(2) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+.lr-banner--actions {
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  gap: var(--space-3);
+  touch-action: auto;
+}
+.lr-banner--actions .lr-banner-top > .lr-icon {
+  flex: none;
+  width: var(--symbol-xl);
+  height: var(--symbol-xl);
+}
+.lr-banner--actions .lr-banner-top {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+.lr-banner--actions .lr-banner-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+.lr-banner--actions .lr-banner-actions > .lr-btn {
+  flex: 1;
+}
+
+.lr-sym-red {
+  color: var(--red);
+}
+.lr-sym-green {
+  color: var(--green);
+}
+.lr-sym-orange {
+  color: var(--orange);
+}
+.lr-sym-blue {
+  color: var(--blue);
+}
+/* Banners drop from the top and leave the way they came; a new one pushes the older one down. */
+.lr-banner-enter-active,
+.lr-banner-leave-active,
+.lr-banner-move {
+  transition:
+    transform var(--dur-snappy) var(--spring-snappy),
+    opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-banner-leave-active {
+  position: absolute;
+}
+.lr-banner-enter-from,
+.lr-banner-leave-to {
+  opacity: 0;
+  transform: translateY(calc(-100% - var(--safe-top) - var(--banner-top))) scale(0.96);
+}
+
+/* ───────────────────────── Tip (TipKit-style inline hint) ───────────────────────── */
+.lr-tip {
+  container-type: inline-size;
+  padding: var(--space-5);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+}
+/* Symbol, text, dismiss side by side; at large text sizes (the card is narrower than ~16 of its own ems) the text
+   takes the full width under the symbol and the dismiss button, so no word has to squeeze between them. */
+.lr-tip-grid {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'icon body close';
+  align-items: start;
+  column-gap: var(--space-4);
+}
+@container (max-width: 16em) {
+  .lr-tip-grid {
+    grid-template-areas:
+      'icon . close'
+      'body body body';
+    row-gap: var(--space-2);
+  }
+}
+.lr-tip-icon {
+  grid-area: icon;
+  color: var(--blue);
+  width: var(--symbol-xl);
+  height: var(--symbol-xl);
+}
+.lr-tip-body {
+  grid-area: body;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+  min-width: 0;
+}
+.lr-tip-body p {
+  color: var(--label-secondary);
+}
+.lr-tip-body .lr-btn--plain {
+  align-self: flex-start;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 0;
+  min-height: var(--hit-min);
+}
+/* Dismiss: its own column at the trailing edge (the title never runs under it), pulled into the card's padding so
+   the xmark sits near the corner. */
+.lr-tip-close {
+  grid-area: close;
+  margin: calc(var(--space-1) - var(--space-5)) calc(var(--space-1) - var(--space-5)) 0 calc(-1 * var(--space-2));
+  width: var(--hit-min);
+  height: var(--hit-min);
+  border: 0;
+  background: transparent;
+  color: var(--label-tertiary);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.lr-tip-close .lr-icon {
+  width: var(--symbol-sm);
+  height: var(--symbol-sm);
+}

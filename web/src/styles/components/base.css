@@ -1,0 +1,154 @@
+/* Layout constants, base elements, utilities. */
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  /* Top of the nav bar: clear of the status bar / Dynamic Island, with room so it isn't tucked under it. */
+  --lr-nav-top: calc(max(var(--safe-top), var(--space-2)) + var(--space-2));
+  /* Nav bar height = its buttons (Back, chat): large enough to hit easily at the top of a tall phone. */
+  --lr-nav-h: var(--control-lg);
+  --lr-margin: var(--space-5);
+  --lr-column: 640px;
+  --lr-glass-blur: blur(14px) saturate(180%);
+  --lr-glass-blur-thick: blur(28px) saturate(170%);
+  /* The soft fade behind the action bar; the switch thumb's glass while pressed. */
+  --lr-blur-soft: blur(6px);
+  --lr-blur-thin: blur(2px);
+  /* Strokes stay in px at every text size. */
+  --lr-hairline: 0.5px;
+  --lr-stroke: 2px;
+  /* Selection rings around portraits: a gap in the ground colour, then the ring (see .lr-champ). */
+  --lr-ring-gap: 2px;
+  --lr-ring-thin: 1.5px;
+  --lr-ring-thick: 3px;
+  /* Horizontal inset of chrome and sections: screen margin + safe area, centred to a --lr-column column on wide screens. */
+  --lr-inset-left: max(calc(var(--lr-margin) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
+  --lr-inset-right: max(calc(var(--lr-margin) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
+}
+@media (min-width: 428px) {
+  :root {
+    --lr-margin: var(--space-6);
+  }
+}
+
+/* ───────────────────────── Base / iOS home-screen app ───────────────────────── */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  /* Scroll, no pinch zoom or double-tap zoom. */
+  touch-action: pan-x pan-y;
+  background: var(--bg);
+}
+body {
+  color: var(--label);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+/* The app scrolls inside #app, never the document (keeps fixed chrome put after the iOS keyboard closes). */
+#app {
+  position: relative;
+  height: 100%;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+/* iOS 26 home-screen app (WebKit 301108): with viewport-fit=cover and a translucent status bar, the viewport comes
+   out a status bar short of the screen while the page is shorter than the screen, and fixed chrome is clipped there,
+   leaving a dead strip under the tab bar. A page at least screen-tall gets the full viewport. The min() keeps it from
+   scrolling where 100lvh is already the full screen. */
+@media (display-mode: standalone) {
+  html,
+  body,
+  #app {
+    height: min(100lvh, calc(100svh + var(--safe-top)));
+  }
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+[hidden] {
+  display: none !important;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+:where(button, input) {
+  font: inherit;
+  color: inherit;
+}
+:where(button, [role='button'], a, input, select, label) {
+  touch-action: manipulation;
+}
+/* Chrome: no selection or iOS callout on a long press (text people may copy stays selectable). */
+:where(button, [role='button'], img, .lr-nav, .lr-actionbar, .lr-banner) {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+:where(button:not(:disabled), [role='button']) {
+  cursor: pointer;
+}
+/* Inputs never under 16px, or iOS zooms the page on focus. */
+:where(input, textarea, select) {
+  font-size: max(16px, var(--font-size-body));
+}
+:focus-visible {
+  outline: var(--lr-stroke) solid var(--focus-ring);
+  outline-offset: var(--lr-stroke);
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+/* Focus the app moved (a modal layer opening, useModalLayer): no ring until the keyboard is used. */
+[data-lr-quiet-focus]:focus-visible {
+  outline: none;
+}
+
+.lr-app {
+  position: relative;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--label);
+}
+.lr-secondary {
+  color: var(--label-secondary);
+}
+.lr-accent-text {
+  color: var(--accent-text);
+}
+.lr-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.lr-icon {
+  width: var(--symbol);
+  height: var(--symbol);
+  flex: none;
+}
+/* A small symbol inside a line of text (the leader crown after a name). */
+.lr-inline-symbol {
+  display: inline-block;
+  width: var(--symbol-sm);
+  height: var(--symbol-sm);
+  margin-left: var(--space-1);
+  vertical-align: -0.125em;
+}

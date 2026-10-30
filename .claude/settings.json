@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(dotnet restore *)",
+      "Bash(npm --prefix web run build)",
+      "Bash(npm --prefix web run tokens)",
+      "Bash(npm --prefix web ci)",
+      "Bash(npm run build)",
+      "Bash(npm run tokens)",
+      "Bash(node .claude/skills/verify-lcu-endpoint/lcu.mjs *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch --show-current)",
+      "Bash(tasklist *)",
+      "Bash(curl -s http://localhost:5080/healthz)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(git reset --hard *)",
+      "Bash(git branch -D *)",
+      "Bash(git worktree remove *)",
+      "Bash(git stash *)",
+      "Bash(docker compose *)",
+      "Bash(dotnet publish *)"
+    ],
+    "deny": [
+      "Bash(taskkill /IM *)",
+      "Bash(taskkill /F /IM *)",
+      "Bash(taskkill //IM *)",
+      "Bash(taskkill //F //IM *)",
+      "Bash(pkill *)",
+      "Bash(killall *)",
+      "Bash(docker system prune *)",
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Read(./.env)",
+      "Read(//c/Riot Games/League of Legends/lockfile)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-commands.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

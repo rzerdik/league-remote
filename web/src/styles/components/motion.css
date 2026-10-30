@@ -1,0 +1,73 @@
+/* ───────────────────────── Screen switching ─────────────────────────
+   The game state picks the screen; screens cross-fade (no horizontal slides: there is no stack). */
+.lr-screen-enter-active {
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-screen-leave-active {
+  transition: opacity var(--dur-fade) var(--ease-fade);
+  position: absolute;
+  inset: 0 0 auto 0;
+  pointer-events: none;
+}
+.lr-screen-enter-from,
+.lr-screen-leave-to {
+  opacity: 0;
+}
+.lr-screen-enter-active .lr-largetitle h1 {
+  animation: lr-title-in var(--dur-smooth) var(--spring-smooth);
+}
+@keyframes lr-title-in {
+  from {
+    transform: translateY(var(--space-2));
+  }
+}
+/* Covers (Ready Check, scanner) materialize: scale + fade together. */
+.lr-cover-enter-active {
+  transition:
+    opacity var(--dur-smooth) var(--spring-smooth),
+    transform var(--dur-smooth) var(--spring-smooth);
+}
+.lr-cover-leave-active {
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-cover-enter-from {
+  opacity: 0;
+  transform: scale(0.96);
+}
+.lr-cover-leave-to {
+  opacity: 0;
+}
+/* Glass materializes (accessory, swap banners): scale 0.96 → 1 with opacity. */
+.lr-pop-enter-active,
+.lr-pop-leave-active {
+  transition:
+    opacity var(--dur-snappy) var(--spring-snappy),
+    transform var(--dur-snappy) var(--spring-snappy);
+}
+.lr-pop-enter-from,
+.lr-pop-leave-to {
+  opacity: 0;
+  transform: translateY(var(--space-4)) scale(0.96);
+}
+/* List rows (party members) fade in and out in place, never sideways. */
+.lr-rows-enter-active,
+.lr-rows-leave-active {
+  transition: opacity var(--dur-smooth) var(--spring-smooth);
+}
+.lr-rows-enter-from,
+.lr-rows-leave-to {
+  opacity: 0;
+}
+/* Reordered rows (drag or arrow keys on an auto pick list's grip) glide to their new place. */
+.lr-rows-move {
+  transition: transform var(--dur-smooth) var(--spring-smooth);
+}
+.lr-bans-enter-active {
+  transition:
+    opacity var(--dur-bouncy) var(--spring-bouncy),
+    transform var(--dur-bouncy) var(--spring-bouncy);
+}
+.lr-bans-enter-from {
+  opacity: 0;
+  transform: scale(0.5);
+}

@@ -1,0 +1,127 @@
+/* ───────────────────────── Pairing code field ───────────────────────── */
+.lr-code {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr) var(--code-dash) repeat(3, 1fr);
+  gap: var(--space-2);
+  width: 100%;
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+.lr-code input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: 0;
+  caret-color: transparent;
+  color: transparent;
+  background: transparent;
+}
+.lr-code-box {
+  min-height: var(--code-box);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  display: grid;
+  place-items: center;
+  transition: box-shadow var(--dur-snappy) var(--spring-snappy);
+}
+/* On an elevated surface (the Pair Again sheet) the boxes are wells. */
+.lr-sheet .lr-code-box {
+  background: var(--bg-tertiary);
+}
+.lr-code.is-disabled .lr-code-box {
+  color: var(--label-tertiary);
+}
+.lr-code-box.is-active {
+  box-shadow: inset 0 0 0 var(--lr-stroke) var(--accent);
+}
+/* The caret: as tall as a digit. */
+.lr-code-box.is-active:empty::after {
+  content: '';
+  width: var(--lr-stroke);
+  height: 1em;
+  background: var(--accent);
+  animation: lr-caret var(--dur-tick) steps(1) infinite;
+}
+@keyframes lr-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.lr-code-dash {
+  align-self: center;
+  height: var(--lr-stroke);
+  border-radius: var(--radius-full);
+  background: var(--label-tertiary);
+}
+.lr-code.is-error {
+  animation: lr-shake var(--dur-shake) var(--spring-bouncy);
+}
+@keyframes lr-shake {
+  20% {
+    transform: translateX(calc(-2.5 * var(--space-1)));
+  }
+  40% {
+    transform: translateX(var(--space-2));
+  }
+  60% {
+    transform: translateX(calc(-1 * var(--space-1)));
+  }
+  80% {
+    transform: translateX(var(--space-0-5));
+  }
+}
+
+/* ───────────────────────── Onboarding (Pair screen) ───────────────────────── */
+.lr-onboarding {
+  padding-top: calc(var(--safe-top) + var(--space-12));
+  padding-left: var(--lr-inset-left);
+  padding-right: var(--lr-inset-right);
+}
+.lr-onboarding-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: 0 var(--space-2) var(--space-8);
+  text-align: center;
+}
+.lr-onboarding-form {
+  padding-top: var(--space-8);
+}
+.lr-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0 var(--space-2);
+  list-style: none;
+}
+.lr-feature {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+.lr-feature > svg {
+  width: var(--symbol-xl);
+  height: var(--symbol-xl);
+  color: var(--accent-text);
+  flex: none;
+}
+.lr-appmark {
+  width: var(--appmark);
+  height: var(--appmark);
+  border-radius: var(--radius-icon);
+  display: grid;
+  place-items: center;
+  background: var(--bg-elevated);
+  color: var(--accent);
+  margin: 0 auto;
+  box-shadow: var(--glass-rim);
+}
+.lr-appmark svg {
+  width: 62%;
+  height: 62%;
+}
