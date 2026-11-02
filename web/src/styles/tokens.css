@@ -165,6 +165,12 @@
   --spring-snappy: linear(0, 0.086, 0.253, 0.427, 0.578, 0.697, 0.787, 0.853, 0.899, 0.932, 0.954, 0.969, 0.98, 0.987, 0.991, 0.994, 0.996, 0.998, 0.998, 1);
   --spring-bouncy: linear(0, 0.048, 0.159, 0.298, 0.44, 0.572, 0.686, 0.78, 0.854, 0.91, 0.95, 0.978, 0.996, 1.007, 1.013, 1.015, 1.015, 1.014, 1.012, 1.009, 1.007, 1.006, 1.004, 1.003, 1.002, 1);
   --ease-fade: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --glass-blur: 18px;
+  --glass-blur-thick: 28px;
+  --glass-saturate: 180%;
+  --glass-saturate-thick: 170%;
+  --edge-blur: 6px;
+  --knob-blur: 2px;
   --font-size-large-title: min(2rem, 60px);
   --font-size-title-1: min(1.6471rem, 58px);
   --font-size-title-2: min(1.2941rem, 56px);
