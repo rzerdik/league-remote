@@ -36,8 +36,8 @@
   --on-tile: #ffffff;
   --ally: var(--blue);
   --enemy: var(--red);
-  --glass: rgba(255,255,255,0.58);
-  --glass-thick: rgba(250,250,252,0.82);
+  --glass: rgba(255,255,255,0.66);
+  --glass-thick: rgba(250,250,252,0.86);
   --glass-clear: rgba(255,255,255,0.12);
   --scrim: rgba(0,0,0,0.35);
   --glow-pick: rgba(204,154,48,0.72);
@@ -50,7 +50,7 @@
   --segment-thumb: #ffffff;
   --camera: #000000;
   --on-camera: #ffffff;
-  --glass-rim: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 0 0 0.5px rgba(255,255,255,0.6), 0 0 0 0.5px rgba(0,0,0,0.10);
+  --glass-rim: inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 0.5px rgba(255,255,255,0.7), inset 0 -0.5px 0 rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.14);
   --glass-lift: 0 8px 28px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   --sheet-lift: 0 -4px 40px rgba(0,0,0,0.16);
   --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
@@ -229,8 +229,8 @@
     --on-tile: #ffffff;
     --ally: var(--blue);
     --enemy: var(--red);
-    --glass: rgba(48,48,52,0.56);
-    --glass-thick: rgba(38,38,42,0.8);
+    --glass: rgba(48,48,52,0.62);
+    --glass-thick: rgba(38,38,42,0.84);
     --glass-clear: rgba(255,255,255,0.08);
     --scrim: rgba(0,0,0,0.48);
     --glow-pick: rgba(230,185,92,0.78);
@@ -243,7 +243,7 @@
     --segment-thumb: #636366;
     --camera: #000000;
     --on-camera: #ffffff;
-    --glass-rim: inset 0 0.5px 0 rgba(255,255,255,0.28), inset 0 0 0 0.5px rgba(255,255,255,0.10), 0 0 0 0.5px rgba(0,0,0,0.6);
+    --glass-rim: inset 0 0.5px 0 rgba(255,255,255,0.42), inset 0 0 0 0.5px rgba(255,255,255,0.12), inset 0 -0.5px 0 rgba(0,0,0,0.35), 0 0 0 0.5px rgba(0,0,0,0.7);
     --glass-lift: 0 8px 28px rgba(0,0,0,0.5);
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.6);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
