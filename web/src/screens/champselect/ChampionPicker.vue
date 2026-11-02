@@ -13,8 +13,9 @@ import { cssSize, SIZE } from '../../styles/tokens'
 /**
  * The non-modal champion picker of your pick or ban: the turn header (`turn` slot), search, class filter and the grid
  * of what League lets you pick or ban. It rises to medium when your turn starts and rests at peek before it; peek keeps
- * the header and search above the floating Lock In button (SIZE.pickerPeek). `hidden` steps it aside without losing
- * its place (never glass on glass).
+ * the header and search above the full-width Lock In button (SIZE.pickerPeek), which floats over the sheet on your own
+ * turn: then the grid scrolls clear of it and fades out above it. `hidden` steps it aside without losing its place
+ * (never glass on glass).
  */
 const props = defineProps<{ cs: ChampSelectState; canAct: boolean; hidden: boolean; selectedId: number }>()
 const emit = defineEmits<{ select: [championId: number] }>()
@@ -66,7 +67,7 @@ const items = computed(() =>
     :detents="['peek', 'medium', 'large']"
     :peek-height="SIZE.pickerPeek"
     label="Champion picker"
-    body-class="lr-picker-body"
+    :body-class="hot ? 'lr-picker-body lr-picker-body--action' : 'lr-picker-body'"
   >
     <template #header>
       <div class="lr-picker-head">

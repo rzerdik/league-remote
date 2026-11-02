@@ -102,8 +102,11 @@ function demoPlayerProfile(puuid: string): PlayerProfile {
   return {
     puuid,
     summoner: { gameName: p.name, tagLine: p.tag, level: p.level, xpSinceLastLevel: 900, xpForNextLevel: 2880, profileIconId: p.icon },
+    // League reports no losses for other players.
     ranks: profileState().ranks.map((r) =>
-      r.queueType === 'RANKED_SOLO_5x5' ? { ...r, tier: 'PLATINUM', division: 'I', leaguePoints: 71, wins: 58, losses: 49 } : r,
+      r.queueType === 'RANKED_SOLO_5x5'
+        ? { ...r, tier: 'PLATINUM', division: 'I', leaguePoints: 71, wins: 58, losses: null }
+        : { ...r, losses: null },
     ),
     mastery: {
       score: 640,

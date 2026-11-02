@@ -58,7 +58,7 @@ function parse(s: unknown): SoundSettings | null {
   }
 }
 
-/** Settings › Sound, kept on this phone. */
+/** Settings › Sounds & Haptics, kept on this phone. */
 export const soundSettings = reactive(readJson(KEYS.sound, parse) ?? { ...DEFAULTS, categories: allCategories(true) })
 
 watch(

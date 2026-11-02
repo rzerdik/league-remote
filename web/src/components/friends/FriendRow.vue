@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Friend } from '../../contracts'
+import { profileIconUrl } from '../../ddragon'
 import { friendStatus, presenceTone } from '../../friends'
 import Avatar from '../lr/Avatar.vue'
 import ListRow from '../lr/ListRow.vue'
@@ -15,7 +16,7 @@ defineProps<{ friend: Friend; title?: string }>()
 
 <template>
   <ListRow v-bind="$attrs" :title="title ?? friend.gameName">
-    <template #lead><Avatar :name="friend.gameName" /></template>
+    <template #lead><Avatar :name="friend.gameName" :image-url="profileIconUrl(friend.profileIconId)" /></template>
     <template #subtitle><StatusLine :tone="presenceTone(friend)" :text="friendStatus(friend)" /></template>
     <template v-if="$slots.trailing" #trailing><slot name="trailing" /></template>
   </ListRow>

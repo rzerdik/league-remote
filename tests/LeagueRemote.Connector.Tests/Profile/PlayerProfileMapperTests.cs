@@ -72,6 +72,34 @@ public sealed class PlayerProfileMapperTests
         Assert.NotEmpty(player.Ranks);
     }
 
+    [Fact]
+    public async Task Another_players_zero_losses_are_unknown_not_an_unbeaten_record()
+    {
+        var handler = ProfileSamples.Player.Handler();
+        handler.Routes[ProfileSamples.Player.RankedPath] = ProfileSamples.Player.RankedStats;
+
+        var player = (await Read(handler))!;
+
+        Assert.Equal([92, 104], player.Ranks.Select(r => r.Wins));
+        Assert.All(player.Ranks, r => Assert.Null(r.Losses));
+    }
+
+    [Fact]
+    public async Task Real_losses_in_a_players_ranks_are_kept()
+    {
+        var player = (await Read(ProfileSamples.Player.Handler()))!;
+
+        Assert.Equal([236, 9], player.Ranks.Select(r => r.Losses));
+    }
+
+    [Fact]
+    public void The_local_players_zero_losses_are_real()
+    {
+        var ranks = ProfileMapper.Ranks(Json(ProfileSamples.Player.RankedStats));
+
+        Assert.All(ranks, r => Assert.Equal(0, r.Losses));
+    }
+
     // --- Their games: names from their side, never the local player's enemies -----------------
 
     [Fact]

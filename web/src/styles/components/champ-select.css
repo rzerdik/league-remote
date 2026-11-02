@@ -49,8 +49,12 @@
 }
 .lr-picker-body {
   padding-top: var(--space-3);
-  /* Scroll the last grid row clear of the floating Lock In button. */
-  padding-bottom: calc(var(--control-lg) + var(--space-8) + var(--safe-bottom));
+}
+/* With Lock In / Ban floating over the sheet: the last grid row scrolls clear of the button, and the grid fades out
+   above it. A mask, not a band of colour or glass: the sheet is glass at partial detents and opaque at large, and
+   this reads right on both (only the alpha counts). */
+.lr-picker-body--action {
+  padding-bottom: calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px) + var(--lr-keyboard, 0px) + var(--control-lg) + var(--space-4));
 }
 
 /* ───────────────────────── Turn header (top of the champion picker) ───────────────────────── */

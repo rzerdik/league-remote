@@ -1,12 +1,11 @@
 import { computed, onBeforeUnmount, onMounted, reactive, type Ref } from 'vue'
 
 /**
- * Large title → inline title hand-off + the top scroll-edge band. The app scrolls inside #app; the screen's
- * LargeTitle registers itself, the NavBar reads `navState`.
+ * Large title → inline title hand-off. The app scrolls inside #app; the screen's LargeTitle registers itself, the
+ * NavBar reads `navState`.
  */
 export const navState = reactive({
   collapsed: false,
-  edge: false,
   /** The large title the nav bar follows (its element); null when the screen has none. */
   title: null as HTMLElement | null,
 })
@@ -35,7 +34,6 @@ function updateNav() {
   navState.collapsed = largeTitle
     ? (largeTitle.querySelector('h1') ?? largeTitle).getBoundingClientRect().bottom < navBottom() - 4
     : top > 8
-  navState.edge = top > 2
 }
 
 /** Watch the #app scroller once (App.vue). */

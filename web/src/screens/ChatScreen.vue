@@ -12,7 +12,9 @@ import ListRow from '../components/lr/ListRow.vue'
 import ListSection from '../components/lr/ListSection.vue'
 import { connectionEmpty } from '../connection'
 import type { ChatConversation } from '../contracts'
+import { profileIconUrl } from '../ddragon'
 import { listTime } from '../format'
+import { friendOf } from '../friends'
 import { haptic } from '../haptics'
 import { nav, openConversation } from '../navigation'
 import { liveChat, liveState, store } from '../store'
@@ -34,6 +36,11 @@ watch(
 
 const rooms = computed(() => conversations.value.filter((c) => c.kind !== 'direct'))
 const direct = computed(() => conversations.value.filter((c) => c.kind === 'direct'))
+
+/** A direct conversation's summoner icon, when the other player is a friend (Chat doesn't carry icons). */
+function conversationIcon(c: ChatConversation) {
+  return profileIconUrl(friendOf({ puuid: c.puuid, riotId: c.title })?.profileIconId ?? 0)
+}
 
 function preview(c: ChatConversation) {
   const m = c.lastMessage
@@ -80,7 +87,7 @@ const quickReplies = computed(() =>
 
     <ListSection v-if="direct.length" header="Messages">
       <ListRow v-for="c in direct" :key="c.id" tappable :title="conversationTitle(c)" @click="choose(c)">
-        <template #lead><Avatar :name="c.title" /></template>
+        <template #lead><Avatar :name="c.title" :image-url="conversationIcon(c)" /></template>
         <template v-if="preview(c)" #subtitle>{{ preview(c) }}</template>
         <template #trailing>
           <span class="lr-row-meta">

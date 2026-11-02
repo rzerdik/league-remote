@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CircleAlertIcon, CircleDotIcon, PauseIcon, SparklesIcon, WandSparklesIcon } from '@lucide/vue'
 import { computed, type Component } from 'vue'
-import { autoPickRun, logKey, pauseAutoPick, presetChoices, resumeAutoPick, roleTitle, runPreset } from '../../autoPick'
+import { autoPickRun, logKey, pauseAutoPick, presetChoiceLines, resumeAutoPick, roleTitle, runPreset } from '../../autoPick'
 import ChampionIcon from '../../components/lr/ChampionIcon.vue'
 import IconTile, { type TileColor } from '../../components/lr/IconTile.vue'
 import ListRow from '../../components/lr/ListRow.vue'
@@ -30,14 +30,15 @@ const title = computed(() => {
       return run.value?.role && run.value.role !== 'ANY' ? `On for ${role.value}` : 'On'
   }
 })
+/** A line per fact: the preset's picks, then its bans. */
 const subtitle = computed(() => {
   switch (run.value?.status) {
     case 'paused':
-      return 'Resume to let your PC ban and pick again.'
+      return ['Resume to let your PC ban and pick again.']
     case 'no-preset':
-      return 'Set one in Settings › Auto Pick & Ban.'
+      return ['Set one in Settings › Auto Pick & Ban.']
     default:
-      return (runPreset.value && presetChoices(runPreset.value)) || undefined
+      return runPreset.value ? presetChoiceLines(runPreset.value) : []
   }
 })
 
@@ -64,11 +65,13 @@ function onToggle() {
   <ListSection v-if="visible && run" header="Auto Pick">
     <ListRow
       :title="title"
-      :subtitle="subtitle"
       :icon="run.status === 'paused' ? PauseIcon : WandSparklesIcon"
       :tile-color="run.status === 'active' ? 'orange' : 'gray'"
       wrap
     >
+      <template v-if="subtitle.length" #subtitle>
+        <span v-for="line in subtitle" :key="line" class="lr-row-line">{{ line }}</span>
+      </template>
       <template v-if="run.status !== 'no-preset'" #trailing>
         <LrButton
           variant="gray"

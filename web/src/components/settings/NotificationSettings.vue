@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { BellIcon } from '@lucide/vue'
 import { computed } from 'vue'
 import type { PushPreferences } from '../../contracts'
 import { tapFeedback } from '../../haptics'
@@ -56,15 +55,13 @@ function sendTest() {
 <template>
   <ListSection :footer="footer">
     <ListRow
-      title="Notifications"
-      :icon="BellIcon"
-      tile-color="red"
+      title="Allow Notifications"
       :value="canToggle ? undefined : notifications.statusLabel.value"
       :value-tone="status === 'denied' ? 'red' : undefined"
       :busy="notifications.busy.value"
     >
       <template #trailing>
-        <LrSwitch v-if="canToggle && !notifications.busy.value" v-model="notificationsOn" aria-label="Notifications" />
+        <LrSwitch v-if="canToggle && !notifications.busy.value" v-model="notificationsOn" aria-label="Allow Notifications" />
       </template>
     </ListRow>
   </ListSection>
@@ -83,7 +80,7 @@ function sendTest() {
     </ListSection>
 
     <ListSection>
-      <ListRow title="Send Test Notification" variant="accent" tappable text :busy="notifications.testing.value" @click="sendTest" />
+      <ListRow title="Send Test Notification" tappable text :busy="notifications.testing.value" @click="sendTest" />
     </ListSection>
   </template>
 </template>

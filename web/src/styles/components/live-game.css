@@ -1,11 +1,33 @@
 /* Live game card (LiveGameCard.vue) */
 .lr-live {
+  /* The clock and the score ask how wide the card is in ems: side by side only while both fit. */
+  container: lr-live / inline-size;
   background: var(--bg-elevated);
   border-radius: var(--radius-card);
-  padding: var(--space-6);
+}
+.lr-live-body {
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+.lr-live-time {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+/* 19.5 ems: the widest pair ("Victory" and the score with both team names) plus the padding. */
+@container lr-live (min-width: 19.5em) {
+  .lr-live-body:has(> :nth-child(2)) {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .lr-live-body:has(> :nth-child(2)) .lr-live-clock {
+    margin: 0;
+  }
 }
 .lr-live-eyebrow {
   color: var(--label-secondary);

@@ -1,6 +1,6 @@
 // ?demo=postgame: the client's post-game screen after a ranked Solo/Duo win (+21 LP, a mastery level up), with Play Again
 // (back to the lobby) and Leave (back to Play). `&game=` picks the game: `promoted` (a win that promotes), `loss`
-// (−18 LP), `normal` (a Draft Pick loss: no Ranked section), `arena` (2nd place of eight duos), `remake`; `&lp=pending`
+// (−18 LP), `normal` (a Draft Pick loss: no LP stat), `arena` (2nd place of eight duos), `remake`; `&lp=pending`
 // is a ranked game whose LP hasn't been reported yet; `&again=off` is a game the client offers no Play Again for;
 // `&wait=1` starts as the Nexus falls (Waiting for Stats, then the honor screen's Game Ending) and the scoreboard
 // arrives at 4 s. A few seconds in, the game shows up in the match history ("Open in Match History").

@@ -75,7 +75,7 @@ Everything is under `%LOCALAPPDATA%\league-remote\`. Tests use temporary folders
 | `phones.json` | Paired phones (token hashes only). |
 | `certs\` | Local CA and server certificate, protected with DPAPI. |
 | `push-subscriptions.json`, `vapid.dpapi` | Web Push subscriptions and the app's push key pair (protected with DPAPI; an older plaintext `vapid.json` is converted on start). |
-| `auto-pick.json` | Auto pick and ban presets. |
+| `auto-pick.json` | Auto pick and ban presets, and the Auto Accept setting. |
 | `client-sounds\` | Sounds and music read from your League install. |
 | `logs\` | `connector.log` plus up to four older files, 2 MB each. Same privacy rules as the console: no chat text, tokens, pairing codes or LCU password. |
 | `settings.json` | Optional user settings (tray **Open Settings File** writes the defaults). |

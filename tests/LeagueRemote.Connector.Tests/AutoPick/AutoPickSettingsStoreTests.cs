@@ -34,6 +34,34 @@ public sealed class AutoPickSettingsStoreTests
     }
 
     [Fact]
+    public void A_file_without_auto_accept_loads_with_it_off()
+    {
+        using var h = new AutoPickHarness();
+        Directory.CreateDirectory(h.Folder);
+        File.WriteAllText(Path.Combine(h.Folder, AutoPickSettingsStore.FileName), """
+        { "version": 1, "settings": { "enabled": true, "presets": [] } }
+        """);
+
+        var loaded = new AutoPickSettingsStore(h.Folder).Current;
+
+        Assert.True(loaded.Enabled);
+        Assert.False(loaded.AutoAccept);
+    }
+
+    [Fact]
+    public void Auto_accept_survives_saving_and_loading()
+    {
+        using var h = new AutoPickHarness();
+
+        Assert.True(h.Settings.Update(s => s with { AutoAccept = true }));
+
+        Assert.True(h.Settings.Current.AutoAccept);
+        var loaded = new AutoPickSettingsStore(h.Folder).Current;
+        Assert.True(loaded.AutoAccept);
+        Assert.False(loaded.Enabled);
+    }
+
+    [Fact]
     public void A_failed_write_leaves_the_previous_file_and_settings()
     {
         using var h = new AutoPickHarness(Draft());

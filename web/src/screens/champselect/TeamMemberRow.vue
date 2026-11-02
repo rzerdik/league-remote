@@ -18,8 +18,9 @@ import { SWAP_ACTION, SWAP_CANCEL, SWAP_ICON, SWAP_ORDER, SWAP_SENT, SWAP_SENT_S
 /**
  * One ally in Champion Select: portrait, name or role, champion, summoner spells and (teammates only) the actions menu:
  * the swaps, and View Profile while League shows who they are (`member.puuid`; never in an anonymous ranked draft).
- * A teammate League names (`member.riotId`, same rule) is titled by their game name with the role leading the champion
- * line ("Top · Hovering Ahri"); an anonymous one, and your own row, by the role.
+ * A player League names (`member.riotId`, same rule) is titled by their game name with the role leading the champion
+ * line ("Top · Hovering Ahri"); an anonymous teammate by the role; you, when League doesn't name you, "You" with the
+ * same line ("Mid · Ahri").
  * `hoverId` is your own optimistic hover while you pick. Teammates whose turn it is get a "Picking" / "Banning" chip.
  * Portraits are always at full opacity (as in the enemy list): a locked-in champion is named, a hovered or intended
  * one reads "Hovering Ahri". The trailing column lines up down the list: spells, then the actions button or (with
@@ -62,17 +63,17 @@ const portraitState = computed(() => {
   return portraitId.value > 0 ? ('locked' as const) : ('empty' as const)
 })
 
-/** The teammate's game name while League shows it (never in an anonymous draft); '' for you and hidden teammates. */
-const name = computed(() => (you.value ? '' : playerShortName(props.member.riotId)))
-const title = computed(() => name.value || role.value || (you.value ? 'You' : 'Teammate'))
-/** The locked-in champion, or "Hovering Ahri" while it isn't locked yet; after the role when the title is a name. */
+/** The player's game name while League shows it (never in an anonymous draft); '' otherwise. */
+const name = computed(() => playerShortName(props.member.riotId))
+const title = computed(() => name.value || (you.value ? 'You' : role.value || 'Teammate'))
+/** The locked-in champion, or "Hovering Ahri" while it isn't locked yet; after the role unless the title is the role. */
 const subtitle = computed(() => {
   const champion = locked.value
     ? championName(championId.value)
     : portraitId.value > 0
       ? hoveringLine(portraitId.value)
       : ''
-  return [name.value ? role.value : '', champion].filter(Boolean).join(' · ') || undefined
+  return [title.value !== role.value ? role.value : '', champion].filter(Boolean).join(' · ') || undefined
 })
 /** Who the row is to VoiceOver and in the menu: their name, else the role. */
 const who = computed(() => name.value || role.value || 'Teammate')
@@ -123,7 +124,9 @@ const swapItems = computed<MenuItem[]>(() =>
 
 <template>
   <!-- `wrap`: "Hovering Aurelion Sol" wraps under the role rather than truncating beside the spells. -->
-  <ListRow :variant="you ? 'you' : 'default'" :title="title" wrap>
+  <ListRow :variant="you ? 'you' : 'default'" wrap>
+    <!-- Your name alone wouldn't tell VoiceOver it is you: on screen the row's tint does. -->
+    <template #title>{{ title }}<span v-if="you && name" class="lr-sr">, you</span></template>
     <template #lead>
       <ChampionIcon
         :champion-id="portraitId"

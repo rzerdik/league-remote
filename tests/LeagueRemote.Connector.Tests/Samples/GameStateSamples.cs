@@ -13,7 +13,7 @@ internal static class GameStateSamples
       "gameConfig": { "queueId": 420, "gameMode": "CLASSIC", "isCustom": false },
       "localMember": { "puuid": "me-puuid", "summonerId": 1001, "isLeader": true },
       "members": [
-        { "puuid": "me-puuid", "summonerId": 1001, "gameName": "", "gameTag": "", "summonerName": "", "isLeader": true, "firstPositionPreference": "MIDDLE", "secondPositionPreference": "" },
+        { "puuid": "me-puuid", "summonerId": 1001, "gameName": "", "gameTag": "", "summonerName": "", "isLeader": true, "firstPositionPreference": "MIDDLE", "secondPositionPreference": "", "summonerIconId": 5132 },
         { "puuid": "friend-puuid", "summonerId": 1002, "gameName": "Friend", "gameTag": "EUNE", "summonerName": "", "isLeader": false },
         { "puuid": "", "summonerId": 1003, "gameName": "", "summonerName": "", "isLeader": false }
       ]

@@ -34,4 +34,18 @@ internal static class ClientSoundsEndpoints
 
         return endpoints;
     }
+
+    /// <summary><c>GET /rank-emblems/{tier}.png</c> → the client's emblem for that tier (cacheable for a day), else 404.</summary>
+    public static IEndpointRouteBuilder MapRankEmblems(this IEndpointRouteBuilder endpoints, RankEmblemLibrary? emblems)
+    {
+        endpoints.MapGet(RankEmblemLibrary.RoutePrefix + "/{file}", (string file, HttpContext context) =>
+        {
+            if (emblems?.Get(file) is not { } data)
+                return Results.NotFound();
+            context.Response.Headers.CacheControl = "public, max-age=86400";
+            return Results.File(data, "image/png");
+        });
+
+        return endpoints;
+    }
 }

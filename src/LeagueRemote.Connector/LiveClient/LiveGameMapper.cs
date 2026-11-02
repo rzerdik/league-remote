@@ -8,8 +8,7 @@ namespace LeagueRemote.Connector.LiveClient;
 
 /// <summary>
 /// Pure mapping from the Live Client Data API's <c>GET /liveclientdata/allgamedata</c> to <see cref="LiveGameState"/>
-/// (the contract's XML docs are the spec). Shapes follow Riot's documented samples (<c>LiveGameSamples</c>); not yet checked
-/// against a live game.
+/// (the contract's XML docs are the spec). Shapes follow Riot's documented samples (<c>LiveGameSamples</c>).
 /// <para>
 /// Privacy: enemies only by champion. Riot IDs are copied only for the local player's team, and only when the local player
 /// was matched and that team has at most <see cref="LiveGameState.MaxTeamSize"/> players; otherwise only the local player

@@ -7,6 +7,7 @@ import ListRow from '../../components/lr/ListRow.vue'
 import ListSection from '../../components/lr/ListSection.vue'
 import Sheet from '../../components/lr/Sheet.vue'
 import type { LobbyMember } from '../../contracts'
+import { profileIconUrl } from '../../ddragon'
 import { friendOf } from '../../friends'
 import { haptic } from '../../haptics'
 import { positionLabel } from '../../labels'
@@ -61,14 +62,14 @@ function viewProfile() {
     :title="member ? playerShortName(member.riotId) || 'Player' : 'Player'">
     <ListSection v-if="member">
       <ListRow :title="playerName(member.riotId) || 'Player'" :subtitle="member.isLocalPlayer ? 'You' : undefined" wrap>
-        <template #lead><Avatar :name="member.riotId" /></template>
+        <template #lead><Avatar :name="member.riotId" :image-url="profileIconUrl(member.profileIconId)" /></template>
       </ListRow>
       <ListRow title="Party" :value="member.isLeader ? 'Leader' : 'Member'" />
       <ListRow v-if="primary" title="Primary Role" :value="primary" />
       <ListRow v-if="secondary" title="Secondary Role" :value="secondary" />
     </ListSection>
     <ListSection v-if="canView">
-      <ListRow tappable variant="accent" :icon="CircleUserIcon" tile-color="indigo" title="View Profile" @click="viewProfile" />
+      <ListRow tappable :icon="CircleUserIcon" tile-color="indigo" title="View Profile" @click="viewProfile" />
     </ListSection>
   </Sheet>
 </template>

@@ -38,7 +38,6 @@ const games = computed(() => countedGames(props.matches).length)
       v-if="hidden > 0"
       tappable
       text
-      variant="accent"
       :title="expanded ? 'Show Fewer' : `Show ${hidden} More`"
       @click="expanded = !expanded"
     />

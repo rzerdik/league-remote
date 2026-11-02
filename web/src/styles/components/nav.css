@@ -53,29 +53,9 @@
   transform: none;
 }
 
-/* Scroll-edge effect (top): iOS 27 default "hard" style — a material band with a hairline,
-   shown only while content is scrolled under the bar. */
-.lr-edge-top {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-2));
-  z-index: var(--z-edge);
-  pointer-events: none;
-  background: var(--glass-thick);
-  -webkit-backdrop-filter: var(--lr-glass-blur-thick);
-  backdrop-filter: var(--lr-glass-blur-thick);
-  border-bottom: var(--lr-hairline) solid var(--separator);
-  opacity: 0;
-  transition: opacity var(--dur-fade) var(--ease-fade);
-}
-.lr-edge-top[data-visible='true'] {
-  opacity: 1;
-}
-
 /* Edge swipe back (useEdgeSwipeBack): the pushed view's parts follow the finger, then settle on a JS spring. */
 .lr-swipe-follow,
-.lr-nav,
-.lr-edge-top {
+.lr-nav {
   translate: var(--lr-swipe-x, 0px) 0;
 }
 
@@ -117,6 +97,14 @@
 .lr-largetitle--trailing > :first-child {
   flex: 1 1 0%;
   min-width: min-content;
+}
+/* Compact (Champion Select): the two short lines sit centred against the button. The top padding stays the large
+   title's: any less and the title would rest under the nav bar, already collapsed (useCollapsingNav). */
+.lr-largetitle--compact.lr-largetitle--trailing {
+  align-items: center;
+}
+.lr-largetitle--compact p {
+  margin-top: var(--space-0-5);
 }
 .lr-largetitle-trail {
   display: flex;

@@ -111,6 +111,28 @@
   width: var(--symbol);
   height: var(--symbol);
 }
+/* The client's emblem art is a small crest in the middle of a wide empty canvas: zoomed so the crest fills the box. */
+.lr-rank-icon {
+  position: relative;
+  display: block;
+  width: var(--champ-row);
+  height: var(--champ-row);
+  overflow: hidden;
+  flex: none;
+}
+.lr-rank-icon > img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 350%;
+  max-width: none;
+  height: auto;
+  translate: -50% -50%;
+}
+.lr-rank-icon--tile {
+  display: grid;
+  place-items: center;
+}
 .lr-tag {
   display: inline-flex;
   align-items: center;

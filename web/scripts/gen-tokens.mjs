@@ -47,7 +47,7 @@ for (const t of tokens.zIndex.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.duration.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.easing.tokens) constants.push(decl(t.name, t.value))
 
-const NUMERALS = new Set(['clock-hero', 'countdown', 'timer', 'code-digit'])
+const NUMERALS = new Set(['clock-hero', 'clock-card', 'countdown', 'timer', 'code-digit'])
 const typeClasses = []
 for (const group of tokens.type.groups) {
   for (const s of group.styles) {

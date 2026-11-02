@@ -23,6 +23,7 @@ service.
 - **Game flow:** accept or decline the ready check, pick a queue, make a lobby, start or cancel the search, leave or dodge.
 - **Champion select:** hover, lock in, ban, swap picks and roles, ARAM bench and rerolls, spells, runes, skins and chromas.
 - **Auto pick and ban:** presets per queue and role that the PC applies for you. See [docs/auto-pick.md](docs/auto-pick.md).
+- **Auto Accept:** the PC accepts the ready check for you, after a moment to decline. Off by default.
 - **Social:** chat, friends, friend requests, lobby invites.
 - **Profile:** rank, mastery, match history and game details for you, your friends and your teammates. Search by Riot ID.
 - **Live game:** game clock, scoreboard, objective timers. After the game: result, LP and Play Again.

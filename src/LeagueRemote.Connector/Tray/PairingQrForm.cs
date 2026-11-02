@@ -3,18 +3,20 @@ using LeagueRemote.Connector.Pairing;
 namespace LeagueRemote.Connector.Tray;
 
 /// <summary>
-/// Small dark window, top to bottom: the 6-digit code, the pairing QR, the link (click opens it in the browser), and a
-/// "first time on this phone" link to the setup page. Follows the code when it changes. UI thread only.
+/// Small dark window, top to bottom: the 6-digit code (click copies it), the pairing QR, the link (click opens it in the
+/// browser), and a "first time on this phone" link to the setup page. Follows the code when it changes. UI thread only.
 /// </summary>
 internal sealed class PairingQrForm : Form
 {
+    private const string CodeCaption = "PAIRING CODE";
+
     private readonly ConnectorStatus _status;
     private readonly SynchronizationContext _ui;
     private readonly Label _caption = new()
     {
         Dock = DockStyle.Fill,
         AutoSize = true,
-        Text = "PAIRING CODE",
+        Text = CodeCaption,
         TextAlign = ContentAlignment.MiddleCenter,
         ForeColor = AppShell.MutedText,
         Font = new Font("Segoe UI", 8.25f, FontStyle.Bold),
@@ -28,7 +30,10 @@ internal sealed class PairingQrForm : Form
         ForeColor = AppShell.Text,
         Font = new Font("Consolas", 26f, FontStyle.Bold),
         Margin = new Padding(0, 0, 0, 8),
+        Cursor = Cursors.Hand,
     };
+    /// <summary>Puts the caption back after it said the code was copied.</summary>
+    private readonly System.Windows.Forms.Timer _captionReset = new() { Interval = 1500 };
     // QR codes need a light quiet zone, so the code sits on a white card inside the dark window.
     private readonly PictureBox _qr = new()
     {
@@ -100,6 +105,9 @@ internal sealed class PairingQrForm : Form
         Controls.Add(layout);
         ResumeLayout(performLayout: true);
 
+        _code.Click += (_, _) => CopyCode();
+        _captionReset.Tick += (_, _) => ShowCaption(CodeCaption);
+        _toolTip.SetToolTip(_code, "Click to copy");
         _link.LinkClicked += (_, _) => AppShell.OpenInBrowser(_status.PairingLink);
         _setup.LinkClicked += (_, _) => AppShell.OpenInBrowser(_status.SetupUrl);
         _toolTip.SetToolTip(_link, "Open in browser. On the phone: scan the QR code above.");
@@ -116,6 +124,31 @@ internal sealed class PairingQrForm : Form
     }
 
     private void OnStatusChanged() => _ui.Post(_ => UpdateView(), null);
+
+    private void CopyCode()
+    {
+        if (_status.PairingCode is not { } code)
+            return;
+        try
+        {
+            Clipboard.SetText(code);
+            ShowCaption("COPIED");
+        }
+        catch (System.Runtime.InteropServices.ExternalException)
+        {
+            // Another program holds the clipboard open.
+            ShowCaption("COULDN'T COPY");
+        }
+
+        _captionReset.Stop();
+        _captionReset.Start();
+    }
+
+    private void ShowCaption(string text)
+    {
+        _captionReset.Stop();
+        _caption.Text = text;
+    }
 
     private void UpdateView()
     {
@@ -167,6 +200,7 @@ internal sealed class PairingQrForm : Form
         if (disposing)
         {
             _status.Changed -= OnStatusChanged;
+            _captionReset.Dispose();
             _toolTip.Dispose();
             _qr.Image?.Dispose();
             _caption.Font.Dispose();

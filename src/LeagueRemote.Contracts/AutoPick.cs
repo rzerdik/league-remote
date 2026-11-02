@@ -34,14 +34,15 @@ namespace LeagueRemote.Contracts;
 ///   player's own resolved pick list.</item>
 ///   <item>Valid pick: in <c>pickable-champion-ids</c> (already only owned + free-to-play, not disabled); not banned (either
 ///   team); not hovered, locked or declared (<c>championPickIntent</c>) by a teammate; not locked by an enemy.</item>
-///   <item>Complete at <see cref="AutoPickPending.CompletesAt"/> = min(hover + <see cref="AutoPickState.AutoLockDelay"/>,
-///   phase end − <see cref="AutoPickState.CompletionMargin"/>), phase end = timer <c>internalNowInEpochMs</c> +
-///   <c>adjustedTimeLeftInPhase</c> (the time left at that anchor; without one, now + it) (infinite timer: hover + delay). If that is not after the hover (too little time left), hover only and log
+///   <item>Complete in the turn's last second: <see cref="AutoPickPending.CompletesAt"/> = phase end −
+///   <see cref="AutoPickState.CompletionMargin"/>, phase end = timer <c>internalNowInEpochMs</c> +
+///   <c>adjustedTimeLeftInPhase</c> (the time left at that anchor; without one, now + it) (infinite timer: hover +
+///   <see cref="AutoPickState.AutoLockDelay"/>). If that is not after the hover (too little time left), hover only and log
 ///   <see cref="AutoPickLogKinds.Hovered"/>.</item>
 ///   <item>Before completing, re-read the session: the action must still be in progress with the auto-hovered champion,
 ///   else the user changed it (log <see cref="AutoPickLogKinds.Manual"/>, never touch that action again) or it is over
-///   (nothing). If the champion became invalid meanwhile, hover the next valid choice with a new grace period (still
-///   bounded by the phase end). Lock the same way <see cref="CommandType.LockChampion"/> does (PATCH completed, confirm,
+///   (nothing). If the champion became invalid meanwhile, hover the next valid choice (completing at the same phase
+///   end). Lock the same way <see cref="CommandType.LockChampion"/> does (PATCH completed, confirm,
 ///   <c>/complete</c> fallback) and log <see cref="AutoPickLogKinds.Banned"/> / <see cref="AutoPickLogKinds.Locked"/>, or
 ///   <see cref="AutoPickLogKinds.Failed"/>.</item>
 ///   <item><see cref="CommandType.CancelAutoPickAction"/>, <see cref="CommandType.PauseAutoPick"/> or disabling cancels the
@@ -75,11 +76,20 @@ public sealed record AutoPickState(
 {
     public static AutoPickState Empty() => new(AutoPickSettings.Default, false, null, DateTimeOffset.UtcNow);
 
-    /// <summary>Grace period between the auto-hover and the lock-in / ban, so the phone can cancel it.</summary>
+    /// <summary>The wait between the auto-hover and the lock-in / ban when the timer never runs out (it has no last second).</summary>
     public static readonly TimeSpan AutoLockDelay = TimeSpan.FromSeconds(3);
 
-    /// <summary>The automation completes an action at least this long before the phase timer runs out.</summary>
-    public static readonly TimeSpan CompletionMargin = TimeSpan.FromSeconds(1.5);
+    /// <summary>
+    /// The automation completes an action this long before the phase timer runs out: the turn's last second, so the user
+    /// has the whole turn to change or cancel it, with time left for the re-read and the lock request.
+    /// </summary>
+    public static readonly TimeSpan CompletionMargin = TimeSpan.FromSeconds(1);
+
+    /// <summary>
+    /// How long <see cref="AutoPickSettings.AutoAccept"/> waits after a ready check appears before accepting it: a moment to
+    /// decline on the phone or in the client.
+    /// </summary>
+    public static readonly TimeSpan AutoAcceptDelay = TimeSpan.FromSeconds(2);
 
     /// <summary>Entries kept in <see cref="AutoPickRun.Log"/> (the oldest is dropped).</summary>
     public const int MaxLogEntries = 10;
@@ -99,7 +109,12 @@ public sealed record AutoPickState(
 /// an empty preset removes it), ordered by group (<see cref="AutoPickQueueGroups.All"/>) then role
 /// (<see cref="AutoPickRoles.All"/>). At most <see cref="MaxPresets"/>.
 /// </param>
-public sealed record AutoPickSettings(bool Enabled, IReadOnlyList<AutoPickPreset> Presets)
+/// <param name="AutoAccept">
+/// The connector accepts ready checks by itself (<see cref="CommandType.SetAutoAcceptEnabled"/>); off by default, also for a
+/// file saved before this setting existed. Independent of <see cref="Enabled"/> and <see cref="AutoPickState.PausedForThisGame"/>.
+/// The rules are on <c>AutoAcceptService</c> in the connector.
+/// </param>
+public sealed record AutoPickSettings(bool Enabled, IReadOnlyList<AutoPickPreset> Presets, bool AutoAccept = false)
 {
     public static AutoPickSettings Default { get; } = new(false, []);
 

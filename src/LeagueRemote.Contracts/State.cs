@@ -107,13 +107,15 @@ public sealed record SentInvitation(string Puuid, string RiotId, string State);
 /// <param name="Puuid">
 /// The member's puuid (own lobby only), for <see cref="CommandType.LoadPlayerProfile"/>; empty when the client doesn't say.
 /// </param>
+/// <param name="ProfileIconId">Summoner icon (the lobby member's <c>summonerIconId</c>); 0 when the client doesn't say.</param>
 public sealed record LobbyMember(
     string RiotId,
     bool IsLeader,
     string? FirstPositionPreference,
     string? SecondPositionPreference,
     bool IsLocalPlayer,
-    string Puuid);
+    string Puuid,
+    int ProfileIconId);
 
 /// <param name="TimerPhase">LCU timer phase: "PLANNING", "BAN_PICK", "FINALIZATION", "GAME_STARTING".</param>
 /// <param name="TimeLeftMs">

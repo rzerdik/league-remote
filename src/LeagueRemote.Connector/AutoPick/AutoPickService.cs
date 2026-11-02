@@ -150,6 +150,16 @@ internal sealed class AutoPickService : BackgroundService
         return null;
     }
 
+    /// <summary>Saves and publishes <see cref="AutoPickSettings.AutoAccept"/>; <see cref="AutoAcceptService"/> follows the published state.</summary>
+    public string? SetAutoAccept(bool enabled)
+    {
+        if (!_settings.Update(s => s with { AutoAccept = enabled }))
+            return "Couldn't save the setting on the PC.";
+        lock (_lock)
+            PublishLocked();
+        return null;
+    }
+
     /// <summary>
     /// Replaces one preset (an empty one removes it); a running champ select uses it for the steps still to come. A pending
     /// action whose champion the new preset no longer lists is cancelled by the next step.

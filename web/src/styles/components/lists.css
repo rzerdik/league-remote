@@ -186,8 +186,9 @@ a.lr-row:active,
   height: var(--symbol);
   flex: none;
 }
-.lr-row--accent .lr-row-text > :first-child {
-  color: var(--accent-text);
+/* A subtitle of several facts, one to a line (Auto Pick & Ban's presets). */
+.lr-row-line {
+  display: block;
 }
 .lr-row--danger .lr-row-text > :first-child {
   color: var(--red-text);

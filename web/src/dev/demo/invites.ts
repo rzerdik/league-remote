@@ -46,6 +46,7 @@ export async function demoInvite(cmd: { type: string; invitationId?: string | nu
       secondPositionPreference: 'TOP',
       isLocalPlayer: false,
       puuid: VEXA.puuid,
+      profileIconId: 29,
     }
     const me = { ...lobbyMembers[0]!, isLeader: false }
     push({ ...s, gameflowPhase: 'Lobby', invitations: null, lobby: { ...lobby(false), queueId: 440, isLeader: false, members: [leader, me] } })

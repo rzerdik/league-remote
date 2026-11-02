@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { CheckIcon, XIcon } from '@lucide/vue'
+import { profileIconUrl } from '../../ddragon'
 import { acceptRequest, busy, cancelRequest, declineRequest, incomingRequests, outgoingRequests } from '../../friendRequests'
 import { riotId } from '../../riotId'
 import Avatar from '../lr/Avatar.vue'
@@ -18,7 +19,7 @@ defineProps<{ direction: 'incoming' | 'outgoing' }>()
 <template>
   <ListSection v-if="direction === 'incoming' && incomingRequests.length" header="Friend Requests" :header-trailing="String(incomingRequests.length)">
     <ListRow v-for="r in incomingRequests" :key="r.puuid" :title="r.gameName" :busy="busy.has(r.puuid)">
-      <template #lead><Avatar :name="r.gameName" /></template>
+      <template #lead><Avatar :name="r.gameName" :image-url="profileIconUrl(r.profileIconId)" /></template>
       <template v-if="!busy.has(r.puuid)" #trailing>
         <span class="request-actions">
           <LrButton variant="gray" size="sm" :icon="XIcon" :aria-label="`Decline ${riotId(r)}`" @click="declineRequest(r)" />
@@ -30,7 +31,7 @@ defineProps<{ direction: 'incoming' | 'outgoing' }>()
 
   <ListSection v-if="direction === 'outgoing' && outgoingRequests.length" header="Sent Requests" :header-trailing="String(outgoingRequests.length)">
     <ListRow v-for="r in outgoingRequests" :key="r.puuid" :title="r.gameName" :busy="busy.has(r.puuid)">
-      <template #lead><Avatar :name="r.gameName" /></template>
+      <template #lead><Avatar :name="r.gameName" :image-url="profileIconUrl(r.profileIconId)" /></template>
       <template v-if="!busy.has(r.puuid)" #trailing>
         <LrButton variant="plain" size="sm" :aria-label="`Cancel request to ${riotId(r)}`" @click="cancelRequest(r)">Cancel</LrButton>
       </template>

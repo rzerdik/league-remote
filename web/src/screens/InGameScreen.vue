@@ -22,7 +22,7 @@ import YouSection from './ingame/YouSection.vue'
 
 /**
  * In Game: the clock, and — once the game's live data arrives (LiveGameUpdated) — three views under a segmented
- * control: Overview (the score, you, objective timers, hand-started buff timers), Scoreboard (both teams, yours first)
+ * control: Overview (the score, objective timers, hand-started buff timers, you), Scoreboard (both teams, yours first)
  * and Events (the feed, newest first). Without live data (loading screen) it is the clock card alone,
  * with a footer saying why. Once the game has a result: "Game Over", the result on the card, no objective or buff
  * timers (nothing is coming any more), the final score, stats, scoreboard and feed stay.
@@ -73,11 +73,11 @@ onMounted(() => void loadDdragonExtras())
               <LiveScore :teams="teams" />
             </LiveGameCard>
           </ListSection>
-          <YouSection v-if="me" :me="me" :rift="rift" />
           <template v-if="!gameOver">
             <ObjectivesSection v-if="liveGame.timers && liveClock != null" :timers="liveGame.timers" :clock="liveClock" />
             <BuffTimers v-if="rift" />
           </template>
+          <YouSection v-if="me" :me="me" :rift="rift" />
         </template>
 
         <template v-else-if="nav.inGameView === 'scoreboard'">

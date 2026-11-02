@@ -131,7 +131,6 @@ function equipFavourite() {
       :title="`Equip Favourite: ${favouriteName}`"
       :icon="StarIcon"
       tile-color="accent"
-      variant="accent"
       tappable
       wrap
       :busy="favourite.busy.value"

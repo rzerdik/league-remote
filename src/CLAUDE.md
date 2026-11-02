@@ -29,6 +29,7 @@
   `appsettings.json`: defaults are in code, user settings in `%LOCALAPPDATA%\league-remote\settings.json`
   (`ConnectorSettings`). Nothing may need a file next to the exe.
 - LCU GETs return null on 404 — that means "not in that phase", not an error.
+- The LCU's ranked `losses` is always 0 for other players (real for the local player): never derive a win rate from it.
 - Each slice has its own refresh loop: one slice's events must not rebuild another (`RefreshesFor` decides).
 - Hubs are transient: no instance fields. Anything that outlives a call goes through `IHubContext<PhoneHub>` or a singleton.
 - Store `Changed` events fire on LCU threads: handlers only signal, they never await a hub send.

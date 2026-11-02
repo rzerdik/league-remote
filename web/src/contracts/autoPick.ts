@@ -5,8 +5,10 @@ export const AutoPickMaxBans = 5
 export const AutoPickMaxPicks = 10
 /** AutoPickState.MaxLogEntries */
 export const AutoPickMaxLogEntries = 10
-/** AutoPickState.AutoLockDelay: grace period between the auto-hover and the lock-in / ban. */
+/** AutoPickState.AutoLockDelay: the wait before the lock-in / ban when the timer never runs out; otherwise its last second. */
 export const AutoPickLockDelayMs = 3_000
+/** AutoPickState.AutoAcceptDelay: how long Auto Accept waits after a ready check appears, leaving a moment to decline. */
+export const AutoAcceptDelayMs = 2_000
 
 /**
  * AutoPickQueueGroups: queues sharing presets, by queue id (the Summoner's Rift Blind / Draft / Tournament Draft custom
@@ -59,6 +61,8 @@ export interface AutoPickSettings {
   enabled: boolean
   /** At most one per (queueGroup, role), never empty, ordered by group then role; at most 13 (AutoPickSettings.MaxPresets). */
   presets: AutoPickPreset[]
+  /** The connector accepts ready checks by itself; off by default. Independent of `enabled` and `pausedForThisGame`. */
+  autoAccept: boolean
 }
 
 /** One preset. */

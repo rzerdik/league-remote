@@ -53,7 +53,7 @@ No Riot audio is in this repository or in the release. The PC reads it from your
 
 Without an install or cache the manifest is empty, and the phone uses synthesized sounds for the main cues (no music).
 
-Settings has switches for sounds, music, both volumes, each kind of sound, and **Play in Background**. It is on by
+Settings › Sounds & Haptics has switches for sounds, music, both volumes, each kind of sound, and **Play in Background**. It is on by
 default and keeps sound going while the app is minimised or the phone is locked. On iPhone this pauses other apps' audio
 while connected.
 

@@ -118,7 +118,7 @@ internal sealed class AutoPickSettingsStore
             .ThenBy(p => IndexOf(AutoPickRoles.All, p.Role))
             .Take(AutoPickSettings.MaxPresets)
             .ToList();
-        return new AutoPickSettings(settings.Enabled, presets);
+        return new AutoPickSettings(settings.Enabled, presets, settings.AutoAccept);
     }
 
     private static RemoteCommand AsCommand(AutoPickPreset p) => new(

@@ -3,7 +3,7 @@ import type { MatchParticipant, PostGameMastery, PostGameRank, PostGameSummary }
 import { championName } from './ddragon'
 import { formatCount, ordinal, plural } from './format'
 import { isPostGamePhase } from './gameflow'
-import { gameQueueName, rankLabel, rankedQueueName } from './labels'
+import { gameQueueName, rankLabel } from './labels'
 import { resultLabel } from './profile'
 import { sendCommand } from './hub'
 import { liveState } from './store'
@@ -70,13 +70,9 @@ export function rankAfter(rank: PostGameRank): string {
   return name ? `${name} · ${rank.leaguePoints} LP` : 'Unranked'
 }
 
-/** "Promoted" / "Demoted" for the row's tag, '' otherwise. */
+/** "Promoted" / "Demoted" for the result card's tag, '' otherwise. */
 export function rankChange(rank: PostGameRank): string {
   return rank.change === 'promoted' ? 'Promoted' : rank.change === 'demoted' ? 'Demoted' : ''
-}
-
-export function rankQueue(rank: PostGameRank): string {
-  return rankedQueueName(rank.queueType)
 }
 
 /** "+1,240 Points". */

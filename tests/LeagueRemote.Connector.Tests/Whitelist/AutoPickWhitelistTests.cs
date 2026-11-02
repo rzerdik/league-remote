@@ -15,6 +15,7 @@ public sealed class AutoPickWhitelistTests
         new("a4", CommandType.ResumeAutoPick),
         new("a5", CommandType.CancelAutoPickAction),
         new("a6", CommandType.CancelAutoPickAction, ActionId: 7),
+        new("a6", CommandType.CancelAutoPickAction, ActionId: 0),
         new("a7", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "MIDDLE",
             BanChampionIds: [238, 157, 777, 84, 105], PickChampionIds: TenPicks, Spell1Id: 4, Spell2Id: 14, RunePageId: 1234567890123),
         new("a8", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "ANY", PickChampionIds: [103]),
@@ -23,12 +24,13 @@ public sealed class AutoPickWhitelistTests
         new("a11", CommandType.SetAutoPickPreset, QueueGroup: "aram", Role: "ANY", RunePageId: 5),
         // Nothing set: removes the preset.
         new("a12", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "TOP"),
+        new("a13", CommandType.SetAutoAcceptEnabled, Enabled: true),
+        new("a14", CommandType.SetAutoAcceptEnabled, Enabled: false),
     ];
 
     public static TheoryData<RemoteCommand> Invalid() =>
     [
         new("a1", CommandType.SetAutoPickEnabled),
-        new("a2", CommandType.CancelAutoPickAction, ActionId: 0),
         new("a3", CommandType.CancelAutoPickAction, ActionId: -3),
         new("a4", CommandType.SetAutoPickPreset),
         new("a5", CommandType.SetAutoPickPreset, Role: "MIDDLE"),
@@ -50,6 +52,7 @@ public sealed class AutoPickWhitelistTests
         new("a21", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "TOP", Spell1Id: 4, Spell2Id: 4),
         new("a22", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "TOP", Spell1Id: 0, Spell2Id: 0),
         new("a23", CommandType.SetAutoPickPreset, QueueGroup: "draft", Role: "TOP", RunePageId: 0),
+        new("a24", CommandType.SetAutoAcceptEnabled),
     ];
 
     [Theory, MemberData(nameof(Valid))]

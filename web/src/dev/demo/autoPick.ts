@@ -5,6 +5,7 @@
 // locks in (or bans, and the draft walks on to your pick, which it locks in too). Cancel, Pause and Resume answer like
 // the connector; hovering another champion meanwhile leaves the action to you. `&auto=hold` keeps the countdown going
 // (it restarts instead of locking in) to review the banner. `&auto=paused` / `no-preset` show those status lines.
+// `&accept=1` on any scenario starts with Auto Accept on (`queue` names it in the status capsule).
 import { emptyPreset } from '../../autoPick'
 import {
   AutoPickLockDelayMs,
@@ -33,7 +34,7 @@ const autoHold = autoParam === 'hold'
 const autoOn = autoParam === '1' || autoHold || autoParam === 'paused' || autoParam === 'no-preset'
 /** How long after the draft reaches your turn the fake connector hovers (the real one: on the next session update). */
 const AUTO_ARM_MS = 1200
-/** The connector's grace period (AutoPickState.AutoLockDelay) and how long its lock-in request then takes. */
+/** A short stand-in for the wait until your turn's last second, and how long the lock-in request then takes. */
 const AUTO_LOCK_DELAY_MS = AutoPickLockDelayMs
 const AUTO_LOCK_REQUEST_MS = 500
 
@@ -72,7 +73,7 @@ function demoRun(): AutoPickRun | null {
 /** The scenario's auto pick state (call once the client state is held: the run follows champion select). */
 export function autoPickState(): AutoPickState {
   return {
-    settings: { enabled: scenario === 'autopick' || autoOn, presets: demoPresets() },
+    settings: { enabled: scenario === 'autopick' || autoOn, presets: demoPresets(), autoAccept: params.get('accept') === '1' },
     pausedForThisGame: autoParam === 'paused',
     run: demoRun(),
     updatedAt: new Date().toISOString(),
@@ -147,7 +148,7 @@ const byKey = (a: AutoPickPreset, b: AutoPickPreset) =>
   AutoPickQueueGroups.indexOf(a.queueGroup) - AutoPickQueueGroups.indexOf(b.queueGroup) ||
   AutoPickRoles.indexOf(a.role) - AutoPickRoles.indexOf(b.role)
 
-/** The five auto pick commands, answered like the connector (they work without a League client). */
+/** The auto pick and Auto Accept commands, answered like the connector (they work without a League client). */
 export async function demoAutoPick(cmd: RemoteCommand): Promise<CommandResult | null> {
   await wait(350)
   const ok = { requestId: cmd.requestId, success: true }
@@ -162,6 +163,10 @@ export async function demoAutoPick(cmd: RemoteCommand): Promise<CommandResult | 
       const run: AutoPickRun | null = s.run && { ...s.run, pending: enabled ? s.run.pending : null, status }
       pushAutoPick({ ...s, settings: { ...s.settings, enabled }, run })
       if (run?.status === 'active') autoPickArm()
+      return ok
+    }
+    case 'SetAutoAcceptEnabled': {
+      pushAutoPick({ ...s, settings: { ...s.settings, autoAccept: !!cmd.enabled } })
       return ok
     }
     case 'SetAutoPickPreset': {

@@ -80,6 +80,14 @@ const canAct = computed(() => {
 const choice = useChampionChoice(() => props.cs, () => canAct.value)
 const { selectedId, myHoverId, popping, locking, lockDisabled, lockVerb, lockName, lockLabel } = choice
 
+/**
+ * Once your champion is set, the loadout is what's left to do: it moves up, right under the pick order and the bench.
+ * A keyed list, so Vue moves the one LoadoutSection instead of remounting it (an open spell or skin sheet, its busy
+ * states stay), and the DOM order VoiceOver reads is the order on screen.
+ */
+const loadoutFirst = computed(() => !!me.value?.isLocked || stage.value === 'finalization' || stage.value === 'starting')
+const middle = computed(() => (loadoutFirst.value ? (['loadout', 'teams'] as const) : (['teams', 'loadout'] as const)))
+
 /** The pick order strip (draft modes only; blind pick has a single simultaneous turn). */
 const order = computed(() => pickTurns(props.cs, myHoverId.value))
 
@@ -121,8 +129,8 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
 </script>
 
 <template>
-  <div class="lr-content" :class="{ 'lr-content--accessory': !canAct }">
-    <LargeTitle title="Champion Select">
+  <div class="lr-content">
+    <LargeTitle title="Champion Select" compact>
       <template v-if="queue">{{ queue }}</template>
       <!-- On the title row; docks into the nav bar once the title collapses, so it stays reachable while the draft scrolls. -->
       <template v-if="draftChat" #trailing>
@@ -136,29 +144,32 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
 
     <BenchSection v-if="benchGame" :cs="cs" :stage="stage" @pending="benchSwapId = $event" />
 
-    <ListSection header="Your Team">
-      <TeamMemberRow
-        v-for="m in myTeamOrdered"
-        :key="m.cellId"
-        :member="m"
-        :stage="stage"
-        :offers="m.isLocalPlayer ? [] : rowOffers(m.cellId)"
-        :hover-id="m.isLocalPlayer ? myHoverId : 0"
-        :bench-swap-id="m.isLocalPlayer ? benchSwapId : null"
-        :popping="m.isLocalPlayer && popping"
-        :swap-busy="swapBusy"
-        :reserve-actions="hasRowActions"
-        @swap="swaps.send"
-      />
-    </ListSection>
+    <template v-for="part in middle" :key="part">
+      <LoadoutSection v-if="part === 'loadout'" :me="me" :rune-pages="runePages" :aram="aramQueue" :skins="cs.skins" />
+      <template v-else>
+        <ListSection header="Your Team">
+          <TeamMemberRow
+            v-for="m in myTeamOrdered"
+            :key="m.cellId"
+            :member="m"
+            :stage="stage"
+            :offers="m.isLocalPlayer ? [] : rowOffers(m.cellId)"
+            :hover-id="m.isLocalPlayer ? myHoverId : 0"
+            :bench-swap-id="m.isLocalPlayer ? benchSwapId : null"
+            :popping="m.isLocalPlayer && popping"
+            :swap-busy="swapBusy"
+            :reserve-actions="hasRowActions"
+            @swap="swaps.send"
+          />
+        </ListSection>
 
-    <ListSection v-if="showEnemies" header="Enemy Team">
-      <EnemyMemberRow v-for="e in theirTeamOrdered" :key="e.cellId" :enemy="e" />
-    </ListSection>
+        <ListSection v-if="showEnemies" header="Enemy Team">
+          <EnemyMemberRow v-for="e in theirTeamOrdered" :key="e.cellId" :enemy="e" />
+        </ListSection>
 
-    <DraftBoard :my-bans="myBans" :their-bans="theirBans" />
-
-    <LoadoutSection :me="me" :rune-pages="runePages" :aram="aramQueue" :skins="cs.skins" />
+        <DraftBoard :my-bans="myBans" :their-bans="theirBans" />
+      </template>
+    </template>
 
     <AutoPickSection />
 
@@ -182,10 +193,12 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
     <EdgeGlow v-if="!covered" :beat="finalBeat" :tone="isBan ? 'ban' : 'pick'" />
 
     <!-- Lock In / Ban only on your own turn: Declare Intent and the turns before yours are hovers, nothing to lock. -->
-    <ActionBar v-if="!covered" :accessory="canAct ? null : accessory" :over-sheet="canAct" compact>
+    <ActionBar v-if="!covered" :accessory="canAct ? null : accessory" :over-sheet="canAct">
       <template v-if="canAct && actionHot" #default>
         <LrButton
           :variant="isBan ? 'destructive' : 'prominent'"
+          size="lg"
+          block
           :leading="isBan ? BanIcon : LockIcon"
           :loading="locking"
           :disabled="lockDisabled"

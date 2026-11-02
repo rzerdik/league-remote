@@ -3,6 +3,7 @@ import { CircleUserIcon, MessageCircleIcon, UserMinusIcon, UserPlusIcon } from '
 import { computed, ref, watch } from 'vue'
 import { openDirectMessage } from '../../chat'
 import type { Friend } from '../../contracts'
+import { profileIconUrl } from '../../ddragon'
 import {
   customGroups,
   friendActivity,
@@ -19,10 +20,10 @@ import { openPlayer } from '../../navigation'
 import { riotId } from '../../riotId'
 import { toast } from '../../store'
 import Avatar from '../lr/Avatar.vue'
-import ChampionIcon from '../lr/ChampionIcon.vue'
 import ListRow from '../lr/ListRow.vue'
 import ListSection from '../lr/ListSection.vue'
 import LrAlert from '../lr/LrAlert.vue'
+import RankIcon from '../lr/RankIcon.vue'
 import Sheet from '../lr/Sheet.vue'
 
 /**
@@ -106,14 +107,15 @@ async function confirmRemove() {
       <ListSection>
         <ListRow :title="riotId(f)" wrap>
           <template #lead>
-            <ChampionIcon v-if="f.activity === 'in-game' && f.championId" :champion-id="f.championId" decorative />
-            <Avatar v-else :name="f.gameName" />
+            <Avatar :name="f.gameName" :image-url="profileIconUrl(f.profileIconId)" />
           </template>
         </ListRow>
         <ListRow title="Status" :value="friendActivity(f)" :value-tone="presenceTone(f)" />
         <ListRow v-if="f.activity && friendQueue(f)" title="Queue" :value="friendQueue(f)" />
         <ListRow v-if="friendChampion(f)" title="Playing" :value="friendChampion(f)" />
-        <ListRow v-if="friendRank(f)" :title="friendRankLabel(f)" :value="friendRank(f)" />
+        <ListRow v-if="friendRank(f)" :title="friendRankLabel(f)" :value="friendRank(f)">
+          <template #lead><RankIcon :tier="f.rankTier" /></template>
+        </ListRow>
         <ListRow v-if="group" title="Group" :value="group" />
         <ListRow v-if="f.note" title="Note" :subtitle="f.note" wrap />
         <slot />
@@ -122,7 +124,6 @@ async function confirmRemove() {
       <ListSection>
         <ListRow
           tappable
-          variant="accent"
           :icon="UserPlusIcon"
           tile-color="accent"
           :title="invite?.label ?? 'Invite to Party'"
@@ -132,7 +133,6 @@ async function confirmRemove() {
         />
         <ListRow
           tappable
-          variant="accent"
           :icon="MessageCircleIcon"
           tile-color="blue"
           title="Message"
@@ -141,7 +141,6 @@ async function confirmRemove() {
         />
         <ListRow
           tappable
-          variant="accent"
           :icon="CircleUserIcon"
           tile-color="indigo"
           title="View Profile"

@@ -287,7 +287,7 @@ public sealed record LiveInhibitorTimer(string Side, string Lane, double Respawn
 /// Spawn rules behind <see cref="LiveObjectiveTimers"/>, in game-clock seconds. They follow the current patch and must be
 /// revisited when Riot changes the map (season starts and big objective patches). Checked Oct 2026 (patch 26.x) against the
 /// League of Legends Wiki's unit pages and their patch histories (Dragon pit, Elder Dragon, Baron Nashor, Rift Herald,
-/// Voidgrub camp, Inhibitor at wiki.leagueoflegends.com); not yet confirmed against a live game.
+/// Voidgrub camp, Inhibitor at wiki.leagueoflegends.com).
 /// </summary>
 public static class LiveGameRules
 {
@@ -296,7 +296,7 @@ public static class LiveGameRules
 
     /// <summary>
     /// Timers are computed for Summoner's Rift in the CLASSIC mode (normal, ranked and custom draft/blind games). Other modes
-    /// (ARAM, Arena, URF, Swiftplay, Practice Tool) have different or unverified rules and get null.
+    /// (ARAM, Arena, URF, Swiftplay, Practice Tool) have different rules and get null.
     /// </summary>
     public static bool HasObjectiveTimers(string? gameMode, int mapNumber) =>
         mapNumber == SummonersRift && string.Equals(gameMode, "CLASSIC", StringComparison.Ordinal);

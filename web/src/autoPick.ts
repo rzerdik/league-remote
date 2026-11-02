@@ -99,32 +99,26 @@ export function findPreset(
   return settings?.presets.find((p) => p.queueGroup === group && p.role === role) ?? null
 }
 
-/** "Bans: Zed, Yasuo · Picks: Ahri, Syndra"; '' without either (Champion Select's status line). */
-export function presetChoices(p: AutoPickPreset): string {
-  const parts: string[] = []
-  if (hasBans(p.queueGroup) && p.banChampionIds.length) parts.push(`Bans: ${championList(p.banChampionIds)}`)
-  if (hasPicks(p.queueGroup) && p.pickChampionIds.length) parts.push(`Picks: ${championList(p.pickChampionIds)}`)
-  return parts.join(' · ')
-}
-
-/** "Bans: Zed, Yasuo · Picks: Ahri, Syndra · Flash + Ignite · Runes: Electrocute Mid"; '' when nothing is set. */
-function presetSummary(p: AutoPickPreset): string {
-  const choices = presetChoices(p)
-  const parts: string[] = choices ? [choices] : []
-  const spells = spellPair(p.spell1Id, p.spell2Id)
-  if (spells) parts.push(spells)
-  if (p.runePageId > 0) parts.push(`Runes: ${runePageName(p.runePageId, p.runePageName)}`)
-  return parts.join(' · ')
+/** ["Picks: Ahri, Syndra", "Bans: Zed, Yasuo"]: what is set of the two lists, picks first (also Champion Select's status). */
+export function presetChoiceLines(p: AutoPickPreset): string[] {
+  const lines: string[] = []
+  if (hasPicks(p.queueGroup) && p.pickChampionIds.length) lines.push(`Picks: ${championList(p.pickChampionIds)}`)
+  if (hasBans(p.queueGroup) && p.banChampionIds.length) lines.push(`Bans: ${championList(p.banChampionIds)}`)
+  return lines
 }
 
 /**
- * The settings row's subtitle for one preset: what it sets itself, "Uses Any Role" or "Not Set". What a role leaves
- * empty falls back to Any Role field by field; the editor's footers say so per field.
+ * The settings row's subtitle for one preset, a line per fact: picks, bans, spells, rune page; or "Not Set". A role
+ * gets its row once it has a preset of its own. What a role leaves empty falls back to Any Role field by field; the editor's footers say so per field.
  */
-export function roleSummary(settings: AutoPickSettings, group: AutoPickQueueGroup, role: AutoPickRole): string {
+export function roleSummaryLines(settings: AutoPickSettings, group: AutoPickQueueGroup, role: AutoPickRole): string[] {
   const own = findPreset(settings, group, role)
-  if (own) return presetSummary(own) || 'Not Set'
-  return role !== 'ANY' && findPreset(settings, group, 'ANY') ? 'Uses Any Role' : 'Not Set'
+  if (!own) return ['Not Set']
+  const lines = presetChoiceLines(own)
+  const spells = spellPair(own.spell1Id, own.spell2Id)
+  if (spells) lines.push(`Spells: ${spells}`)
+  if (own.runePageId > 0) lines.push(`Runes: ${runePageName(own.runePageId, own.runePageName)}`)
+  return lines.length ? lines : ['Not Set']
 }
 
 /** The preset that applies to the current champion select (role fallback included); null when none. */
@@ -245,6 +239,31 @@ export async function setAutoPickEnabled(enabled: boolean): Promise<boolean> {
   enableInFlight = false
   // Failed, or the echo already came: show the state. Otherwise keep the value until the next update arrives.
   if (!ok || autoPickSettings.value?.enabled === enabled) pendingEnabled.value = null
+  return ok
+}
+
+/** Optimistic Auto Accept switch while 'SetAutoAcceptEnabled' is on its way; same rules as `pendingEnabled`. */
+const pendingAutoAccept = ref<boolean | null>(null)
+/** Counts toggles, so an older command's result can't clear a newer one's value. */
+let autoAcceptSeq = 0
+let autoAcceptInFlight = false
+watch(autoPickSettings, (settings) => {
+  if (pendingAutoAccept.value === null) return
+  if (!settings || !autoAcceptInFlight || settings.autoAccept === pendingAutoAccept.value) pendingAutoAccept.value = null
+})
+
+/** Auto Accept as shown: the optimistic value while a change is in flight. Independent of the auto pick switch. */
+export const autoAcceptEnabled = computed(() => pendingAutoAccept.value ?? autoPickSettings.value?.autoAccept ?? false)
+
+export async function setAutoAcceptEnabled(enabled: boolean): Promise<boolean> {
+  const seq = ++autoAcceptSeq
+  pendingAutoAccept.value = enabled
+  autoAcceptInFlight = true
+  const ok = await send({ type: 'SetAutoAcceptEnabled', enabled })
+  if (seq !== autoAcceptSeq) return ok
+  autoAcceptInFlight = false
+  // Failed, or the echo already came: show the state. Otherwise keep the value until the next update arrives.
+  if (!ok || autoPickSettings.value?.autoAccept === enabled) pendingAutoAccept.value = null
   return ok
 }
 

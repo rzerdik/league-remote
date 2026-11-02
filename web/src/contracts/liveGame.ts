@@ -168,7 +168,7 @@ export interface LiveInhibitorTimer {
 
 /**
  * LiveGameRules: spawn rules behind the timers, game-clock seconds. Current patch (26.x, checked Oct 2026 against the
- * League wiki; not yet confirmed live); revisit when Riot changes the map.
+ * League wiki); revisit when Riot changes the map.
  */
 export const LiveGameRules = {
   summonersRift: 11,

@@ -25,7 +25,8 @@ Every response carries `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-r
 `Permissions-Policy` that allows only the camera (for the QR scanner) and a `Content-Security-Policy`. The policy lets the
 web app load only its own files, Data Dragon images and data (`ddragon.leagueoflegends.com`), its own WebSocket, and the
 WebAssembly QR decoder it ships; inline scripts, frames, plugins and foreign form targets are blocked. The exact policy is
-`SecurityHeaders.ContentSecurityPolicy` in `src/LeagueRemote.Connector/Server/SecurityHeaders.cs`. A tap on a push
+`SecurityHeaders.ContentSecurityPolicy` in `src/LeagueRemote.Connector/Server/SecurityHeaders.cs`. Client sounds and rank
+emblems come from the PC app, which reads a fixed list of them from the local League install. A tap on a push
 notification only ever opens a page of the app itself.
 
 ## Local certificate authority

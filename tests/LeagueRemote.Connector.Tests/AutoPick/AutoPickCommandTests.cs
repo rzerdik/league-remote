@@ -38,6 +38,70 @@ public sealed class AutoPickCommandTests
     }
 
     [Fact]
+    public async Task SetAutoAcceptEnabled_works_without_a_League_client_is_saved_and_leaves_auto_pick_alone()
+    {
+        using var h = new AutoPickHarness();
+        var executor = new FakeLcuSession(null).Executor(time: h.Time, autoPick: h.Service, autoPickStore: h.Store);
+
+        var on = await executor.ExecuteAsync(new RemoteCommand("a1", CommandType.SetAutoAcceptEnabled, Enabled: true), default);
+
+        Assert.True(on.Success, on.Error);
+        Assert.True(h.State.Settings.AutoAccept);
+        Assert.False(h.State.Settings.Enabled);
+        Assert.True(new AutoPickSettingsStore(h.Folder).Current.AutoAccept);
+
+        Assert.True((await executor.ExecuteAsync(new RemoteCommand("a2", CommandType.SetAutoAcceptEnabled, Enabled: false), default)).Success);
+        Assert.False(h.State.Settings.AutoAccept);
+        Assert.False(new AutoPickSettingsStore(h.Folder).Current.AutoAccept);
+    }
+
+    [Fact]
+    public async Task SetAutoAcceptEnabled_sends_nothing_to_League_and_asks_for_no_rebuild()
+    {
+        using var h = new AutoPickHarness();
+        var session = new FakeLcuSession(h.Client);
+        var executor = session.Executor(autoPick: h.Service, autoPickStore: h.Store);
+
+        var result = await executor.ExecuteAsync(new RemoteCommand("a1", CommandType.SetAutoAcceptEnabled, Enabled: true), default);
+
+        Assert.True(result.Success, result.Error);
+        Assert.Empty(h.Lcu.Requests);
+        Assert.Equal(0, session.Refreshes);
+    }
+
+    [Fact]
+    public async Task SetAutoAcceptEnabled_without_a_value_is_refused_by_the_executor()
+    {
+        using var h = new AutoPickHarness();
+        var executor = new FakeLcuSession(null).Executor(autoPick: h.Service, autoPickStore: h.Store);
+
+        var result = await executor.ExecuteAsync(new RemoteCommand("a1", CommandType.SetAutoAcceptEnabled), default);
+
+        Assert.Equal((false, "Enabled is required."), (result.Success, result.Error));
+        Assert.False(h.State.Settings.AutoAccept);
+    }
+
+    [Fact]
+    public async Task SetAutoAcceptEnabled_reports_a_settings_file_that_cant_be_written()
+    {
+        using var h = new AutoPickHarness();
+        File.WriteAllText(h.Folder, "not a folder");
+        try
+        {
+            var executor = new FakeLcuSession(null).Executor(autoPick: h.Service, autoPickStore: h.Store);
+
+            var result = await executor.ExecuteAsync(new RemoteCommand("a1", CommandType.SetAutoAcceptEnabled, Enabled: true), default);
+
+            Assert.Equal("Couldn't save the setting on the PC.", result.Error);
+            Assert.False(h.State.Settings.AutoAccept);
+        }
+        finally
+        {
+            File.Delete(h.Folder);
+        }
+    }
+
+    [Fact]
     public async Task Executor_revalidates_presets_and_changes_nothing_when_refused()
     {
         using var h = new AutoPickHarness();

@@ -17,6 +17,7 @@ public sealed class LobbyMapperTests
         Assert.Equal(["Me#EUW", "Friend#EUNE", "Unknown"], lobby.Members.Select(m => m.RiotId));
         Assert.Equal("MIDDLE", lobby.Members[0].FirstPositionPreference);
         Assert.Null(lobby.Members[0].SecondPositionPreference);
+        Assert.Equal([5132, 0, 0], lobby.Members.Select(m => m.ProfileIconId));
         Assert.Equal(420, lobby.QueueId);
         Assert.Equal("CLASSIC", lobby.GameMode);
         Assert.False(lobby.IsCustom);

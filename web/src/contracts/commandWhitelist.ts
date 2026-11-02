@@ -19,13 +19,15 @@ const hasControlChars = (s: string) => /[\u0000-\u001f\u007f-\u009f]/.test(s)
 export function validateCommand(c: RemoteCommand): string | null {
   if (!c.requestId || c.requestId.length > MaxRequestIdLength) return `RequestId is required (max ${MaxRequestIdLength} chars).`
   const pos = (v: number | null | undefined) => typeof v === 'number' && v > 0
+  const nonNegative = (v: number | null | undefined) => typeof v === 'number' && v >= 0
   switch (c.type) {
     case 'CreateLobby':
       return pos(c.queueId) ? null : 'QueueId must be a positive integer.'
     case 'HoverChampion':
     case 'LockChampion':
       if (!pos(c.championId)) return 'ChampionId must be a positive integer.'
-      return pos(c.actionId) ? null : 'ActionId must be a positive integer.'
+      // League numbers a draft's actions from 0, so 0 is a real action (the first ban of a custom game).
+      return nonNegative(c.actionId) ? null : 'ActionId must not be negative.'
     case 'BenchSwap':
       return pos(c.championId) ? null : 'ChampionId must be a positive integer.'
     case 'SetSummonerSpells':
@@ -82,11 +84,12 @@ export function validateCommand(c: RemoteCommand): string | null {
       // Optional: empty = a game of your own history.
       return c.puuid && !isPuuid(c.puuid) ? `Puuid must be a puuid (max ${RiotIds.maxPuuidLength} chars).` : null
     case 'SetAutoPickEnabled':
+    case 'SetAutoAcceptEnabled':
       return typeof c.enabled === 'boolean' ? null : 'Enabled is required.'
     case 'SetAutoPickPreset':
       return validateAutoPickPreset(c)
     case 'CancelAutoPickAction':
-      return c.actionId == null || pos(c.actionId) ? null : 'ActionId must be a positive integer.'
+      return c.actionId == null || nonNegative(c.actionId) ? null : 'ActionId must not be negative.'
     case 'SelectSkin':
       return pos(c.skinId) ? null : 'SkinId must be a positive integer.'
     default:

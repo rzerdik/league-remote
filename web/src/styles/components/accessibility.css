@@ -61,8 +61,7 @@
   .lr-glass,
   .lr-glass-thick,
   .lr-btn--glass,
-  .lr-sheet,
-  .lr-edge-top {
+  .lr-sheet {
     background: var(--bg-elevated);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

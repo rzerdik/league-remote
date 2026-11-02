@@ -10,7 +10,6 @@ defineProps<{ title: string; inline?: boolean }>()
 </script>
 
 <template>
-  <div class="lr-edge-top" :data-visible="navState.edge" aria-hidden="true" />
   <header class="lr-nav" :data-collapsed="inline || navState.collapsed">
     <div class="lr-nav-bar">
       <div class="lr-nav-lead"><slot name="leading" /></div>

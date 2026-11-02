@@ -9,7 +9,7 @@ import { tapFeedback } from '../../haptics'
 import { liveAutoPick } from '../../store'
 
 /**
- * Champion Select: the auto ban / lock-in the PC is about to make ("Auto-locking Ahri", "In 3 s") as an actionable
+ * Champion Select: the auto ban / lock-in the PC is about to make ("Auto-locking Ahri", "In 28 s": the last second of your turn) as an actionable
  * banner with Cancel ('CancelAutoPickAction'; the hover stays, so the user picks on from there). The countdown is the
  * connector's (`pendingSecondsLeft`); the seconds are hidden from VoiceOver, which hears the banner once. Also toasts
  * each new line of the automation's log while Champion Select is up ("Auto-banned Zed").

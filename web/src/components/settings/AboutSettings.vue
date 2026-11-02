@@ -30,7 +30,7 @@ watch(open, (isOpen) => {
 </script>
 
 <template>
-  <ListSection header="About">
+  <ListSection>
     <ListRow title="Version" :icon="InfoIcon" tile-color="gray" :value="appVersion" />
     <ListRow title="Licenses" :icon="ScrollTextIcon" tile-color="gray" chevron tappable @click="open = true" />
   </ListSection>

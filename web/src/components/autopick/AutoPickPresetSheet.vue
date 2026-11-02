@@ -18,7 +18,6 @@ import {
 } from '../../autoPick'
 import { useBusy } from '../../composables/useBusy'
 import {
-  AutoPickLockDelayMs,
   AutoPickMaxBans,
   AutoPickMaxPicks,
   type AutoPickPreset,
@@ -38,7 +37,7 @@ import StatusLine from '../lr/StatusLine.vue'
 import ChampionListSection from './ChampionListSection.vue'
 
 /**
- * Editor for one auto pick preset (queue group × role): ban list, pick list, summoner spells (both or neither) and
+ * Editor for one auto pick preset (queue group × role): pick list, ban list, summoner spells (both or neither) and
  * rune page. Edits a local copy; the checkmark saves it with one 'SetAutoPickPreset' (nothing set removes the preset)
  * and closes once the PC confirmed. A role preset's empty fields fall back to the group's Any Role preset, and the
  * footers say what they would use. With unsaved changes, closing (✕, swipe, Escape, scrim) asks "Discard Changes?".
@@ -84,13 +83,12 @@ const picks = computed({ get: () => draft.pickChampionIds, set: (v: number[]) =>
 const banFooter = computed(() => {
   const any = fallback.value?.banChampionIds ?? []
   if (!draft.banChampionIds.length && any.length) return `Empty: uses Any Role (${championList(any)}).`
-  return 'The first one still free is banned.'
+  return 'The first one still free is hovered, then banned in the last second of your turn.'
 })
-const delay = AutoPickLockDelayMs / 1000
 const pickFooter = computed(() => {
   const any = fallback.value?.pickChampionIds ?? []
   if (!draft.pickChampionIds.length && any.length) return `Empty: uses Any Role (${championList(any)}).`
-  return `The first one you own that’s still free is hovered, then locked in ${delay} seconds later.`
+  return 'The first one you own that’s still free is hovered, then locked in during the last second of your turn.'
 })
 
 // ----- spells -----
@@ -206,8 +204,8 @@ const saveLabel = computed(() => (save.busy.value ? 'Saving…' : 'Save'))
       />
     </template>
 
-    <ChampionListSection v-if="hasBans(group)" v-model="bans" header="Bans" kind="ban" :max="AutoPickMaxBans" :footer="banFooter" />
     <ChampionListSection v-if="hasPicks(group)" v-model="picks" header="Picks" kind="pick" :max="AutoPickMaxPicks" :footer="pickFooter" />
+    <ChampionListSection v-if="hasBans(group)" v-model="bans" header="Bans" kind="ban" :max="AutoPickMaxBans" :footer="banFooter" />
 
     <ListSection header="Summoner Spells">
       <SpellSlots
@@ -217,7 +215,7 @@ const saveLabel = computed(() => (save.busy.value ? 'Saving…' : 'Save'))
         :placeholder="spellPlaceholder"
         @change="setSpells"
       />
-      <ListRow v-if="spellsSet" title="Clear Spells" variant="accent" tappable text @click="clearSpells" />
+      <ListRow v-if="spellsSet" title="Clear Spells" tappable text @click="clearSpells" />
       <template #footer>
         <StatusLine v-if="halfSpells" tone="red" text="Choose both spells, or clear them." role="alert" />
         <span v-else>{{ spellFooter }}</span>

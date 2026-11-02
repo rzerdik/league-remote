@@ -95,6 +95,8 @@ export interface LobbyMember {
   isLocalPlayer: boolean
   /** Own lobby only, for 'LoadPlayerProfile'; '' when the client doesn't say. */
   puuid: string
+  /** Summoner icon (Data Dragon id); 0 when the client doesn't say. */
+  profileIconId: number
 }
 
 export interface ChampSelectState {

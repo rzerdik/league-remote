@@ -191,6 +191,12 @@ public enum CommandType
     /// Refused when nobody has that Riot ID or it is the local player's own.
     /// </summary>
     SearchPlayer,
+    /// <summary>
+    /// Requires <see cref="RemoteCommand.Enabled"/>. Turns Auto Accept on or off (<see cref="AutoPickSettings.AutoAccept"/>,
+    /// saved on the PC). Turning it off cancels an accept still waiting out <see cref="AutoPickState.AutoAcceptDelay"/>. Works
+    /// without a League client.
+    /// </summary>
+    SetAutoAcceptEnabled,
 }
 
 /// <summary>Which champ-select exchange a swap command targets.</summary>
@@ -244,7 +250,10 @@ public enum SwapKind
 /// <see cref="CommandType.LoadMatchDetails"/>: <see cref="MatchSummary.GameId"/> of a game in <see cref="ProfileState.Matches"/>
 /// (or, with <paramref name="Puuid"/>, in that <see cref="PlayerProfile.Matches"/>).
 /// </param>
-/// <param name="Enabled"><see cref="CommandType.SetAutoPickEnabled"/>: the new <see cref="AutoPickSettings.Enabled"/>.</param>
+/// <param name="Enabled">
+/// <see cref="CommandType.SetAutoPickEnabled"/>: the new <see cref="AutoPickSettings.Enabled"/>.
+/// <see cref="CommandType.SetAutoAcceptEnabled"/>: the new <see cref="AutoPickSettings.AutoAccept"/>.
+/// </param>
 /// <param name="QueueGroup"><see cref="CommandType.SetAutoPickPreset"/>: which preset (<see cref="AutoPickQueueGroups"/>).</param>
 /// <param name="Role"><see cref="CommandType.SetAutoPickPreset"/>: which preset (<see cref="AutoPickRoles"/>).</param>
 /// <param name="BanChampionIds">

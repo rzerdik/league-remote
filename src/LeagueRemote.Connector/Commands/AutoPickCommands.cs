@@ -14,6 +14,7 @@ internal sealed class AutoPickCommands(ILcuSession session, AutoPickService auto
     public override IReadOnlyDictionary<CommandType, RefreshSlice> Commands { get; } = new Dictionary<CommandType, RefreshSlice>
     {
         [CommandType.SetAutoPickEnabled] = RefreshSlice.None,
+        [CommandType.SetAutoAcceptEnabled] = RefreshSlice.None,
         [CommandType.SetAutoPickPreset] = RefreshSlice.None,
         [CommandType.PauseAutoPick] = RefreshSlice.None,
         [CommandType.ResumeAutoPick] = RefreshSlice.None,
@@ -25,6 +26,7 @@ internal sealed class AutoPickCommands(ILcuSession session, AutoPickService auto
         error = command.Type switch
         {
             CommandType.SetAutoPickEnabled => autoPick.SetEnabled(command.Enabled!.Value),
+            CommandType.SetAutoAcceptEnabled => autoPick.SetAutoAccept(command.Enabled!.Value),
             CommandType.SetAutoPickPreset => autoPick.SetPreset(new AutoPickPreset(
                 command.QueueGroup!,
                 command.Role!,

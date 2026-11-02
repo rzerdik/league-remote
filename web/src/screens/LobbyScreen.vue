@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { CrownIcon, LogOutIcon, PlayIcon, PlusIcon, SearchIcon, XIcon } from '@lucide/vue'
+import { CrownIcon, LogOutIcon, PlayIcon, PlusIcon, SearchIcon } from '@lucide/vue'
 import { computed, ref, watch } from 'vue'
+import { autoAcceptEnabled } from '../autoPick'
 import { partyChat } from '../chat'
 import { secondsSinceReading } from '../clock'
 import ModeList from '../components/ModeList.vue'
@@ -18,7 +19,9 @@ import Sheet from '../components/lr/Sheet.vue'
 import Tag from '../components/lr/Tag.vue'
 import { useBusy } from '../composables/useBusy'
 import type { LobbyMember, LobbyState } from '../contracts'
+import { profileIconUrl } from '../ddragon'
 import { formatSeconds } from '../format'
+import { friendOf } from '../friends'
 import { tapFeedback } from '../haptics'
 import { invitationStatus, invitingLobby } from '../invites'
 import { isPracticeTool, lobbyMap, lobbyTitle, partyMax, positionLabel } from '../labels'
@@ -63,11 +66,12 @@ const accessory = computed<ActionBarAccessory | null>(() => {
   const l = props.lobby
   if (l.isSearching) {
     const t = inQueue.value
+    const estimate = l.estimatedQueueTime ? `~${formatSeconds(l.estimatedQueueTime)}` : ''
     return {
       tone: 'orange',
       pulsing: true,
       title: 'Finding Match',
-      detail: l.estimatedQueueTime ? `~${formatSeconds(l.estimatedQueueTime)}` : undefined,
+      detail: [estimate, autoAcceptEnabled.value && 'Auto Accept'].filter(Boolean).join(' · ') || undefined,
       value: t != null ? formatSeconds(t) : undefined,
       valueLabel: t != null ? `Time in queue ${formatSeconds(t)}` : undefined,
     }
@@ -135,7 +139,7 @@ function memberLabel(m: LobbyMember) {
 </script>
 
 <template>
-  <div class="lr-content lr-content--accessory">
+  <div class="lr-content">
     <LargeTitle :title="title">
       <template v-if="map">{{ map }}</template>
       <!-- On the title row; docks into the nav bar once the title collapses, so it stays reachable while scrolling. -->
@@ -148,7 +152,7 @@ function memberLabel(m: LobbyMember) {
       <ListRow tappable text pop-up title="Mode" :value="title" :disabled="busy" @click="openModes" />
     </ListSection>
 
-    <LobbyRoles v-if="showRoles" :lobby="lobby" />
+    <LobbyRoles v-if="showRoles && !lobby.isSearching" :lobby="lobby" />
 
     <ListSection header="Party" :header-trailing="partyCount" bare>
       <TransitionGroup tag="ul" name="lr-rows" class="lr-list">
@@ -159,7 +163,7 @@ function memberLabel(m: LobbyMember) {
           :aria-label="memberLabel(m)"
           @click="openMember(m)"
         >
-          <template #lead><Avatar :name="m.riotId" /></template>
+          <template #lead><Avatar :name="m.riotId" :image-url="profileIconUrl(m.profileIconId)" /></template>
           <template #title>
             <span :class="{ 'lr-accent-text': m.isLocalPlayer }">{{ playerShortName(m.riotId) || 'Player' }}</span>
             <CrownIcon v-if="m.isLeader" class="lr-inline-symbol lr-accent-text" :stroke-width="2" role="img" aria-label="Party leader" />
@@ -178,7 +182,7 @@ function memberLabel(m: LobbyMember) {
           :value-tone="i.status.tone"
           :value-pulse="i.status.pending"
         >
-          <template #lead><Avatar :name="i.riotId" /></template>
+          <template #lead><Avatar :name="i.riotId" :image-url="profileIconUrl(friendOf(i)?.profileIconId ?? 0)" /></template>
         </ListRow>
         <ListRow v-if="canInvite" key="invite" tappable title="Invite Friends" @click="openInvite">
           <template #lead><Avatar :icon="PlusIcon" /></template>
@@ -196,11 +200,13 @@ function memberLabel(m: LobbyMember) {
 
     <ChatSheet v-model:open="chatOpen" :conversation="partyChat" />
 
+    <!-- Searching or waiting, the one action belongs to the status: on its capsule, so the bar takes one row. -->
     <ActionBar :accessory="accessory">
-      <LrButton v-if="lobby.isSearching" variant="glass" size="lg" block :leading="XIcon" :loading="busy" @click="cancel">
-        Cancel
-      </LrButton>
-      <template v-else-if="lobby.isLeader">
+      <template #accessory-action>
+        <LrButton v-if="lobby.isSearching" variant="gray" size="sm" :loading="busy" @click="cancel">Cancel</LrButton>
+        <LrButton v-else-if="!lobby.isLeader" variant="gray" size="sm" :loading="busy" @click="leave">Leave</LrButton>
+      </template>
+      <template v-if="lobby.isLeader && !lobby.isSearching">
         <LrButton
           variant="prominent"
           size="lg"
@@ -216,7 +222,6 @@ function memberLabel(m: LobbyMember) {
           Leave
         </LrButton>
       </template>
-      <LrButton v-else variant="glass" size="lg" block :leading="LogOutIcon" :loading="busy" @click="leave">Leave</LrButton>
     </ActionBar>
 
     <LrAlert v-model:open="leaveAlert" title="Leave Party?" action-label="Leave" destructive @action="confirmLeave" />

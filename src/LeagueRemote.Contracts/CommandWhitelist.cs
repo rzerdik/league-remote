@@ -27,8 +27,9 @@ public static class CommandWhitelist
             CommandType.CreateLobby when command.QueueId is not > 0 => "QueueId must be a positive integer.",
             CommandType.HoverChampion or CommandType.LockChampion or CommandType.BenchSwap when command.ChampionId is not > 0
                 => "ChampionId must be a positive integer.",
-            CommandType.HoverChampion or CommandType.LockChampion when command.ActionId is not > 0
-                => "ActionId must be a positive integer.",
+            // League numbers a draft's actions from 0, so 0 is a real action (the first ban of a custom game).
+            CommandType.HoverChampion or CommandType.LockChampion when command.ActionId is not >= 0
+                => "ActionId must not be negative.",
             CommandType.SetSummonerSpells when command.Spell1Id is not > 0 || command.Spell2Id is not > 0 => "Spell1Id and Spell2Id must be positive integers.",
             CommandType.SetSummonerSpells when command.Spell1Id == command.Spell2Id => "Summoner spells must differ.",
             CommandType.SelectRunePage when command.RunePageId is not > 0 => "RunePageId must be a positive integer.",
@@ -54,9 +55,9 @@ public static class CommandWhitelist
             // Optional here: empty or missing = a game of the local player's own history.
             CommandType.LoadMatchDetails when command.Puuid is { Length: > 0 } && !RiotIds.IsPuuid(command.Puuid)
                 => $"Puuid must be a puuid (max {RiotIds.MaxPuuidLength} chars).",
-            CommandType.SetAutoPickEnabled when command.Enabled is null => "Enabled is required.",
+            CommandType.SetAutoPickEnabled or CommandType.SetAutoAcceptEnabled when command.Enabled is null => "Enabled is required.",
             CommandType.SetAutoPickPreset => ValidateAutoPickPreset(command),
-            CommandType.CancelAutoPickAction when command.ActionId is <= 0 => "ActionId must be a positive integer.",
+            CommandType.CancelAutoPickAction when command.ActionId is < 0 => "ActionId must not be negative.",
             CommandType.SelectSkin when command.SkinId is not > 0 => "SkinId must be a positive integer.",
             _ => null,
         };

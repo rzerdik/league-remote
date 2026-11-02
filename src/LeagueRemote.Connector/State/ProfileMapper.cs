@@ -199,7 +199,6 @@ internal static class ProfileMapper
     /// One <see cref="MatchTeam"/> per Arena duo, <see cref="MatchTeam.TeamId"/> = <c>playerSubteamId</c>: the own duo
     /// first, then by placement (<c>subteamPlacement</c>). <see cref="MatchTeam.Win"/> as the LCU says per player
     /// (<c>stats.win</c>: a top-half placement); no objectives or bans (the LCU keeps those per side, not per duo).
-    /// Not verified live: no Arena game recorded yet.
     /// </summary>
     private static List<MatchTeam> ArenaTeams(List<JsonElement> participants, Dictionary<int, JsonElement> identities, Func<JsonElement, bool> isMe)
     {
@@ -365,6 +364,13 @@ internal static class ProfileMapper
 
     /// <summary>A named teammate's puuid as published (<see cref="MatchParticipant.Puuid"/>); "" when it isn't a usable puuid.</summary>
     internal static string TeammatePuuid(string? puuid) => RiotIds.IsPuuid(puuid) ? puuid! : "";
+
+    /// <summary>
+    /// Another player's <see cref="Ranks"/>. League answers <c>losses: 0</c> for anyone but the local player, so 0 here means
+    /// "not told", never "unbeaten" (<see cref="RankedQueueStats.Losses"/>). Looking yourself up still gets the real number.
+    /// </summary>
+    public static IReadOnlyList<RankedQueueStats> PlayerRanks(JsonElement? rankedStats) =>
+        [.. Ranks(rankedStats).Select(q => q.Losses > 0 ? q : q with { Losses = null })];
 
     private static RankedQueueStats MapQueue(JsonElement q)
     {

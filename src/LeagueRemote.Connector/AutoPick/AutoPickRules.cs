@@ -65,8 +65,7 @@ internal static class AutoPickRules
             .Select(a => a.ChampionId)
             .ToHashSet();
         var enemyLocks = actions.Where(a => a.Type == ChampSelectAction.Pick && a.Completed && !a.IsAlly).Select(a => a.ChampionId).ToHashSet();
-        // Not myTeam's championId for the local player: whether League mirrors a ban hover there isn't verified, and our own
-        // pending ban must never look like one of our picks.
+        // Not myTeam's championId for the local player: our own pending ban must never look like one of our picks.
         var myPicks = actions.Where(a => a.Type == ChampSelectAction.Pick && a.ActorCellId == localCell).Select(a => a.ChampionId)
             .Append(me?.ChampionPickIntent ?? 0)
             .Where(id => id > 0)
@@ -137,22 +136,17 @@ internal static class AutoPickRules
         Choices(kind, preset).Where(id => IsValid(kind, id, facts, preset, ids)).Select(id => (int?)id).FirstOrDefault();
 
     /// <summary>
-    /// When a hover at <paramref name="hoverAt"/> completes: min(hover + <see cref="AutoPickState.AutoLockDelay"/>, phase end −
-    /// <see cref="AutoPickState.CompletionMargin"/>), phase end = <paramref name="observedAt"/> (when the session was read) +
-    /// the timer's time left at that moment (<see cref="ChampSelectTimer.TimeLeftAt"/>: League's value is as of its
-    /// <c>internalNowInEpochMs</c>, which can be well before the read); an infinite timer has no phase end. Null when that
-    /// isn't after the hover (hover only).
+    /// When a hover at <paramref name="hoverAt"/> completes: phase end − <see cref="AutoPickState.CompletionMargin"/>, phase
+    /// end = <paramref name="observedAt"/> (when the session was read) + the timer's time left at that moment
+    /// (<see cref="ChampSelectTimer.TimeLeftAt"/>: League's value is as of its <c>internalNowInEpochMs</c>, which can be well
+    /// before the read). An infinite timer has no phase end: hover + <see cref="AutoPickState.AutoLockDelay"/>. Null when
+    /// that isn't after the hover (hover only).
     /// </summary>
     public static DateTimeOffset? CompletesAt(DateTimeOffset hoverAt, DateTimeOffset observedAt, ChampSelectFacts facts)
     {
-        var completesAt = hoverAt + AutoPickState.AutoLockDelay;
-        if (!facts.Timer.IsInfinite)
-        {
-            var latest = observedAt + TimeSpan.FromMilliseconds(facts.Timer.TimeLeftAt(observedAt)) - AutoPickState.CompletionMargin;
-            if (latest < completesAt)
-                completesAt = latest;
-        }
-
+        if (facts.Timer.IsInfinite)
+            return hoverAt + AutoPickState.AutoLockDelay;
+        var completesAt = observedAt + TimeSpan.FromMilliseconds(facts.Timer.TimeLeftAt(observedAt)) - AutoPickState.CompletionMargin;
         return completesAt > hoverAt ? completesAt : null;
     }
 

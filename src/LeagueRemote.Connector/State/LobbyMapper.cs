@@ -31,7 +31,8 @@ internal static class LobbyMapper
                 Text.NullIfBlank(m.Str("firstPositionPreference")),
                 Text.NullIfBlank(m.Str("secondPositionPreference")),
                 local is { } l && IsSameMember(m, l),
-                m.Str("puuid") ?? ""))
+                m.Str("puuid") ?? "",
+                Math.Max(0, m.Int("summonerIconId"))))
             .ToList();
 
         var gameConfig = GameConfig(lobby);

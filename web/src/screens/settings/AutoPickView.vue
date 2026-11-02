@@ -4,9 +4,10 @@ import { computed } from 'vue'
 import {
   autoPickEnabled,
   autoPickSettings,
+  findPreset,
   GROUP_INFO,
   resumeAutoPick,
-  roleSummary,
+  roleSummaryLines,
   rolesFor,
   roleTitle,
   setAutoPickEnabled,
@@ -17,19 +18,19 @@ import LargeTitle from '../../components/lr/LargeTitle.vue'
 import ListRow from '../../components/lr/ListRow.vue'
 import ListSection from '../../components/lr/ListSection.vue'
 import LrButton from '../../components/lr/LrButton.vue'
+import type { MenuItem } from '../../components/lr/LrMenu.vue'
 import LrSwitch from '../../components/lr/LrSwitch.vue'
-import StatusLine from '../../components/lr/StatusLine.vue'
 import { useBusy } from '../../composables/useBusy'
-import { AutoPickLockDelayMs, AutoPickQueueGroups, type AutoPickQueueGroup, type AutoPickRole } from '../../contracts'
+import { AutoPickQueueGroups, type AutoPickQueueGroup, type AutoPickRole } from '../../contracts'
 import { tapFeedback } from '../../haptics'
-import type { StatusTone } from '../../labels'
 import { nav } from '../../navigation'
 import { liveAutoPick, store } from '../../store'
 
 /**
- * Settings › Auto Pick & Ban (a pushed view): the master switch, a pause that is still on, and one row per preset
- * (queue group × role) with what it sets; a row opens its editor sheet (`nav.autoPickEdit`). The presets live on the
- * PC (the connector runs the automation), so they show only while it is online.
+ * Settings › Auto Pick & Ban (a pushed view): the master switch, a pause that is still on, and per queue
+ * group its Any Role row plus the roles with their own preset, each with what it sets; a row opens its editor sheet
+ * (`nav.autoPickEdit`), and Add Role… opens it for a role without a preset. The presets live on the PC (the connector
+ * runs the automation), so they show only while it is online.
  */
 const toggle = useBusy()
 const enabled = computed({
@@ -44,17 +45,24 @@ function onResume() {
   void resume.run(resumeAutoPick)
 }
 
-const status = computed<{ tone: StatusTone; text: string }>(() => {
-  if (!enabled.value) return { tone: 'gray', text: 'Off' }
-  return paused.value ? { tone: 'orange', text: 'Paused for this game' } : { tone: 'green', text: 'On' }
-})
-
-const delay = AutoPickLockDelayMs / 1000
-const intro = `When your turn comes, your PC hovers your first choice and locks it in ${delay} seconds later, unless you pick another champion or tap Cancel. It runs on your PC, even with your phone locked.`
+const intro = 'Hovers your first choice and locks it in during your turn’s last second, unless you pick or tap Cancel.'
 const FALLBACK = 'Any Role is used when you have no role, and fills in whatever a role leaves empty.'
-function footer(g: AutoPickQueueGroup) {
-  return g === 'aram' ? GROUP_INFO[g].queues : `${GROUP_INFO[g].queues} ${FALLBACK}`
-}
+
+/** Per group: the rows to show (Any Role always, a role once it has a preset) and the Add Role… menu for the rest. */
+const groups = computed(() =>
+  AutoPickQueueGroups.map((id) => {
+    const shown = (r: AutoPickRole) => r === 'ANY' || !!findPreset(autoPickSettings.value, id, r)
+    const roles = rolesFor(id)
+    return {
+      id,
+      roles: roles.filter(shown),
+      // The menu gives the selection haptic itself. A preset left empty in the editor just doesn't appear.
+      addItems: roles
+        .filter((r) => !shown(r))
+        .map((role): MenuItem => ({ label: roleTitle(role, id), onSelect: () => (nav.autoPickEdit = { group: id, role }) })),
+    }
+  }),
+)
 
 function edit(group: AutoPickQueueGroup, role: AutoPickRole) {
   tapFeedback()
@@ -64,9 +72,7 @@ function edit(group: AutoPickQueueGroup, role: AutoPickRole) {
 
 <template>
   <div class="lr-content lr-swipe-follow">
-    <LargeTitle title="Auto Pick & Ban">
-      <StatusLine v-if="autoPickSettings" :tone="status.tone" :text="status.text" />
-    </LargeTitle>
+    <LargeTitle title="Auto Pick & Ban" />
 
     <template v-if="!autoPickSettings">
       <EmptyState v-if="store.syncing.autoPick" busy title="Loading" />
@@ -80,7 +86,7 @@ function edit(group: AutoPickQueueGroup, role: AutoPickRole) {
 
     <template v-else>
       <ListSection :footer="intro">
-        <ListRow title="Auto Pick & Ban" :icon="WandSparklesIcon" tile-color="orange" :busy="toggle.busy.value">
+        <ListRow title="Enabled" :busy="toggle.busy.value">
           <template #trailing>
             <LrSwitch v-if="!toggle.busy.value" v-model="enabled" aria-label="Auto Pick & Ban" />
           </template>
@@ -101,19 +107,32 @@ function edit(group: AutoPickQueueGroup, role: AutoPickRole) {
         </ListRow>
       </ListSection>
 
-      <ListSection v-for="g in AutoPickQueueGroups" :key="g" :header="GROUP_INFO[g].title" :footer="footer(g)">
+      <ListSection v-for="g in groups" :key="g.id" :header="GROUP_INFO[g.id].title" :footer="GROUP_INFO[g.id].queues">
         <ListRow
-          v-for="r in rolesFor(g)"
+          v-for="r in g.roles"
           :key="r"
-          :title="roleTitle(r, g)"
-          :subtitle="roleSummary(autoPickSettings, g, r)"
+          :title="roleTitle(r, g.id)"
           wrap
           chevron
           tappable
-          :aria-label="`${GROUP_INFO[g].title}, ${roleTitle(r, g)}: ${roleSummary(autoPickSettings, g, r)}`"
-          @click="edit(g, r)"
+          :aria-label="`${GROUP_INFO[g.id].title}, ${roleTitle(r, g.id)}: ${roleSummaryLines(autoPickSettings, g.id, r).join(', ')}`"
+          @click="edit(g.id, r)"
+        >
+          <template #subtitle>
+            <span v-for="line in roleSummaryLines(autoPickSettings, g.id, r)" :key="line" class="lr-row-line">{{ line }}</span>
+          </template>
+        </ListRow>
+        <ListRow
+          v-if="g.addItems.length"
+          title="Add Role…"
+          text
+          :menu="g.addItems"
+          menu-title="Add Role"
+          :aria-label="`Add Role to ${GROUP_INFO[g.id].title}`"
         />
       </ListSection>
+
+      <ListSection bare :footer="FALLBACK" />
     </template>
 
     <AutoPickPresetSheet :target="autoPickSettings ? nav.autoPickEdit : null" @close="nav.autoPickEdit = null" />

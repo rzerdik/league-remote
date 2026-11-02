@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import { TrophyIcon, UserIcon, UsersIcon } from '@lucide/vue'
-import type { Component } from 'vue'
-import type { TileColor } from '../../components/lr/IconTile.vue'
 import ListRow from '../../components/lr/ListRow.vue'
 import ListSection from '../../components/lr/ListSection.vue'
-import { RankedQueueTypes, type RankedQueueStats } from '../../contracts'
+import RankIcon from '../../components/lr/RankIcon.vue'
+import type { RankedQueueStats } from '../../contracts'
 import { plural, record, winRate } from '../../format'
 import { rankLabel, rankedQueueName } from '../../labels'
 
@@ -13,12 +11,6 @@ import { rankLabel, rankedQueueName } from '../../labels'
  * tier. Each row: the rank ("Gold II", "Unranked", "Placements"), the queue, and at the end LP over wins / losses.
  */
 defineProps<{ ranks: RankedQueueStats[] }>()
-
-function tile(q: RankedQueueStats): { icon: Component; color: TileColor } {
-  if (q.queueType === RankedQueueTypes.solo) return { icon: UserIcon, color: 'blue' }
-  if (q.queueType === RankedQueueTypes.flex) return { icon: UsersIcon, color: 'indigo' }
-  return { icon: TrophyIcon, color: 'purple' }
-}
 
 function title(q: RankedQueueStats): string {
   return rankLabel(q.tier, q.division) || (q.isProvisional && q.provisionalGamesRemaining > 0 ? 'Placements' : 'Unranked')
@@ -31,8 +23,9 @@ function headline(q: RankedQueueStats): string {
   return ''
 }
 
-/** "34W 28L · 55%"; '' without games. */
+/** "34W 28L · 55%"; "92 wins" when League doesn't report the losses (other players); '' without games. */
 function recordLine(q: RankedQueueStats): string {
+  if (q.losses === null) return q.wins > 0 ? plural(q.wins, 'win') : ''
   const rate = winRate(q.wins, q.losses)
   return rate ? `${record(q.wins, q.losses)} · ${rate}` : ''
 }
@@ -52,9 +45,8 @@ function series(q: RankedQueueStats): string {
       wrap
       :title="title(q)"
       :subtitle="[rankedQueueName(q.queueType), series(q)].filter(Boolean).join(' · ')"
-      :icon="tile(q).icon"
-      :tile-color="tile(q).color"
     >
+      <template #lead><RankIcon :tier="q.tier" /></template>
       <template v-if="headline(q) || recordLine(q)" #trailing>
         <span class="lr-row-meta">
           <span v-if="headline(q)" class="body rank-lp">{{ headline(q) }}</span>

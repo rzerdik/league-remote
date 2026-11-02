@@ -101,7 +101,6 @@
   --form-chip: min(1.2941rem, 33px);
   --profile-icon: min(3.7647rem, 96px);
   --stat-min: min(3.7647rem, 96px);
-  --grid-tile-min: min(4.4706rem, 114px);
   --code-box: min(3.7647rem, 96px);
   --code-dash: min(0.7059rem, 18px);
   --tabbar-h: 62px;
@@ -123,7 +122,7 @@
   --edge-glow-core: 48px;
   --edge-glow-halo: 112px;
   --sheet-peek: min(12.4706rem, 318px);
-  --picker-peek: min(16.8235rem, 429px);
+  --picker-peek: min(17.4118rem, 444px);
   --tab-symbol: 24px;
   --banner-min: min(3.7647rem, 96px);
   --skin-card-h: 460px;
@@ -177,6 +176,7 @@
   --font-size-caption-1: min(0.7059rem, 43px);
   --font-size-caption-2: min(0.6471rem, 40px);
   --font-size-clock-hero: min(3.7647rem, 88px);
+  --font-size-clock-card: min(2.5882rem, 72px);
   --font-size-countdown: min(3.2941rem, 72px);
   --font-size-timer: min(1.6471rem, 40px);
   --font-size-code-digit: min(1.6471rem, 36px);
@@ -451,6 +451,14 @@ html {
   font-family: var(--font-sans);
   font-size: var(--font-size-clock-hero);
   line-height: min(4rem, 93.5px);
+  font-weight: 300;
+  letter-spacing: calc(0.0100em * var(--lr-tracking));
+  font-variant-numeric: tabular-nums;
+}
+.clock-card {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-clock-card);
+  line-height: min(2.8235rem, 78.5455px);
   font-weight: 300;
   letter-spacing: calc(0.0100em * var(--lr-tracking));
   font-variant-numeric: tabular-nums;

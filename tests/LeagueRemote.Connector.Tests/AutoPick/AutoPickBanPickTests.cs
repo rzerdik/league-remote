@@ -111,14 +111,14 @@ public sealed class AutoPickBanPickTests
     // --- Ban ------------------------------------------------------------------------------
 
     [Fact]
-    public async Task Ban_hovers_the_first_valid_choice_and_completes_it_after_the_grace_period()
+    public async Task Ban_hovers_the_first_valid_choice_and_completes_it_in_the_last_second_of_the_turn()
     {
         using var h = new AutoPickHarness(Draft());
 
         await h.ObserveAsync();
 
         Assert.Equal([GetSession, Hover11Zed, Summary], h.Lcu.Requests);
-        Assert.Equal(new AutoPickPending(AutoPickActionKinds.Ban, 11, 238, Start + AutoPickState.AutoLockDelay), h.Run.Pending);
+        Assert.Equal(new AutoPickPending(AutoPickActionKinds.Ban, 11, 238, Start + TimeSpan.FromSeconds(3)), h.Run.Pending);
         Assert.Equal(AutoPickRunStatus.Active, h.Run.Status);
 
         await h.AdvanceAsync(2.9);
@@ -351,7 +351,7 @@ public sealed class AutoPickBanPickTests
     public async Task Too_little_time_left_hovers_only()
     {
         using var h = new AutoPickHarness(Draft());
-        h.Lcu.SetTimer("BAN_PICK", 1400);
+        h.Lcu.SetTimer("BAN_PICK", 900);
 
         await h.ObserveAsync();
         await h.AdvanceAsync(5);
@@ -362,10 +362,11 @@ public sealed class AutoPickBanPickTests
     }
 
     [Theory]
-    [InlineData(4000, false, 2.5)] // phase end − margin comes first
-    [InlineData(30000, false, 3)] // the grace period comes first
-    [InlineData(0, true, 3)] // infinite timer: just the grace period
-    public async Task Completion_is_the_grace_period_bounded_by_the_phase_end(double timeLeftMs, bool infinite, double seconds)
+    [InlineData(4000, false, 3)]
+    [InlineData(30000, false, 29)] // a full turn: the whole of it stays yours
+    [InlineData(1500, false, 0.5)]
+    [InlineData(0, true, 3)] // infinite timer: no last second, a short wait instead
+    public async Task Completion_is_one_second_before_the_phase_end(double timeLeftMs, bool infinite, double seconds)
     {
         using var h = new AutoPickHarness(Draft());
         h.Lcu.SetTimer("BAN_PICK", timeLeftMs, infinite);
@@ -380,14 +381,14 @@ public sealed class AutoPickBanPickTests
     [Fact]
     public async Task Phase_end_counts_from_leagues_timer_anchor_not_from_the_read()
     {
-        // League's 6 s were left 3 s before the read: the phase ends 3 s after it, so the lock comes at 1.5 s, not 3 s.
+        // League's 6 s were left 3 s before the read: the phase ends 3 s after it, so the lock comes at 2 s, not 5 s.
         using var h = new AutoPickHarness(Draft());
         h.Lcu.SetTimer("BAN_PICK", 6000);
         h.Lcu.Session["timer"]!["internalNowInEpochMs"] = Start.ToUnixTimeMilliseconds() - 3000;
 
         await h.ObserveAsync();
 
-        Assert.Equal(Start + TimeSpan.FromSeconds(1.5), h.Run.Pending!.CompletesAt);
+        Assert.Equal(Start + TimeSpan.FromSeconds(2), h.Run.Pending!.CompletesAt);
     }
 
     [Fact]

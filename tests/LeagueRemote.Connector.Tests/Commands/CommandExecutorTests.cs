@@ -66,6 +66,22 @@ public sealed class CommandExecutorTests
     }
 
     [Fact]
+    public async Task LockChampion_runs_on_action_id_0_the_first_action_of_a_draft()
+    {
+        var firstAction = PickInProgress.Replace("\"id\": 21", "\"id\": 0");
+        var handler = LockingLcu(
+            completesOn: "PATCH",
+            GameStateSamples.ChampSelectSession.Replace(PickInProgress, firstAction),
+            firstAction,
+            PickCompleted.Replace("\"id\": 21", "\"id\": 0"));
+
+        var result = await FakeLcuSession.ExecuteAsync(handler, new RemoteCommand("r1", CommandType.LockChampion, ChampionId: 222, ActionId: 0));
+
+        Assert.True(result.Success, result.Error);
+        Assert.Contains("PATCH /lol-champ-select/v1/session/actions/0 {\"championId\":222,\"completed\":true}", handler.Requests);
+    }
+
+    [Fact]
     public async Task HoverChampion_refuses_an_action_that_is_no_longer_the_current_one()
     {
         var handler = LockingLcu(completesOn: null);

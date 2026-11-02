@@ -81,6 +81,11 @@ export default defineConfig({
         target: devConnector,
         changeOrigin: true,
       },
+      // The League client's own rank emblems.
+      '/rank-emblems': {
+        target: devConnector,
+        changeOrigin: true,
+      },
     },
   },
 })

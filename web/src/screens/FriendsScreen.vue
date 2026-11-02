@@ -117,7 +117,6 @@ const hasRequests = computed(() => incomingRequests.value.length + outgoingReque
           tappable
           chevron
           :title="`Show ${s.friends.length} Offline`"
-          variant="accent"
           @click="showOffline = true"
         />
         <template v-else>
@@ -132,7 +131,6 @@ const hasRequests = computed(() => incomingRequests.value.length + outgoingReque
           <ListRow
             v-if="s.id === 'offline' && showOffline && !query.trim()"
             tappable
-            variant="accent"
             title="Hide Offline"
             @click="showOffline = false"
           />

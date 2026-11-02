@@ -34,10 +34,10 @@ The PC saves the rune page's name with the preset, so the phone can show it whil
    new role, unless you changed them.
 2. When your ban or pick turn starts, the PC hovers the first valid choice. A choice is valid if it is available and
    not already banned, taken or hovered by a teammate.
-3. It locks that choice after 3 seconds, or 1.5 seconds before the timer ends if that is sooner. With less time left it
-   only hovers.
-4. The phone shows "Auto-locking Ahri in 3 s" with **Cancel**.
-5. If your choice becomes invalid before the lock, it hovers the next valid one and waits again.
+3. It locks that choice in the last second of your turn, 1 second before the timer ends. With less time left it only
+   hovers. A timer that never runs out (some custom games) locks after 3 seconds.
+4. The phone shows "Auto-locking Ahri" with the seconds left and **Cancel**.
+5. If your choice becomes invalid before the lock, it hovers the next valid one and locks it at the same moment.
 
 Your own hover or lock always wins. Nothing is retried in a loop. If a rune page is gone or a spell is unknown, it logs
 that and moves on.
@@ -53,6 +53,19 @@ that and moves on.
 
 Trades and pick-order swaps after locking are never touched.
 
+## Auto Accept
+
+With **Auto Accept** on (Settings, Automation), the PC accepts the ready check for you. It is **off by default**, and
+separate from the auto pick switch and from Pause.
+
+- It waits 2 seconds after the ready check appears, so you have a moment to decline. It then reads the ready check
+  again and accepts only if it is still open, you haven't answered and the setting is still on.
+- It tries once per ready check. If the accept fails, the PC logs it and you can still answer yourself. The next ready
+  check (someone declined, you queue again) is a new one.
+- Turning it off during the wait cancels the accept for that ready check. A ready check that appeared while it was off is
+  left to you, even if you turn it on then.
+- The "Match found" notification still goes out.
+
 ## Storage
 
 Presets are saved in `%LOCALAPPDATA%\league-remote\auto-pick.json`:
@@ -60,7 +73,7 @@ Presets are saved in `%LOCALAPPDATA%\league-remote\auto-pick.json`:
 ```json
 { "version": 1, "settings": { "enabled": true, "presets": [ { "queueGroup": "draft", "role": "ANY",
   "banChampionIds": [238], "pickChampionIds": [103, 99], "spell1Id": 4, "spell2Id": 14,
-  "runePageId": 0, "runePageName": "" } ] } }
+  "runePageId": 0, "runePageName": "" } ], "autoAccept": false } }
 ```
 
 Writes are atomic. An unreadable file or an unknown version is moved to `auto-pick.json.corrupt-<time>` and the
@@ -71,7 +84,8 @@ defaults are used. Invalid presets are dropped on load.
 The contract is `src/LeagueRemote.Contracts/AutoPick.cs`, mirrored in `web/src/contracts/autoPick.ts`. The rules live
 in the `AutoPickState` XML docs and `AutoPickRules`. It is its own state slice (`AutoPickState`).
 
-- It reuses the existing typed LCU calls for hover, lock, spells and rune page. It adds none.
+- It reuses the existing typed LCU calls for hover, lock, spells, rune page and accepting the ready check. It adds none.
+- Auto Accept is `AutoAcceptService`. It follows the published state and shares the `AutoPickState` slice.
 - The settings commands work without a running client. Their rules are in [commands.md](commands.md).
 - Timing uses `TimeProvider`, so tests run on a fake clock.
 - The phone hides the feature until it receives an `AutoPickState`.

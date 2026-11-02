@@ -159,6 +159,11 @@ public static class RankedQueueTypes
 /// <param name="Tier">"IRON" … "CHALLENGER"; empty when unranked (LCU "" or "NONE").</param>
 /// <param name="Division">"I"–"IV"; empty when unranked or for apex tiers (LCU sends "NA").</param>
 /// <param name="LeaguePoints">LP in the current division.</param>
+/// <param name="Wins">Ranked wins this season.</param>
+/// <param name="Losses">
+/// Ranked losses this season; null when League doesn't say. It reports 0 for every other player, in all its ranked
+/// endpoints (checked read-only against a live client, Nov 2026), so a win rate can't be worked out for them.
+/// </param>
 /// <param name="IsProvisional">Still in placement games.</param>
 /// <param name="ProvisionalGamesRemaining">Placement games left; 0 when placed.</param>
 /// <param name="Promos">
@@ -175,7 +180,7 @@ public sealed record RankedQueueStats(
     string Division,
     int LeaguePoints,
     int Wins,
-    int Losses,
+    int? Losses,
     bool IsProvisional,
     int ProvisionalGamesRemaining,
     string Promos,

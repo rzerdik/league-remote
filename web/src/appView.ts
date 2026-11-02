@@ -2,8 +2,8 @@ import { computed } from 'vue'
 import { conversationById, conversationTitle } from './chat'
 import { isInGame, isLobbyPhase } from './gameflow'
 import { lobbyTitle } from './labels'
-import { closeConversation, closeMatch, closePlayer, closePlayerMatch, closeSettingsView, nav } from './navigation'
-import { postGame, postGamePhase, postGameTitle } from './postGame'
+import { closeConversation, closeMatch, closePlayer, closePlayerMatch, closeSettingsView, nav, SETTINGS_VIEW_TITLE } from './navigation'
+import { postGamePhase } from './postGame'
 import { matchById, playerMatchById, playerProfile, resultLabel } from './profile'
 import { playerShortName } from './riotId'
 import { liveGameState, liveState as live, store } from './store'
@@ -72,7 +72,7 @@ export const navTitle = computed(() => {
     case 'friends':
       return 'Friends'
     case 'settings':
-      return openSettings.value === 'autopick' ? 'Auto Pick & Ban' : 'Settings'
+      return openSettings.value ? SETTINGS_VIEW_TITLE[openSettings.value] : 'Settings'
     case 'lobby':
       return live.value?.lobby ? lobbyTitle(live.value.lobby) : 'Lobby'
     case 'champselect':
@@ -81,7 +81,7 @@ export const navTitle = computed(() => {
       // From the store, not liveGame/: that module belongs to the lazily loaded In Game screen.
       return liveGameState.value?.available && liveGameState.value.result ? 'Game Over' : 'In Game'
     case 'postgame':
-      return postGame.value ? postGameTitle(postGame.value) : 'Game Over'
+      return 'Game Over'
     default:
       return 'Play'
   }

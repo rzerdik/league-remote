@@ -100,6 +100,8 @@ export type CommandType =
    * it is your own.
    */
   | 'SearchPlayer'
+  /** Needs enabled. Auto Accept on/off (saved on the PC); off cancels a waiting accept. Works without a League client. */
+  | 'SetAutoAcceptEnabled'
 
 /** SwapKind */
 export type SwapKind = 'PickOrder' | 'Position' | 'Trade'
@@ -144,7 +146,7 @@ export interface RemoteCommand {
   tagLine?: string | null
   /** LoadMatchDetails: MatchSummary.gameId (of ProfileState.matches, or with puuid of that PlayerProfile.matches). */
   gameId?: number | null
-  /** SetAutoPickEnabled: the new AutoPickSettings.enabled. */
+  /** SetAutoPickEnabled: the new AutoPickSettings.enabled; SetAutoAcceptEnabled: the new AutoPickSettings.autoAccept. */
   enabled?: boolean | null
   /** SetAutoPickPreset: which preset (AutoPickQueueGroups / AutoPickRoles) and its lists in priority order. */
   queueGroup?: AutoPickQueueGroup | null

@@ -82,6 +82,7 @@ These need no running client. They are saved on the PC. See [auto-pick.md](auto-
 | `SetAutoPickPreset(queueGroup, role, banChampionIds, pickChampionIds, spell1Id, spell2Id, runePageId)` | Saves one preset. Up to 5 bans and 10 picks. Both spells or neither. Nothing set removes the preset. |
 | `PauseAutoPick`, `ResumeAutoPick` | No automation for this champ select (or the next, if sent before it starts). |
 | `CancelAutoPickAction(actionId?)` | Does not complete the pending auto ban or lock-in. The hover stays. |
+| `SetAutoAcceptEnabled(enabled)` | Turns Auto Accept on or off. Off cancels an accept that is still waiting. |
 
 ## Keeping this list true
 

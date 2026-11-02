@@ -129,6 +129,11 @@ export function rankLabel(tier: string, division: string): string {
   return division ? `${name} ${division}` : name
 }
 
+/** The client's emblem for a tier, served by the PC app (RankEmblemLibrary); null without a known tier. */
+export function rankEmblemUrl(tier: string): string | null {
+  return TIERS[tier] ? `/rank-emblems/${tier.toLowerCase()}.png` : null
+}
+
 const RANKED_QUEUES: Record<string, string> = {
   RANKED_SOLO_5x5: 'Ranked Solo/Duo',
   RANKED_FLEX_SR: 'Ranked Flex',

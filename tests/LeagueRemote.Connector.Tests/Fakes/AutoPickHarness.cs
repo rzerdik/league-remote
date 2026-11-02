@@ -19,7 +19,10 @@ internal sealed class AutoPickHarness : IDisposable
     /// <summary>The hover of the draft ban turn: ban action 11, Zed.</summary>
     public const string Hover11Zed = "PATCH /lol-champ-select/v1/session/actions/11 {\"championId\":238}";
 
-    public const string Summary = "GET /lol-game-data/assets/v1/champion-summary.json";
+    /// <summary>Time left in the turn when a test starts: the action completes 3 s in, the turn's last second.</summary>
+    public const int TurnSeconds = 4;
+
+    public const string Summary ="GET /lol-game-data/assets/v1/champion-summary.json";
 
     public const string GetSession = "GET /lol-champ-select/v1/session";
 
@@ -28,6 +31,9 @@ internal sealed class AutoPickHarness : IDisposable
     public AutoPickHarness(AutoPickSettings? settings = null, string session = AutoPickSamples.DraftBanTurn)
     {
         Lcu = new DraftLcu(session);
+        // The automation completes in a turn's last second: a turn that ends soon keeps these tests' clocks short.
+        if (Lcu.Session["timer"]!["phase"]!.GetValue<string>() == "BAN_PICK")
+            Lcu.SetTimer("BAN_PICK", TurnSeconds * 1000);
         _http = TestLcu.LcuHttp(Lcu);
         Client = new LcuClient(_http);
         Settings = new AutoPickSettingsStore(Folder);

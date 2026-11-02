@@ -6,7 +6,7 @@ namespace LeagueRemote.Connector.Server;
 
 /// <summary>
 /// The app's license and the third-party notices (repo root <c>LICENSE</c> and <c>THIRD_PARTY_NOTICES.md</c>, embedded by
-/// the csproj), as plain text for the phone's Settings › Licenses: the exe is downloaded alone, so they travel inside it.
+/// the csproj), as plain text for the phone's Settings › About › Licenses: the exe is downloaded alone, so they travel inside it.
 /// </summary>
 internal static class Licenses
 {

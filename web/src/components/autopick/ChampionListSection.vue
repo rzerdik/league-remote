@@ -98,7 +98,7 @@ function add(id: number) {
         </template>
       </ListRow>
     </TransitionGroup>
-    <ListRow v-if="!full" :title="addLabel" variant="accent" tappable text @click="pickerOpen = true" />
+    <ListRow v-if="!full" :title="addLabel" tappable text @click="pickerOpen = true" />
   </ListSection>
 
   <ChampionPickerSheet

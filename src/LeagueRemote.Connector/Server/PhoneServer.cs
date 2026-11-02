@@ -71,7 +71,7 @@ internal static class PhoneServer
         return builder;
     }
 
-    /// <summary>Security headers, the LAN front, the embedded PWA, <c>/hub</c>, <c>/healthz</c>, <c>/licenses.txt</c>, <c>/client-sounds</c> and the SPA fallback.</summary>
+    /// <summary>Security headers, the LAN front, the embedded PWA, <c>/hub</c>, <c>/healthz</c>, <c>/licenses.txt</c>, <c>/client-sounds</c>, <c>/rank-emblems</c> and the SPA fallback.</summary>
     public static WebApplication MapPhoneServer(this WebApplication app)
     {
         var options = app.Services.GetRequiredService<IOptions<ServerOptions>>().Value;
@@ -98,6 +98,7 @@ internal static class PhoneServer
         app.MapLicenses();
         app.MapHub<PhoneHub>(HubMethods.Path);
         app.MapClientSounds(app.Services.GetService<ClientSoundLibrary>());
+        app.MapRankEmblems(app.Services.GetService<RankEmblemLibrary>());
         app.MapFallbackToFile("index.html", staticFiles); // SPA routes (and the /?pair= deep link) → index.html
         return app;
     }

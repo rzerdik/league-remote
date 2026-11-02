@@ -78,6 +78,7 @@ internal static class Program
         services.AddSingleton<ChampSelect.ChampSelectLock>();
         services.AddSingleton<AutoPickService>();
         services.AddHostedService(sp => sp.GetRequiredService<AutoPickService>());
+        services.AddHostedService<AutoAcceptService>();
         services.AddSingleton<ILcuProcessInspector, WmiLcuProcessInspector>();
         services.AddSingleton<LcuDiscovery>();
         services.AddSingleton<LcuEventSocket>();
@@ -97,6 +98,8 @@ internal static class Program
                 sp.GetRequiredService<ILogger<ClientSoundLibrary>>(),
                 (path, ct) => session.Client is { } client ? client.GetGameDataAudioAsync(path, ct) : Task.FromResult<byte[]?>(null));
         });
+        services.AddSingleton(sp => new RankEmblemLibrary(
+            sp.GetRequiredService<IOptions<LcuOptions>>().Value.InstallPath, sp.GetRequiredService<ILogger<RankEmblemLibrary>>()));
         builder.AddPhoneServer(new PhoneServerSettings(AppDataFolder.Root, IPAddress.Any));
 
         using var app = builder.Build();

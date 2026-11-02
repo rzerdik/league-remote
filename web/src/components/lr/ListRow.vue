@@ -23,7 +23,7 @@ const props = defineProps<{
   valuePulse?: boolean
   icon?: Component
   tileColor?: TileColor
-  variant?: 'default' | 'accent' | 'danger' | 'you'
+  variant?: 'default' | 'danger' | 'you'
   tappable?: boolean
   chevron?: boolean
   popUp?: boolean

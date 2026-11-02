@@ -9,21 +9,20 @@ import ListSection from '../components/lr/ListSection.vue'
 import LrButton from '../components/lr/LrButton.vue'
 import { useBusy } from '../composables/useBusy'
 import { loadDdragonExtras } from '../ddragon'
-import { formatSeconds } from '../format'
 import { tapFeedback } from '../haptics'
 import { openMatch } from '../navigation'
-import { canAnswer, leavePostGame, myLine, playAgain, postGame, postGamePhase, postGameQueue, postGameTitle } from '../postGame'
+import { canAnswer, leavePostGame, myLine, playAgain, postGame, postGamePhase } from '../postGame'
 import { matchById } from '../profile'
 import { enemyNumbers } from '../teams'
-import PostGameProgress from './postgame/PostGameProgress.vue'
+import PostGameResult from './postgame/PostGameResult.vue'
 import PostGameTeamSection from './postgame/PostGameTeamSection.vue'
 import PostGameYou from './postgame/PostGameYou.vue'
 
 /**
- * The client's post-game screen (phase EndOfGame): the result as the title (Arena: your place), the LP and mastery the
- * game gave, your stats, both teams (yours first; enemies by champion), and the client's two buttons, Play Again (back
- * to a lobby for this queue with your party) and Leave (back to Home). Before League has the stats (WaitingForStats,
- * PreEndOfGame — the PC shows the honor vote, which stays on the PC) it waits. Once the game is in your match history,
+ * The client's post-game screen (phase EndOfGame): "Game Over" as the title, the result card (the result or, in Arena,
+ * your place; the LP and mastery the game gave), your stats, both teams (yours first; enemies by champion), and the
+ * client's two buttons, Play Again (back to a lobby for this queue with your party) and Leave (back to Home). Before
+ * League has the stats (WaitingForStats, PreEndOfGame — the PC shows the honor vote, which stays on the PC) it waits. Once the game is in your match history,
  * a row opens it there (bans and objectives).
  */
 const { busy, run } = useBusy()
@@ -32,11 +31,6 @@ const sending = ref<'again' | 'leave' | null>(null)
 
 const summary = postGame
 const me = computed(() => (summary.value ? myLine(summary.value) : null))
-const title = computed(() => (summary.value ? postGameTitle(summary.value) : 'Game Over'))
-const subtitle = computed(() => {
-  const s = summary.value
-  return s ? [postGameQueue(s), formatSeconds(s.durationSeconds)].filter(Boolean).join(' · ') : ''
-})
 
 const enemyNumber = computed(() => enemyNumbers(summary.value?.teams ?? []))
 
@@ -71,13 +65,11 @@ onMounted(() => void loadDdragonExtras())
 </script>
 
 <template>
-  <div class="lr-content" :class="{ 'lr-content--accessory': accessory }">
-    <LargeTitle :title="title">
-      <template v-if="subtitle">{{ subtitle }}</template>
-    </LargeTitle>
+  <div class="lr-content">
+    <LargeTitle title="Game Over" />
 
     <template v-if="summary">
-      <PostGameProgress :summary="summary" />
+      <PostGameResult :summary="summary" />
       <PostGameYou v-if="me" :me="me" :duration-seconds="summary.durationSeconds" :map-id="summary.mapId" />
       <PostGameTeamSection
         v-for="(t, i) in summary.teams"

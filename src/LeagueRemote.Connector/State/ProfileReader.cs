@@ -58,7 +58,7 @@ internal static class ProfileReader
         return new PlayerProfile(
             puuid,
             player,
-            ProfileMapper.Ranks(ranked.Json),
+            ProfileMapper.PlayerRanks(ranked.Json),
             ProfileMapper.PlayerMastery(mastery.Json),
             ProfileMapper.Matches(matches.Json, puuid),
             [],

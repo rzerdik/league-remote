@@ -270,7 +270,8 @@ internal static class ProfileSamples
     /// <summary>
     /// Another player's profile endpoints as the client answered them for a friend. The friend is <see cref="FriendPuuid"/>
     /// (the first entry of <see cref="FriendsSamples.Friends"/>, named "Friend#EUW" here); the ranked endpoint answers the
-    /// same shape as the local player's, so <see cref="Own.RankedStats"/> is reused.
+    /// same shape as the local player's, so <see cref="Own.RankedStats"/> is reused where the numbers don't matter
+    /// (<see cref="RankedStats"/> has what the client really sends for someone else).
     /// </summary>
     public static class Player
     {
@@ -284,6 +285,18 @@ internal static class ProfileSamples
         /// <summary>The GETs of one player profile read, in the order the connector sends them.</summary>
         public static readonly IReadOnlyList<string> Reads =
             [$"GET {SummonerPath}", $"GET {RankedPath}", $"GET {MasteryPath}", $"GET {MatchesPath}"];
+
+        /// <summary>
+        /// /lol-ranked/v1/ranked-stats/{puuid} for a friend, trimmed. Recorded read-only against a live client (Nov 2026):
+        /// real wins, but <c>losses</c> is always 0 for another player, here and in <c>league-ladders</c> and
+        /// <c>social-leaderboard-ranked-queue-stats-for-puuids</c>. The local player's own read has real losses.
+        /// </summary>
+        public const string RankedStats = """
+        {"queues": [
+          {"queueType": "RANKED_FLEX_SR", "tier": "EMERALD", "division": "II", "leaguePoints": 47, "wins": 104, "losses": 0, "isProvisional": false, "provisionalGamesRemaining": 0, "miniSeriesProgress": ""},
+          {"queueType": "RANKED_SOLO_5x5", "tier": "PLATINUM", "division": "I", "leaguePoints": 34, "wins": 92, "losses": 0, "isProvisional": false, "provisionalGamesRemaining": 0, "miniSeriesProgress": ""}
+        ]}
+        """;
 
         /// <summary>The Riot ID lookup's path (the Riot ID rides the query string, which <see cref="FakeLcu"/> records).</summary>
         public const string AliasLookupPath = "/lol-summoner/v1/alias/lookup";

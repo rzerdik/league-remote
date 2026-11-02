@@ -5,9 +5,10 @@ import type { LiveTeam } from '../../contracts'
 import { knowsMyTeam } from '../../liveGame'
 
 /**
- * The kill score under the In Game clock: your team (blue dot) against the enemy (red dot), like the game's own top bar;
+ * The kill score on the In Game card, your team (blue dot) against the enemy (red dot), like the game's own top bar;
  * several enemy teams (an unexpected mode) are added up. Spectating: Blue Side against Red Side. Nothing when neither
- * is known. One phrase for VoiceOver.
+ * is known. One phrase for VoiceOver. Beside the clock: the score over the two names. Under it (large text): one
+ * wrapping line.
  */
 const props = defineProps<{ teams: LiveTeam[] }>()
 
@@ -62,5 +63,20 @@ const label = computed(() =>
 .live-score-n {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+}
+/* Same width as LiveGameCard's side-by-side layout (live-game.css). */
+@container lr-live (min-width: 19.5em) {
+  .live-score {
+    margin: 0;
+    flex: none;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-items: center;
+    gap: var(--space-1) var(--space-3);
+  }
+  .live-score-n {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
 }
 </style>

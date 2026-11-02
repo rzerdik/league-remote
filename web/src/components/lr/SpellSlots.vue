@@ -75,7 +75,7 @@ const items = computed(() => (props.spells ?? ddragon.spells).map((s) => ({ id: 
   </li>
 
   <Sheet v-model:open="open" modal :detents="['medium']" :title="`Summoner Spell ${shownSlot}`">
-    <PickerGrid :items="items" :selected-id="spellOf(shownSlot)" :columns="4" @select="choose($event.id)">
+    <PickerGrid :items="items" :selected-id="spellOf(shownSlot)" @select="choose($event.id)">
       <template #art="{ item }"><SpellIcon :spell-id="item.id" size="grid" /></template>
     </PickerGrid>
   </Sheet>

@@ -11,7 +11,15 @@ export type Tab = 'home' | 'profile' | 'chat' | 'friends' | 'settings'
 export type InGameView = 'overview' | 'scoreboard' | 'events'
 
 /** A Settings sub-view pushed over the Settings tab (back button, no tab bar). */
-type SettingsView = 'autopick'
+export type SettingsView = 'autopick' | 'notifications' | 'sounds' | 'about'
+
+/** The nav bar's inline title for each Settings sub-view (the same words as the view's large title). */
+export const SETTINGS_VIEW_TITLE: Record<SettingsView, string> = {
+  autopick: 'Auto Pick & Ban',
+  notifications: 'Notifications',
+  sounds: 'Sounds & Haptics',
+  about: 'About',
+}
 
 export const nav = reactive({
   tab: 'home' as Tab,
@@ -21,7 +29,7 @@ export const nav = reactive({
   profileGameId: null as number | null,
   /** What the In Game screen shows (kept while you look at another tab). */
   inGameView: 'overview' as InGameView,
-  /** The Settings sub-view open (Auto Pick & Ban), or null for Settings itself. */
+  /** The Settings sub-view open, or null for Settings itself. */
   settingsView: null as SettingsView | null,
   /** The auto pick preset open in its editor sheet (Settings › Auto Pick & Ban), or null. */
   autoPickEdit: null as { group: AutoPickQueueGroup; role: AutoPickRole } | null,

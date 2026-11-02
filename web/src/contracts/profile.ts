@@ -72,7 +72,8 @@ export interface RankedQueueStats {
   division: string
   leaguePoints: number
   wins: number
-  losses: number
+  /** null when League doesn't say: it reports 0 for every other player, so there is no win rate for them. */
+  losses: number | null
   /** Still in placements. */
   isProvisional: boolean
   provisionalGamesRemaining: number

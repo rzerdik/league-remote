@@ -50,7 +50,8 @@ function state(): ClientState | null {
       return { ...base('None'), lcuConnected: false }
     case 'lobby':
     case 'chat':
-      return { ...base('Lobby'), lobby: lobby(false) }
+      // `&leader=off`: someone else leads (Waiting for Leader, with Leave on its capsule).
+      return { ...base('Lobby'), lobby: { ...lobby(false), isLeader: params.get('leader') !== 'off' } }
     case 'queue':
       return { ...base('Matchmaking'), lobby: lobby(true) }
     case 'readycheck':
@@ -100,7 +101,7 @@ function state(): ClientState | null {
 devCommands.handle = async (cmd): Promise<CommandResult | null> => {
   const ok = { requestId: cmd.requestId, success: true }
   if (cmd.type === 'RefreshState' && scenario === 'reconnect') return demoRefresh(cmd)
-  if (/AutoPick/.test(cmd.type)) return demoAutoPick(cmd)
+  if (/AutoPick|AutoAccept/.test(cmd.type)) return demoAutoPick(cmd)
   if (cmd.type === 'BenchSwap' || cmd.type === 'Reroll') return demoBench(cmd)
   if (/FriendRequest$/.test(cmd.type)) return demoFriends(cmd)
   if (cmd.type === 'LoadPlayerProfile' || (cmd.type === 'LoadMatchDetails' && cmd.puuid)) return demoPlayer(cmd)
@@ -174,7 +175,11 @@ if (scenario && scenario !== 'pair') {
   if (scenario === 'profile') openProfileDemo()
   // ?demo=settings: the Settings tab with notifications on (the alert toggles and test button show); `&push=default`,
   // `denied`, `needs-install` or `unsupported` shows the other states.
-  if (scenario === 'settings') nav.tab = 'settings'
+  // `&view=notifications`, `sounds`, `about` or `autopick` opens that pushed view.
+  if (scenario === 'settings') {
+    nav.tab = 'settings'
+    nav.settingsView = params.get('view') as typeof nav.settingsView
+  }
   // Settings › About › Licenses answers from demo text in every scenario (`&licenses=fail` for the error state).
   demoLicenses()
   // `&push=default` on `play` shows Play's notifications tip (if it wasn't dismissed in this browser).

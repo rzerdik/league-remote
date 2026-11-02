@@ -32,8 +32,8 @@ export const TARN = person('Tarn', 'EUNE', 'friend-2')
  * profile); Lumen isn't (the party sheet's View Profile still opens her: she's in your party).
  */
 export const lobbyMembers = [
-  { riotId: riotIdOf(ME), isLeader: true, firstPositionPreference: 'MIDDLE', secondPositionPreference: 'TOP', isLocalPlayer: true, puuid: ME.puuid },
-  { riotId: riotIdOf(NIGHTOWL), isLeader: false, firstPositionPreference: 'JUNGLE', secondPositionPreference: 'UTILITY', isLocalPlayer: false, puuid: NIGHTOWL.puuid },
-  { riotId: riotIdOf(KESTREL), isLeader: false, firstPositionPreference: 'BOTTOM', secondPositionPreference: 'UTILITY', isLocalPlayer: false, puuid: KESTREL.puuid },
-  { riotId: riotIdOf(LUMEN), isLeader: false, firstPositionPreference: 'UTILITY', secondPositionPreference: 'FILL', isLocalPlayer: false, puuid: LUMEN.puuid },
+  { riotId: riotIdOf(ME), isLeader: true, firstPositionPreference: 'MIDDLE', secondPositionPreference: 'TOP', isLocalPlayer: true, puuid: ME.puuid, profileIconId: 5132 },
+  { riotId: riotIdOf(NIGHTOWL), isLeader: false, firstPositionPreference: 'JUNGLE', secondPositionPreference: 'UTILITY', isLocalPlayer: false, puuid: NIGHTOWL.puuid, profileIconId: 29 },
+  { riotId: riotIdOf(KESTREL), isLeader: false, firstPositionPreference: 'BOTTOM', secondPositionPreference: 'UTILITY', isLocalPlayer: false, puuid: KESTREL.puuid, profileIconId: 29 },
+  { riotId: riotIdOf(LUMEN), isLeader: false, firstPositionPreference: 'UTILITY', secondPositionPreference: 'FILL', isLocalPlayer: false, puuid: LUMEN.puuid, profileIconId: 0 },
 ]
