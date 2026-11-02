@@ -40,6 +40,7 @@
   --glass-thick: rgba(250,250,252,0.86);
   --glass-clear: rgba(255,255,255,0.12);
   --scrim: rgba(0,0,0,0.35);
+  --dim-clear: rgba(0,0,0,0.35);
   --glow-pick: rgba(204,154,48,0.72);
   --glow-pick-soft: rgba(204,154,48,0.26);
   --glow-ban: rgba(255,56,60,0.66);
@@ -233,6 +234,7 @@
     --glass-thick: rgba(38,38,42,0.84);
     --glass-clear: rgba(255,255,255,0.08);
     --scrim: rgba(0,0,0,0.48);
+    --dim-clear: rgba(0,0,0,0.35);
     --glow-pick: rgba(230,185,92,0.78);
     --glow-pick-soft: rgba(230,185,92,0.3);
     --glow-ban: rgba(255,66,69,0.78);
@@ -291,6 +293,7 @@
     --glass-thick: rgba(255,255,255,0.97);
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.5);
+    --dim-clear: rgba(0,0,0,0.5);
     --glow-pick: rgba(184,128,20,0.9);
     --glow-pick-soft: rgba(184,128,20,0.4);
     --glow-ban: rgba(233,21,45,0.88);
@@ -349,6 +352,7 @@
     --glass-thick: rgba(30,30,32,0.95);
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.6);
+    --dim-clear: rgba(0,0,0,0.5);
     --glow-pick: rgba(242,203,120,0.95);
     --glow-pick-soft: rgba(242,203,120,0.45);
     --glow-ban: rgba(255,97,101,0.95);

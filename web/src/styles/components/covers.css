@@ -156,7 +156,13 @@
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: var(--radius-xl);
-  box-shadow: 0 0 0 100vmax var(--scrim);
+  box-shadow: 0 0 0 100vmax var(--dim-clear);
+}
+/* No viewfinder (the camera failed): the clear glass keeps its dim. */
+.lr-scanner-dim {
+  position: absolute;
+  inset: 0;
+  background: var(--dim-clear);
 }
 .lr-viewfinder svg {
   width: 100%;

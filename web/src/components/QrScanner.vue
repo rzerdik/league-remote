@@ -245,6 +245,7 @@ onBeforeUnmount(() => {
         <path d="M2 24V14A12 12 0 0 1 14 2h10M76 2h10a12 12 0 0 1 12 12v10M98 76v10a12 12 0 0 1-12 12H76M24 98H14A12 12 0 0 1 2 86V76" />
       </svg>
     </div>
+    <div v-else class="lr-scanner-dim" aria-hidden="true" />
 
     <div class="lr-scanner-top">
       <LrButton ref="closeButton" variant="clear" :icon="XIcon" aria-label="Close Scanner" @click="emit('close')" />

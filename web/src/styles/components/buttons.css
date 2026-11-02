@@ -112,6 +112,7 @@
   -webkit-backdrop-filter: var(--lr-glass-blur);
   backdrop-filter: var(--lr-glass-blur);
   box-shadow: var(--glass-rim);
+  text-shadow: var(--camera-shadow);
 }
 /* A toggle that is on (`pressed`: the flashlight). */
 .lr-btn[aria-pressed='true'] {

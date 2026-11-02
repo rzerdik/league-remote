@@ -19,6 +19,9 @@
 .lr-glass-clear {
   background: var(--glass-clear);
   color: var(--on-camera);
+  /* Text on clear glass is bold and bright, and keeps its edge over a white feed. */
+  font-weight: 600;
+  text-shadow: var(--camera-shadow);
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .lr-glass,
