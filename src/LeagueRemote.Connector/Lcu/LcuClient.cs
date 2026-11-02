@@ -205,6 +205,12 @@ internal sealed class LcuClient(HttpClient http)
     public Task<JsonElement?> GetChampionSummaryAsync(CancellationToken ct) => GetAsync("/lol-game-data/assets/v1/champion-summary.json", ct);
 
     /// <summary>
+    /// The lanes League recommends per champion: <c>{ "103": { "recommendedPositions": ["MIDDLE"] }, … }</c>. Mapped by
+    /// <see cref="State.ChampionLanesMapper"/>.
+    /// </summary>
+    public Task<JsonElement?> GetRecommendedChampionPositionsAsync(CancellationToken ct) => GetAsync("/lol-perks/v1/recommended-champion-positions", ct);
+
+    /// <summary>
     /// <c>POST /lol-champ-select/v1/session/{pick-order-swaps|position-swaps|trades}/{id}/{request|accept|decline|cancel}</c>.
     /// </summary>
     public Task SwapAsync(SwapKind kind, long id, SwapVerb verb, CancellationToken ct) =>

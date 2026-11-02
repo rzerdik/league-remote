@@ -300,6 +300,7 @@ public sealed class PostGameTests
         Assert.Equal(
             [
                 "GET /lol-gameflow/v1/gameflow-phase",
+                "GET /lol-perks/v1/recommended-champion-positions",
                 "GET /lol-perks/v1/pages",
                 "GET /lol-game-queues/v1/queues",
                 $"GET {StatsBlock}",

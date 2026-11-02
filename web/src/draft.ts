@@ -1,7 +1,6 @@
 import type { DotTone } from './components/lr/StatusDot.vue'
-import type { ChampSelectState, DraftTurn, EnemyMember, SwapOffer, TeamMember } from './contracts'
+import type { ChampSelectState, DraftTurn, SwapOffer, TeamMember } from './contracts'
 import { championName } from './ddragon'
-import { positionLabel } from './labels'
 
 /**
  * Where the draft stands, read from League's own turn list (ChampSelectState.turns).
@@ -148,66 +147,9 @@ function stageOf(cs: ChampSelectState, current: DraftTurn | null): DraftStage {
   return cs.turns.length && cs.timerPhase === 'BAN_PICK' ? 'reveal' : 'waiting'
 }
 
-/** The same as a tag in the picker's turn header (Title Case): "You're Next", "In 3 Turns", or "". */
-export function upNextTag(view: DraftView): string {
-  return myUpNext(view)
-    .split(' ')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
-}
-
 /** "You're next", "In 3 turns", or "" (not yours, or nothing left). */
 function myUpNext(view: DraftView): string {
   const n = view.turnsUntilMine
   if (n === null || n === 0 || !view.myTurn) return ''
   return n === 1 ? "You're next" : `In ${n} turns`
 }
-
-/** One pick slot of the draft order strip. */
-export interface DraftSlot {
-  cellId: number
-  ally: boolean
-  you: boolean
-  championId: number
-  locked: boolean
-  acting: boolean
-  label: string
-}
-
-/** Pick turns with their slots, for the draft order strip; empty for blind pick (a single simultaneous turn). */
-export function pickTurns(cs: ChampSelectState, myHoverId = 0): { turn: DraftTurn; slots: DraftSlot[] }[] {
-  const picks = cs.turns.filter((t) => t.type === 'pick')
-  if (picks.length < 2) return []
-  const allies = new Map(cs.myTeam.map((m) => [m.cellId, m]))
-  const enemies = new Map<number, EnemyMember>((cs.theirTeam ?? []).map((e) => [e.cellId, e]))
-  return picks.map((turn) => ({
-    turn,
-    slots: turn.cellIds.map((cellId) => {
-      const a = allies.get(cellId)
-      if (a) {
-        const you = a.isLocalPlayer
-        const hover = you && myHoverId > 0 && !a.isLocked ? myHoverId : 0
-        return {
-          cellId,
-          ally: true,
-          you,
-          championId: hover || a.championId || a.championPickIntent,
-          locked: a.isLocked,
-          acting: a.isActing,
-          label: you ? 'You' : positionLabel(a.assignedPosition) || 'Teammate',
-        }
-      }
-      const e = enemies.get(cellId)
-      return {
-        cellId,
-        ally: false,
-        you: false,
-        championId: e?.championId || 0,
-        locked: !!e?.isLocked,
-        acting: !!e?.isActing,
-        label: positionLabel(e?.assignedPosition) || 'Enemy',
-      }
-    }),
-  }))
-}
-

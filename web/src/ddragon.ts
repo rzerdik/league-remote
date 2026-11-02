@@ -4,16 +4,10 @@ import { isRecord, KEYS, readJson, writeJson } from './lib/storage'
 const BASE = 'https://ddragon.leagueoflegends.com'
 const MAX_AGE_MS = 12 * 60 * 60 * 1000
 
-/** The classes the League client filters champions by (Data Dragon's `tags`). */
-export const CHAMPION_CLASSES = ['Assassin', 'Fighter', 'Mage', 'Marksman', 'Support', 'Tank'] as const
-export type ChampionClass = (typeof CHAMPION_CLASSES)[number]
-
 export interface ChampionInfo {
   key: number
   id: string
   name: string
-  /** Data Dragon tags: one or two of {@link CHAMPION_CLASSES}. */
-  tags: string[]
 }
 
 export interface SpellInfo {
@@ -92,7 +86,6 @@ async function fetchAll(version: string): Promise<Cached> {
     key: Number(c.key),
     id: c.id,
     name: c.name,
-    tags: c.tags ?? [],
   }))
   const spells = Object.values(summ.data)
     .map((s) => ({ key: Number(s.key), id: s.id, name: s.name, modes: s.modes }))
@@ -164,11 +157,6 @@ export function championIconUrl(championId: number): string | null {
 export function skinArtUrl(championId: number, skinId: number, kind: 'loading' | 'splash' = 'loading'): string | null {
   const c = ddragon.champions.get(championId)
   return c && skinId > 0 ? `${BASE}/cdn/img/champion/${kind}/${c.id}_${skinId % 1000}.jpg` : null
-}
-
-/** Whether the champion has this class (Data Dragon tag); false for unknown champions. */
-export function championHasClass(championId: number, cls: ChampionClass): boolean {
-  return ddragon.champions.get(championId)?.tags?.includes(cls) ?? false
 }
 
 export function championName(championId: number): string {

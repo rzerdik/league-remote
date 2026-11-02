@@ -8,7 +8,8 @@ import SpellIcon from './SpellIcon.vue'
 /**
  * The two summoner spell slots of a list (an `li` inside a ListSection): tapping one opens the spell picker sheet.
  * Picking the spell that sits in the other slot swaps the two (as in the client). Emits the new pair; the parent sends
- * it (Champion Select › Loadout) or keeps it (an auto pick preset). An empty slot (0) shows `placeholder`.
+ * it (Champion Select › Loadout) or keeps it (an auto pick preset). An empty slot (0) shows `placeholder`. `tray`: just the
+ * two icons, with the default slot (the rune page) beside them on the same line (the draft's loadout).
  */
 const props = withDefaults(
   defineProps<{
@@ -18,6 +19,7 @@ const props = withDefaults(
     spells?: SpellInfo[]
     disabled?: boolean
     placeholder?: string
+    tray?: boolean
   }>(),
   { spells: undefined, placeholder: 'Choose' },
 )
@@ -58,7 +60,22 @@ const items = computed(() => (props.spells ?? ddragon.spells).map((s) => ({ id: 
 </script>
 
 <template>
-  <li class="lr-spell-slots">
+  <li v-if="tray" class="lr-tray">
+    <button
+      v-for="s in [1, 2] as const"
+      :key="s"
+      type="button"
+      class="lr-tray-spell"
+      aria-haspopup="dialog"
+      :aria-label="`Summoner spell ${s}: ${spellById(spellOf(s))?.name ?? 'none'}`"
+      :disabled="disabled"
+      @click="openSlot(s)"
+    >
+      <SpellIcon :spell-id="spellOf(s)" size="slot" />
+    </button>
+    <slot />
+  </li>
+  <li v-else class="lr-spell-slots">
     <button
       v-for="s in [1, 2] as const"
       :key="s"

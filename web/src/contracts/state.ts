@@ -20,6 +20,17 @@ export interface ClientState {
   invitations: ReceivedInvitation[] | null
   /** The post-game screen's summary while the phase is EndOfGame; null otherwise. */
   postGame: PostGameSummary | null
+  /** The champions League recommends per lane, for the champion pickers' lane filter; null until the client answers. */
+  championLanes: ChampionLanes | null
+}
+
+/** ChampionLanes: champion ids per lane. A champion can be listed under several lanes. */
+export interface ChampionLanes {
+  top: number[]
+  jungle: number[]
+  middle: number[]
+  bottom: number[]
+  utility: number[]
 }
 
 /** ReceivedInvitation: an invite to someone's party (answer with 'AcceptInvitation' / 'DeclineInvitation'). */

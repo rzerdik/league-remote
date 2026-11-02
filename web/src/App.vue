@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ChevronLeftIcon } from '@lucide/vue'
 import { computed, onMounted, ref, watch } from 'vue'
-import { goBack, navTitle, openChat, openGame, openPlayer, openSettings, pushed, readyCheck, screen, view } from './appView'
+import { goBack, navInline, navSubtitle, navTitle, openChat, openGame, openPlayer, openSettings, pushed, readyCheck, screen, view } from './appView'
 import InviteBanners from './components/invites/InviteBanners.vue'
 import BannerHost from './components/lr/BannerHost.vue'
 import LrButton from './components/lr/LrButton.vue'
@@ -125,7 +125,7 @@ watch(
 
 <template>
   <div class="lr-app">
-    <NavBar v-if="screen !== 'pair'" :title="navTitle" :inline="!!openChat">
+    <NavBar v-if="screen !== 'pair'" :title="navTitle" :subtitle="navSubtitle" :inline="navInline">
       <template v-if="pushed" #leading>
         <LrButton variant="glass" :icon="ChevronLeftIcon" aria-label="Back" @click="goBack" />
       </template>

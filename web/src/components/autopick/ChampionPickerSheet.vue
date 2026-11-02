@@ -1,23 +1,25 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { type ChampionClass, ddragon } from '../../ddragon'
+import { ddragon } from '../../ddragon'
+import { championLanes, laneChampions, type Lane } from '../../lanes'
 import ChampionGrid, { findChampions } from '../ChampionGrid.vue'
-import ClassFilter from '../lr/ClassFilter.vue'
+import LaneFilter from '../lr/LaneFilter.vue'
 import SearchField from '../lr/SearchField.vue'
 import Sheet from '../lr/Sheet.vue'
 
 /**
  * A modal champion picker (Settings › Auto Pick & Ban › a preset's Add Ban / Add Pick): every champion Data Dragon
- * knows, by name, with search and a class filter, minus the ones already on the list (`exclude`). Picking one emits it
+ * knows, by name, with search and a lane filter, minus the ones already on the list (`exclude`). Picking one emits it
  * and closes; the ring and tile colours follow the list (`red` for bans). Works without a League client: presets
- * aren't tied to the champions you own today (the connector skips ones it can't pick).
+ * aren't tied to the champions you own today (the connector skips ones it can't pick), and only the lane filter needs
+ * League, so it stays away while the client is closed.
  */
 const props = defineProps<{ title: string; tone?: 'accent' | 'red'; exclude: number[] }>()
 const open = defineModel<boolean>('open', { required: true })
 const emit = defineEmits<{ select: [championId: number] }>()
 
 const query = ref('')
-const cls = ref<ChampionClass | null>(null)
+const lane = ref<Lane | null>(null)
 /** Taken when the sheet opens: the champion just picked mustn't vanish from the grid while the sheet slides away. */
 const excluded = ref<number[]>([])
 watch(
@@ -25,7 +27,7 @@ watch(
   (o) => {
     if (!o) return
     query.value = ''
-    cls.value = null
+    lane.value = null
     excluded.value = [...props.exclude]
   },
   { immediate: true },
@@ -33,7 +35,7 @@ watch(
 
 const items = computed(() => {
   const skip = new Set(excluded.value)
-  return findChampions([...ddragon.champions.keys()].filter((id) => !skip.has(id)), query.value, cls.value)
+  return findChampions([...ddragon.champions.keys()].filter((id) => !skip.has(id)), query.value, laneChampions(lane.value))
 })
 
 function choose(id: number) {
@@ -47,7 +49,7 @@ function choose(id: number) {
     <template #header>
       <div class="lr-picker-head">
         <SearchField v-model="query" placeholder="Search" label="Search Champions" />
-        <ClassFilter v-model="cls" />
+        <LaneFilter v-if="championLanes" v-model="lane" />
       </div>
     </template>
     <ChampionGrid :items="items" :tone="tone" empty-text="No Results" @select="choose" />

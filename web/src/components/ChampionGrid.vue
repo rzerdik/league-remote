@@ -1,5 +1,5 @@
 <script lang="ts">
-import { type ChampionClass, championHasClass, championName, ddragon } from '../ddragon'
+import { championName, ddragon } from '../ddragon'
 
 export interface ChampionItem {
   id: number
@@ -8,13 +8,13 @@ export interface ChampionItem {
 }
 
 /**
- * The champions among `ids` that match the search and class filter, by name. Only ids Data Dragon knows: League also
- * lists placeholders (-1, 0) and ids that aren't champions (60001…).
+ * The champions among `ids` that match the search and the lane filter (`lane`: that lane's champions), by name. Only ids
+ * Data Dragon knows: League also lists placeholders (-1, 0) and ids that aren't champions (60001…).
  */
-export function findChampions(ids: Iterable<number>, query: string, cls: ChampionClass | null): ChampionItem[] {
+export function findChampions(ids: Iterable<number>, query: string, lane: ReadonlySet<number> | null): ChampionItem[] {
   const q = query.trim().toLowerCase()
   return [...new Set(ids)]
-    .filter((id) => id > 0 && ddragon.champions.has(id) && (!cls || championHasClass(id, cls)))
+    .filter((id) => id > 0 && ddragon.champions.has(id) && (!lane || lane.has(id)))
     .map((id) => ({ id, name: championName(id) }))
     .filter((c) => !q || c.name.toLowerCase().includes(q))
     .sort((a, b) => a.name.localeCompare(b.name))

@@ -266,13 +266,13 @@
   height: var(--symbol-xs);
 }
 
-/* Class filter (ClassFilter.vue): six icon toggles under the picker's search field, one on at a time. */
-.lr-class-filter {
+/* Lane filter (LaneFilter.vue): the League client's five lane icons under the picker's search field, one on at a time. */
+.lr-lane-filter {
   display: flex;
   gap: var(--space-1);
   margin-top: var(--space-2);
 }
-.lr-class-filter-btn {
+.lr-lane-filter-btn {
   flex: 1;
   min-width: 0;
   min-height: var(--hit-min);
@@ -287,16 +287,16 @@
     background var(--dur-snappy) var(--spring-snappy),
     color var(--dur-snappy) var(--spring-snappy);
 }
-.lr-class-filter-btn svg {
-  width: var(--symbol-sm);
-  height: var(--symbol-sm);
+.lr-lane-filter-btn svg {
+  width: var(--symbol-lg);
+  height: var(--symbol-lg);
 }
-.lr-class-filter-btn.is-selected {
+.lr-lane-filter-btn.is-selected {
   background: var(--accent-soft);
   color: var(--accent-text);
 }
 @media (prefers-reduced-motion: reduce) {
-  .lr-class-filter-btn {
+  .lr-lane-filter-btn {
     transition: none;
   }
 }

@@ -5,8 +5,8 @@ import { vImgLoaded } from '../../lib/vImgLoaded'
 
 /**
  * Champion portrait (Data Dragon, shimmer until loaded). Rounded squares, never circles. `alt` is the champion name
- * unless `decorative` (the name is printed next to it). `intent`: hovered but not locked in, translucent — only in the
- * draft strip, where there's no room for a word; team lists keep portraits opaque and say "Hovering …".
+ * unless `decorative` (the name is printed next to it). `intent`: hovered but not locked in, translucent — on the draft
+ * board, where the opacity says it; ARAM's team lists keep portraits opaque and say "Hovering …".
  */
 const props = withDefaults(
   defineProps<{
@@ -17,7 +17,9 @@ const props = withDefaults(
      * `acting` / `enemy-acting`: breathing ally / enemy ring during that player's turn. `dead`: dimmed gray (In Game;
      * the row says when they respawn).
      */
-    state?: 'locked' | 'intent' | 'empty' | 'you' | 'acting' | 'enemy-acting' | 'banned' | 'dead' | null
+    state?: 'locked' | 'empty' | 'you' | 'acting' | 'enemy-acting' | 'banned' | 'dead' | null
+    /** Hovered, not locked in; on top of the ring states. */
+    intent?: boolean
     decorative?: boolean
     popping?: boolean
   }>(),
@@ -32,6 +34,7 @@ const url = computed(() => (props.championId > 0 ? championIconUrl(props.champio
     :class="[
       size !== 'row' && `lr-champ--${size}`,
       state && state !== 'locked' && `is-${state}`,
+      intent && 'is-intent',
       !url && 'is-empty',
       popping && 'is-pop',
     ]"

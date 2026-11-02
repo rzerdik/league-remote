@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { CircleDotIcon, PaletteIcon, StarIcon } from '@lucide/vue'
+import { ChevronsUpDownIcon, CircleDotIcon, PaletteIcon, StarIcon } from '@lucide/vue'
 import { computed, nextTick, ref, watch } from 'vue'
+import IconTile from '../../components/lr/IconTile.vue'
 import ListRow from '../../components/lr/ListRow.vue'
 import ListSection from '../../components/lr/ListSection.vue'
-import type { MenuItem } from '../../components/lr/LrMenu.vue'
+import LrMenu, { type MenuItem } from '../../components/lr/LrMenu.vue'
 import SpellSlots from '../../components/lr/SpellSlots.vue'
 import { useBusy } from '../../composables/useBusy'
 import { focusQuietly } from '../../composables/useModalLayer'
@@ -19,7 +20,8 @@ import { choiceName } from './skins'
  * Summoner spells (two slots → spell picker sheet), rune page (pop-up menu) and, once your champion is locked in, your
  * skin (→ the Skins carousel sheet) for your own pick. When this phone has a favourite skin for the champion you locked
  * in (marked in the Skins sheet) and you aren't wearing it, a one-tap "Equip Favourite: Star Guardian Ahri" row offers
- * it; SelectSkin goes out only on that tap, never by itself.
+ * it; SelectSkin goes out only on that tap, never by itself. `tray` (the draft board): spells and rune page share one line
+ * and the section's header is for VoiceOver only, so the board keeps the screen.
  */
 const props = defineProps<{
   me: TeamMember | null
@@ -27,6 +29,7 @@ const props = defineProps<{
   /** ARAM queue: offer ARAM's spells. */
   aram?: boolean
   skins?: SkinSelection | null
+  tray?: boolean
 }>()
 
 const spellChoices = computed(() => (props.aram ? spellsForMode('ARAM') : undefined))
@@ -94,17 +97,32 @@ function equipFavourite() {
 </script>
 
 <template>
-  <ListSection v-if="me || runePages.length" header="Loadout">
+  <ListSection v-if="me || runePages.length" :class="{ 'lr-board-extra': tray }" :header="tray ? undefined : 'Loadout'">
+    <template v-if="tray" #header><span class="lr-sr">Loadout</span></template>
     <SpellSlots
       v-if="me"
       :spell1-id="Number(me.spell1Id)"
       :spell2-id="Number(me.spell2Id)"
       :spells="spellChoices"
       :disabled="spells.busy.value"
+      :tray="tray"
       @change="setSpells"
-    />
+    >
+      <LrMenu v-if="tray && runePages.length" :items="runeItems" title="Rune Page">
+        <button
+          type="button"
+          class="lr-tray-rune"
+          :disabled="runes.busy.value"
+          :aria-label="`Rune Page: ${currentRunePage?.name ?? 'Choose'}`"
+        >
+          <IconTile :icon="CircleDotIcon" color="indigo" />
+          <span class="body">{{ currentRunePage?.name ?? 'Choose' }}</span>
+          <ChevronsUpDownIcon class="lr-row-chevron lr-row-chevron--popup" :stroke-width="2.25" aria-hidden="true" />
+        </button>
+      </LrMenu>
+    </SpellSlots>
     <ListRow
-      v-if="runePages.length"
+      v-if="runePages.length && !(tray && me)"
       title="Rune Page"
       :icon="CircleDotIcon"
       tile-color="indigo"

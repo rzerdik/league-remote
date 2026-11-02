@@ -35,7 +35,7 @@
   --s: var(--icon-tile);
   --r: var(--radius-sm);
 }
-/* Hovered, not locked: only in the draft strip (no room for a word there); team lists say "Hovering …" instead. */
+/* Hovered, not locked: on the draft board the opacity says it; ARAM's team lists say "Hovering …" instead. */
 .lr-champ.is-intent > * {
   opacity: 0.45;
   filter: saturate(0.4);
@@ -154,41 +154,44 @@
   }
 }
 
-/* Selection rings: a gap in the ground colour, then a --ring-w ring in --ring-color. The states below only set those. */
-.lr-champ.is-you,
-.lr-champ.is-acting,
-.lr-champ.is-enemy-acting,
-.lr-grid-tile[aria-pressed='true'] .lr-grid-art,
-.lr-draft-slot.is-you {
-  --ring-gap: var(--lr-ring-gap);
-  overflow: visible;
-  box-shadow:
-    0 0 0 var(--ring-gap) var(--bg-elevated),
-    0 0 0 calc(var(--ring-gap) + var(--ring-w, var(--lr-stroke))) var(--ring-color, var(--accent));
+/* Selection rings: a --ring-w ring in --ring-color on the art's edge, then a gap in the ground colour. Inside the art's own
+   box, so a ring never runs into a neighbour however tight the row is. The states below only set those. */
+.lr-grid-art {
+  position: relative;
 }
-.lr-champ.is-acting,
-.lr-champ.is-enemy-acting {
+.lr-champ.is-you::after,
+.lr-champ.is-acting::after,
+.lr-champ.is-enemy-acting::after,
+.lr-grid-tile[aria-pressed='true'] .lr-grid-art::after {
+  --ring-gap: var(--lr-ring-gap);
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 var(--ring-w, var(--lr-stroke)) var(--ring-color, var(--accent)),
+    inset 0 0 0 calc(var(--ring-w, var(--lr-stroke)) + var(--ring-gap)) var(--bg-elevated);
+}
+.lr-champ.is-acting::after,
+.lr-champ.is-enemy-acting::after {
   --ring-color: var(--ally);
   animation: lr-breathe-ring var(--dur-pulse) var(--ease-fade) infinite;
 }
-.lr-champ.is-enemy-acting {
+.lr-champ.is-enemy-acting::after {
   --ring-color: var(--enemy);
 }
-.lr-grid-tile[aria-pressed='true'] .lr-grid-art {
+.lr-grid-tile[aria-pressed='true'] .lr-grid-art::after {
   --ring-w: var(--lr-ring-thick);
 }
-.lr-grid-tile.is-ban[aria-pressed='true'] .lr-grid-art {
+.lr-grid-tile.is-ban[aria-pressed='true'] .lr-grid-art::after {
   --ring-color: var(--red);
-}
-.lr-draft-slot.is-you {
-  --ring-gap: var(--lr-ring-thin);
-  --ring-w: var(--lr-ring-thin);
 }
 @keyframes lr-breathe-ring {
   50% {
     box-shadow:
-      0 0 0 var(--ring-gap) var(--bg-elevated),
-      0 0 0 calc(var(--ring-gap) + var(--lr-stroke)) transparent;
+      inset 0 0 0 var(--ring-w, var(--lr-stroke)) transparent,
+      inset 0 0 0 calc(var(--ring-w, var(--lr-stroke)) + var(--ring-gap)) var(--bg-elevated);
   }
 }
 

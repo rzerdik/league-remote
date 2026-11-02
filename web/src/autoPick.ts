@@ -33,6 +33,9 @@ export const autoPickSettings = computed<AutoPickSettings | null>(() => liveAuto
 /** The automation in the current champion select; null outside one. */
 export const autoPickRun = computed<AutoPickRun | null>(() => liveAutoPick.value?.run ?? null)
 
+/** Champion Select has something to say about it: on, paused, or no preset for your role. */
+export const autoPickShown = computed(() => ['active', 'paused', 'no-preset'].includes(autoPickRun.value?.status ?? ''))
+
 /** The user's rune pages, known only while the client runs (ClientState.runePages). */
 export const runePages = computed<RunePage[]>(() => liveState.value?.runePages ?? [])
 

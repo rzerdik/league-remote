@@ -7,8 +7,9 @@ Update this file in the same change as the work it describes.
 ## Works ✅
 
 - **Game flow:** lobbies for any queue, Practice Tool, role preferences, ready check, queue and cancel, leave, dodge.
-- **Champion select:** hover, lock, bans, enemy team and bans, pick-order and role swaps, trades, spells, runes, skins
-  and chromas, ARAM bench and rerolls, anonymous draft chat.
+- **Champion select:** the whole draft on one screen, hover, lock, bans, enemy team and bans, a lane filter with the
+  client's lists, pick-order and role swaps, trades, spells, runes, skins and chromas, ARAM bench and rerolls, anonymous
+  draft chat.
 - **Auto pick and ban:** presets per queue and role, with a cancel before the auto lock. Auto Accept for the ready check.
 - **Social:** chat, friends and presence, friend requests, lobby invites.
 - **Profile:** rank, mastery, form, roles, match history and game details. Teammates' profiles and Riot ID search.

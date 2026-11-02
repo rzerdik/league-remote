@@ -52,6 +52,10 @@
   opacity: 1;
   transform: none;
 }
+.lr-nav-subtitle {
+  display: block;
+  color: var(--label-secondary);
+}
 
 /* Edge swipe back (useEdgeSwipeBack): the pushed view's parts follow the finger, then settle on a JS spring. */
 .lr-swipe-follow,
