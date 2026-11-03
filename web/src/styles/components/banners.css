@@ -89,21 +89,18 @@
 .lr-sym-blue {
   color: var(--blue);
 }
-/* Banners drop from the top and leave the way they came; a new one pushes the older one down. */
-.lr-banner-enter-active,
-.lr-banner-leave-active,
-.lr-banner-move {
-  transition:
-    transform var(--dur-snappy) var(--spring-snappy),
-    opacity var(--dur-fade) var(--ease-fade);
+/* Banners materialize from the top edge; a new one pushes the older one down. */
+.lr-banner-enter-active {
+  transform-origin: top center;
+  animation: lr-materialize-in var(--dur-menu) var(--spring-menu);
 }
 .lr-banner-leave-active {
   position: absolute;
+  transform-origin: top center;
+  animation: lr-materialize-out var(--dur-fade) var(--ease-fade) forwards;
 }
-.lr-banner-enter-from,
-.lr-banner-leave-to {
-  opacity: 0;
-  transform: translateY(calc(-100% - var(--safe-top) - var(--banner-top))) scale(0.96);
+.lr-banner-move {
+  transition: transform var(--dur-snappy) var(--spring-snappy);
 }
 
 /* ───────────────────────── Tip (TipKit-style inline hint) ───────────────────────── */

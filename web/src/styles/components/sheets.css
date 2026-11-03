@@ -179,22 +179,10 @@
   transform-origin: var(--reka-dropdown-menu-content-transform-origin, top right);
 }
 .lr-menu[data-state='open'] {
-  animation: lr-menu-in var(--dur-snappy) var(--spring-snappy);
+  animation: lr-materialize-in var(--dur-menu) var(--spring-menu);
 }
 .lr-menu[data-state='closed'] {
-  animation: lr-menu-out var(--dur-fade) var(--ease-fade);
-}
-@keyframes lr-menu-in {
-  from {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-}
-@keyframes lr-menu-out {
-  to {
-    opacity: 0;
-    transform: scale(0.6);
-  }
+  animation: lr-materialize-out var(--dur-fade) var(--ease-fade);
 }
 .lr-menu-item {
   display: flex;
