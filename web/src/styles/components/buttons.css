@@ -33,7 +33,7 @@
   cursor: default;
 }
 .lr-btn--glass {
-  background: var(--glass);
+  background: var(--lr-glass-fill);
   -webkit-backdrop-filter: var(--lr-glass-blur);
   backdrop-filter: var(--lr-glass-blur);
   box-shadow: var(--glass-rim), var(--glass-lift);

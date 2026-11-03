@@ -57,7 +57,7 @@
 }
 /* A disabled action ("Tap a Champion") still floats over content: keep it on glass so it stays legible. */
 .lr-actionbar-row > .lr-btn:disabled {
-  background: var(--glass-thick);
+  background: var(--lr-glass-fill-thick);
   -webkit-backdrop-filter: var(--lr-glass-blur-thick);
   backdrop-filter: var(--lr-glass-blur-thick);
   box-shadow: var(--glass-rim), var(--glass-lift);

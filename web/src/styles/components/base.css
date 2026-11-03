@@ -12,8 +12,9 @@
   --lr-margin: var(--space-5);
   --lr-column: 640px;
   /* Backdrop filters, composed from the material tokens. */
-  --lr-glass-blur: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  --lr-glass-blur-thick: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate-thick));
+  --lr-glass-blur: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+  --lr-glass-blur-thick: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate-thick))
+    brightness(var(--glass-brightness));
   /* The soft scroll edges; a knob's glass while it is held. */
   --lr-blur-soft: blur(var(--edge-blur));
   --lr-blur-thin: blur(var(--knob-blur));

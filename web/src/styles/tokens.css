@@ -38,6 +38,9 @@
   --enemy: var(--red);
   --glass: rgba(255,255,255,0.66);
   --glass-thick: rgba(250,250,252,0.86);
+  --glass-ultraclear: rgba(255,255,255,0.55);
+  --glass-tinted: rgba(250,250,252,0.96);
+  --label-secondary-glass: rgba(0,0,0,0.8);
   --glass-clear: rgba(255,255,255,0.12);
   --scrim: rgba(0,0,0,0.35);
   --dim-clear: rgba(0,0,0,0.35);
@@ -56,6 +59,7 @@
   --sheet-lift: 0 -4px 40px rgba(0,0,0,0.16);
   --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
   --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  --glass-brightness: 100%;
   --font-sans: -apple-system, BlinkMacSystemFont, system-ui, "SF Pro Text", "Inter Variable", Inter, "Segoe UI", Roboto, sans-serif;
   --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Inter Variable", Inter, sans-serif;
   --space-0-5: min(0.1176rem, 2.5px);
@@ -170,6 +174,7 @@
   --glass-blur-thick: 28px;
   --glass-saturate: 180%;
   --glass-saturate-thick: 170%;
+  --glass-amount: 0.5;
   --edge-blur: 6px;
   --knob-blur: 2px;
   --font-size-large-title: min(2rem, 60px);
@@ -232,6 +237,9 @@
     --enemy: var(--red);
     --glass: rgba(48,48,52,0.62);
     --glass-thick: rgba(38,38,42,0.84);
+    --glass-ultraclear: rgba(48,48,52,0.56);
+    --glass-tinted: rgba(30,30,33,0.95);
+    --label-secondary-glass: rgba(255,255,255,0.86);
     --glass-clear: rgba(255,255,255,0.08);
     --scrim: rgba(0,0,0,0.48);
     --dim-clear: rgba(0,0,0,0.35);
@@ -250,6 +258,7 @@
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.6);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 70%;
   }
 }
 
@@ -291,6 +300,9 @@
     --enemy: var(--red);
     --glass: rgba(255,255,255,0.9);
     --glass-thick: rgba(255,255,255,0.97);
+    --glass-ultraclear: rgba(255,255,255,0.9);
+    --glass-tinted: rgba(255,255,255,0.97);
+    --label-secondary-glass: #48484a;
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.5);
     --dim-clear: rgba(0,0,0,0.5);
@@ -309,6 +321,7 @@
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.25);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 100%;
   }
 }
 
@@ -350,6 +363,9 @@
     --enemy: var(--red);
     --glass: rgba(40,40,44,0.86);
     --glass-thick: rgba(30,30,32,0.95);
+    --glass-ultraclear: rgba(40,40,44,0.86);
+    --glass-tinted: rgba(30,30,32,0.95);
+    --label-secondary-glass: #c7c7cc;
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.6);
     --dim-clear: rgba(0,0,0,0.5);
@@ -368,6 +384,7 @@
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.7);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 100%;
   }
 }
 

@@ -5,6 +5,7 @@ import './styles/components.css'
 import App from './App.vue'
 import { installClock } from './clock'
 import { isDemo } from './lib/demoMode'
+import { installGlassAmount } from './lib/glassAmount'
 import { noteChunkFailure } from './lib/lazy'
 import { installPressStates } from './lib/pressStates'
 import { installUpdateReload } from './lib/reload'
@@ -14,6 +15,7 @@ import { installSound } from './sound/install'
 
 // Every global listener and timer starts here, so importing a module (the demo, a test) has no effects of its own.
 installPressStates()
+installGlassAmount()
 installClock()
 installSound()
 installHubLifecycle()

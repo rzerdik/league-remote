@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
   /* The send button sits concentric in the capsule. */
   padding: 0 calc((var(--control-lg) - var(--control-md)) / 2) 0 var(--space-5);
   border-radius: var(--radius-full);
-  background: var(--glass);
+  background: var(--lr-glass-fill);
   -webkit-backdrop-filter: var(--lr-glass-blur);
   backdrop-filter: var(--lr-glass-blur);
   box-shadow: var(--glass-rim), var(--glass-lift);

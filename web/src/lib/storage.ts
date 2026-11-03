@@ -13,6 +13,8 @@ export const KEYS = {
   sound: 'league-remote.sound',
   /** Haptics on or off (haptics.ts). */
   haptics: 'league-remote.haptics',
+  /** This phone's glass amount, when it isn't the default (glassAmount.ts). */
+  glassAmount: 'league-remote.glassAmount',
   /** Prefix of the favourite skins, one key per pairing id (favouriteSkins.ts). */
   favouriteSkinsPrefix: 'league-remote.favouriteSkins.',
   /** Data Dragon champions and spells (ddragon.ts). */

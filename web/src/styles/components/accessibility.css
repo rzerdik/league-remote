@@ -57,13 +57,38 @@
     opacity: 70%;
   }
 }
+/* Reduce Transparency (Chromium only: iOS Safari doesn't expose it) and Increase Contrast: the glass amount doesn't
+   apply, glass is at its most tinted. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root,
+  :root[data-glass-amount] {
+    --lr-glass-amount: 1;
+    --lr-glass-fill: var(--glass-tinted);
+    --lr-glass-fill-thick: var(--glass-tinted);
+  }
+}
 @media (prefers-reduced-transparency: reduce) {
   .lr-glass,
   .lr-glass-thick,
   .lr-btn--glass,
-  .lr-sheet {
-    background: var(--bg-elevated);
+  .lr-sheet,
+  .chat-field,
+  .lr-actionbar-row > .lr-btn:disabled {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+/* Forced colours drop shadows and fills: a system-colour border draws the shape. */
+@media (forced-colors: active) {
+  .lr-glass,
+  .lr-glass-thick,
+  .lr-glass-clear,
+  .lr-btn--glass,
+  .lr-btn--clear,
+  .lr-sheet,
+  .chat-field {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 1px solid CanvasText;
   }
 }

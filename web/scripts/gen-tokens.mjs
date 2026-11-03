@@ -46,7 +46,10 @@ for (const t of tokens.radius.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.zIndex.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.duration.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.easing.tokens) constants.push(decl(t.name, t.value))
-for (const t of tokens.material.tokens) constants.push(decl(t.name, t.value))
+for (const t of tokens.material.tokens) {
+  if (typeof t.value === 'string') constants.push(decl(t.name, t.value))
+  else for (const theme of THEMES) themed[theme].push(decl(t.name, t.value[theme]))
+}
 
 const NUMERALS = new Set(['clock-hero', 'clock-card', 'countdown', 'timer', 'code-digit'])
 const typeClasses = []

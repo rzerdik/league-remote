@@ -1,6 +1,27 @@
 /* ───────────────────────── Liquid Glass ─────────────────────────
    Controls layer only (nav buttons, action bar, banners, menus, partial sheets).
    Never on list sections, cards or other content. */
+
+/* The fills every glass surface reads. At the default they are the tokens themselves; a phone with its own glass
+   amount (lib/glassAmount.ts sets data-glass-amount) mixes ultraclear → glass → tinted. Reduce Transparency and
+   Increase Contrast override this in accessibility.css. */
+:root {
+  --lr-glass-amount: var(--glass-amount);
+  --lr-glass-fill: var(--glass);
+  --lr-glass-fill-thick: var(--glass-thick);
+}
+:root[data-glass-amount] {
+  --lr-glass-fill: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--glass-ultraclear), var(--glass) calc(min(var(--lr-glass-amount), 0.5) * 200%)),
+    var(--glass-tinted) calc(max(var(--lr-glass-amount) - 0.5, 0) * 200%)
+  );
+  --lr-glass-fill-thick: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--glass-ultraclear), var(--glass-thick) calc(min(var(--lr-glass-amount), 0.5) * 200%)),
+    var(--glass-tinted) calc(max(var(--lr-glass-amount) - 0.5, 0) * 200%)
+  );
+}
 .lr-glass,
 .lr-glass-thick,
 .lr-glass-clear {
@@ -9,12 +30,19 @@
   box-shadow: var(--glass-rim), var(--glass-lift);
 }
 .lr-glass {
-  background: var(--glass);
+  background: var(--lr-glass-fill);
 }
 .lr-glass-thick {
-  background: var(--glass-thick);
+  background: var(--lr-glass-fill-thick);
   -webkit-backdrop-filter: var(--lr-glass-blur-thick);
   backdrop-filter: var(--lr-glass-blur-thick);
+}
+/* Secondary text inside glass stays legible over whatever shows through. */
+.lr-glass,
+.lr-glass-thick,
+.lr-btn--glass,
+.lr-sheet:not([data-detent='large']) {
+  --label-secondary: var(--label-secondary-glass);
 }
 .lr-glass-clear {
   background: var(--glass-clear);
