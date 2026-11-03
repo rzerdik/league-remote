@@ -187,6 +187,7 @@
   --edge-blur: 6px;
   --edge-blur-top: 12px;
   --knob-blur: 2px;
+  --materialize-blur: 4px;
   --font-size-large-title: min(2rem, 60px);
   --font-size-title-1: min(1.6471rem, 58px);
   --font-size-title-2: min(1.2941rem, 56px);
