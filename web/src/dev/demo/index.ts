@@ -1,6 +1,6 @@
 // Dev-only: `?demo=<scenario>` fills the store with a fake client state so every screen can be reviewed in a browser
 // without the PC app or a League client. Loaded from main.ts only in `vite dev`; never part of a build. The scenarios
-// are the `switch` in state() below plus `offline` and `pair` (handled at the end of this file); each module documents
+// are the `switch` in state() below plus `offline`, `pair` and `materials` (handled at the end of this file); each module documents
 // its own options (`&game=`, `&auto=`, …).
 import { createApp, watchEffect } from 'vue'
 import type { ClientState, CommandResult } from '../../contracts'

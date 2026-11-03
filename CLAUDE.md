@@ -38,7 +38,7 @@ npm --prefix web run build                           # tokens + vue-tsc type-che
 npm --prefix web run dev -- --port 5179 --strictPort # review screens at /?demo=<scenario>
 ```
 
-Demo scenarios: the `switch (scenario)` in `web/src/dev/demo/index.ts` plus `offline` and `pair` (for example `play`,
+Demo scenarios: the `switch (scenario)` in `web/src/dev/demo/index.ts` plus `offline`, `pair` and `materials` (for example `play`,
 `lobby`, `readycheck`, `pick`, `game`, `chat`). Check new UI at 375 px, light and dark.
 
 Don't run the connector yourself while another copy may be running: both want ports 5080/5443. Ask first.

@@ -13,8 +13,9 @@ IPv4 addresses and `localhost`):
 | 5080 (`Server:HttpPort`) | HTTP | The setup page and the certificate download. Everything else redirects to HTTPS on the address the phone used (a `Host` header the certificate cannot cover is not reflected). The hub over plain HTTP works from the PC itself only. |
 | 5443 (`Server:HttpsPort`) | HTTPS | The web app and the hub (`/hub`). |
 
-Anyone on the same network can reach these ports, so allow them on **Private** networks only. The web app, `/healthz`
-and the client sounds (`/client-sounds`) are open. The hub needs a pairing code or a token.
+Anyone on the same network can reach these ports, so allow them on **Private** networks only. The web app, `/healthz`,
+`/licenses.txt`, the client sounds (`/client-sounds`) and rank emblems (`/rank-emblems`) are open. The hub needs a pairing
+code or a token.
 
 There is no end-to-end encryption: traffic is encrypted between the phone and the PC, and nothing else is involved.
 Use a network you trust.
@@ -23,7 +24,8 @@ Use a network you trust.
 
 Every response carries `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `X-Frame-Options: DENY`, a
 `Permissions-Policy` that allows only the camera (for the QR scanner) and a `Content-Security-Policy`. The policy lets the
-web app load only its own files, Data Dragon images and data (`ddragon.leagueoflegends.com`), its own WebSocket, and the
+web app load only its own files, Data Dragon images and data (`ddragon.leagueoflegends.com`), images it generates itself
+(`blob:`, `data:`), secure WebSockets (`wss:`, spelled out for older Safari; the app only opens its own hub), and the
 WebAssembly QR decoder it ships; inline scripts, frames, plugins and foreign form targets are blocked. The exact policy is
 `SecurityHeaders.ContentSecurityPolicy` in `src/LeagueRemote.Connector/Server/SecurityHeaders.cs`. Client sounds and rank
 emblems come from the PC app, which reads a fixed list of them from the local League install. A tap on a push

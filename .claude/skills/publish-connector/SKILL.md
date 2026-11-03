@@ -14,7 +14,7 @@ Build the exe. Read `docs/standards/safety.md` first. Never stop a process by na
 
 ## Build
 
-This is the same command the release workflow (`.github/workflows/release.yml`) runs:
+The release workflow (`.github/workflows/release.yml`) runs this too, with `-p:Version` and `-p:SkipWebBuild=true` added:
 
 ```bash
 dotnet publish src/LeagueRemote.Connector -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -o publish/connector

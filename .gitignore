@@ -9,7 +9,10 @@ node_modules/
 web/dist/
 *.log
 .env
+.env.*
 publish/
+# Local design capture: a cache of Data Dragon art
+.design-capture/
 
 # Claude Code: personal settings/notes and the desktop app's worktrees stay local
 .claude/settings.local.json

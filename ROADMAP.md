@@ -28,6 +28,7 @@ Update this file in the same change as the work it describes.
 - End-to-end encryption between phone and PC.
 - Trends over more than the last 20 games.
 - Chroma preview art in the skin picker.
+- Check the phone app on Android: refraction frame rate on a mid-range phone, scrolling in Firefox.
 
 ## Ideas 💡
 
@@ -35,3 +36,5 @@ Update this file in the same change as the work it describes.
 - Reaching the PC away from home, for example through a VPN. Not supported today.
 - Translations.
 - Push for more events.
+- A Liquid Glass slider in Settings (the per-phone amount is built, it has no row yet).
+- Drag across the tab bar to switch tabs, with the pill as a glass lens.

@@ -32,7 +32,7 @@ export interface DraftView {
   turnsUntilMine: number | null
   /** Short status for the header, e.g. "Your Pick", "Enemy Picks". */
   title: string
-  /** When your turn comes, e.g. "You're next"; empty when the strip says it all. */
+  /** When your turn comes, e.g. "You're next"; empty when the board says it all. */
   detail: string
   tone: DraftTone
 }

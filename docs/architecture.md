@@ -23,7 +23,7 @@ flowchart LR
 | Path | What |
 |---|---|
 | `src/LeagueRemote.Contracts/` | Shared types: hub method names, state slices, `CommandType`, `CommandWhitelist`. |
-| `src/LeagueRemote.Connector/` | The app. `Lcu/` finds and calls the client, `State/` reads and maps it, `ChampSelect/` parses the draft, `Commands/` runs phone commands, `Server/` is the web server and hub, `Pairing/`, `Push/`, `Https/` (local CA), `ClientSounds/`, `AutoPick/`, `LiveClient/`, `Logging/` (log file), `Tray/`. |
+| `src/LeagueRemote.Connector/` | The app. `Lcu/` finds and calls the client, `State/` reads and maps it, `ChampSelect/` parses the draft, `Commands/` runs phone commands, `Server/` is the web server and hub, `Pairing/`, `Push/`, `Https/` (local CA), `ClientSounds/`, `AutoPick/`, `LiveClient/`, `Json/` (lenient JSON reading), `Logging/` (log file), `Tray/`. |
 | `web/` | The phone app (Vue 3, Vite). Built and embedded in the exe. |
 | `tests/LeagueRemote.Connector.Tests/` | All tests. The League client is always mocked. |
 
@@ -34,7 +34,8 @@ See [standards/contracts.md](standards/contracts.md).
 
 The app does not send one big state. It sends separate **slices**, each with its own store and update rhythm:
 
-- `ClientState`: game flow. Ready check, lobby, champ select, runes, in-game clock, received invitations.
+- `ClientState`: game flow. Ready check, lobby, champ select, runes, in-game clock, post-game, received invitations, the
+  client's champion lanes.
 - Feature slices: `ChatState`, `FriendsState`, `ProfileState`, `LiveGameState`, `AutoPickState`.
 
 Each slice is a `SliceStore<T>`: the latest value, a version number and a `Changed` event. Refresh loops read the

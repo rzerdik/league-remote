@@ -26,8 +26,8 @@ router, no Pinia, on purpose. Ask before adding a dependency.
 | `src/<feature>.ts` (`chat.ts`, `friends.ts`, `invites.ts`, `push.ts`, `pairing.ts`, `draft.ts`, `gameflow.ts`, …) | Feature modules (plain TS, no components): computeds over `liveX`, command helpers, badge counts |
 | `src/liveGame/`, `src/sound/` | Larger features with several files and an `index.ts` |
 | `src/labels.ts`, `format.ts`, `riotId.ts`, `teams.ts`, `clock.ts`, `countdown.ts`, `haptics.ts` | Names and phase labels, formatting, Riot ID display, time, haptics |
-| `src/lib/` | Helpers with no app state: `lazy`, `reload`, `timeout` (`within`), `storage` (`KEYS`), `spring`, `pressStates`, `qrDetector`, `vImgLoaded`, `demoMode` |
-| `src/composables/use*.ts` | Behaviour: `useBusy`, `useAnswers`, `useSheet`, `useModalLayer`, `useTimerTicks`, … |
+| `src/lib/` | Helpers with no app state: `lazy`, `reload`, `timeout` (`within`), `storage` (`KEYS`), `spring`, `pressStates`, `glassAmount`, `qrDetector`, `vImgLoaded`, `demoMode` |
+| `src/composables/use*.ts` | Behaviour: `useBusy`, `useAnswers`, `useSheet`, `useModalLayer`, `useTimerTicks`, `useRefraction`, … |
 | `src/components/lr/` | Design-system primitives (owned by `web/CLAUDE.md`) |
 | `src/components/<feature>/` | Feature components shared across screens (sheets, banners, sections) |
 | `src/screens/<Name>Screen.vue` + `src/screens/<name>/` | One screen per game phase or tab, sub-parts in a folder |
