@@ -8,6 +8,26 @@
   padding: var(--lr-nav-top) var(--lr-inset-right) 0 var(--lr-inset-left);
   pointer-events: none;
 }
+/* Top scroll edge (iOS 27): a uniform, legible zone under the nav buttons and the inline title, only once content has
+   scrolled under them. One soft edge, no line. It fades; its blur is never animated. */
+.lr-edge-top {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-5));
+  z-index: var(--z-edge);
+  pointer-events: none;
+  background: var(--edge-dim);
+  -webkit-backdrop-filter: var(--lr-blur-soft);
+  backdrop-filter: var(--lr-blur-soft);
+  /* A mask: only the alpha counts. */
+  -webkit-mask-image: linear-gradient(#000 60%, transparent);
+  mask-image: linear-gradient(#000 60%, transparent);
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-edge-top[data-visible='true'] {
+  opacity: 1;
+}
 .lr-nav-bar {
   height: var(--lr-nav-h);
   display: grid;

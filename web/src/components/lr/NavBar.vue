@@ -13,6 +13,7 @@ defineProps<{ title: string; subtitle?: string; inline?: boolean }>()
 </script>
 
 <template>
+  <div class="lr-edge-top" :data-visible="navState.scrolled" aria-hidden="true" />
   <header class="lr-nav" :data-collapsed="inline || navState.collapsed">
     <div class="lr-nav-bar">
       <div id="lr-nav-leading" class="lr-nav-lead"><slot name="leading" /></div>

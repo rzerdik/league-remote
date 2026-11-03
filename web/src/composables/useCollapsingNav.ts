@@ -6,6 +6,8 @@ import { computed, onBeforeUnmount, onMounted, reactive, type Ref } from 'vue'
  */
 export const navState = reactive({
   collapsed: false,
+  /** Content has scrolled under the bar: the top scroll edge shows. */
+  scrolled: false,
   /** The large title the nav bar follows (its element); null when the screen has none. */
   title: null as HTMLElement | null,
 })
@@ -29,6 +31,7 @@ function navBottom(): number {
 function updateNav() {
   if (!scroller) return
   const top = scroller.scrollTop
+  navState.scrolled = top > 0
   const largeTitle = shownTitle()
   navState.title = largeTitle
   navState.collapsed = largeTitle
