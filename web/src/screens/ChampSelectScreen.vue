@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { BanIcon, LockIcon } from '@lucide/vue'
 import { computed, ref } from 'vue'
-import { autoPickShown } from '../autoPick'
 import { draftChat, draftQuickReplies } from '../chat'
 import ChatButton from '../components/chat/ChatButton.vue'
 import ChatSheet from '../components/chat/ChatSheet.vue'
@@ -12,7 +11,6 @@ import ListSection from '../components/lr/ListSection.vue'
 import LrButton from '../components/lr/LrButton.vue'
 import { sheetStack } from '../composables/useSheet'
 import { autoPickGroupForQueue, type ChampSelectState, type RunePage } from '../contracts'
-import type { DetentId } from '../components/lr/Sheet.vue'
 import { byPickOrder, DRAFT_DOT, draftView, hasMemberActions, myTurnNow } from '../draft'
 import { queueLabel } from '../labels'
 import AutoPickBanner from './champselect/AutoPickBanner.vue'
@@ -109,17 +107,6 @@ const accessory = computed<ActionBarAccessory>(() => ({
 /** Never glass on glass: the picker steps aside while a modal sheet, the Dodge alert or a pushed profile is up. */
 const pickerHidden = computed(() => sheetStack.modal > 0 || !!props.covered || dodgeAlert.value)
 
-/**
- * The draft board's density follows the room the rest of the screen leaves it: the picker, the Auto Pick section, or the
- * Skin row once your champion is locked in.
- */
-const pickerDetent = ref<DetentId>('peek')
-const boardDensity = computed(() => {
-  if (canAct.value && !pickerHidden.value) return pickerDetent.value === 'peek' ? 'peek' : 'compact'
-  if (autoPickShown.value) return 'compact'
-  return props.cs.skins ? 'peek' : 'roomy'
-})
-
 const myTeamOrdered = computed(() => byPickOrder(props.cs.myTeam))
 /** The enemy team in pick order, like yours (League hides their positions in most queues). */
 const theirTeamOrdered = computed(() => byPickOrder(props.cs.theirTeam ?? []))
@@ -184,7 +171,6 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
       <DraftBoard
         :cs="cs"
         :stage="stage"
-        :density="boardDensity"
         :selected-id="selectedId"
         :popping="popping"
         :swap-busy="swapBusy"
@@ -199,7 +185,6 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
     <DodgeSection v-model:alert="dodgeAlert" :can-dodge="cs.canDodge" :in-nav="!benchGame" :nav-hidden="covered" />
 
     <ChampionPicker
-      v-model:detent="pickerDetent"
       :cs="cs"
       :can-act="canAct"
       :hidden="pickerHidden"

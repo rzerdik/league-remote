@@ -11,14 +11,12 @@ import type { SwapCommand } from './swaps'
 
 /**
  * Champion Select on one screen: both teams face each other, each with its bans above it, portraits on the screen's outer
- * edges. An empty slot shows its pick number, so the draft order needs no strip of its own. `density` follows the room the
- * picker leaves: `roomy` with the picker down, `peek` at its low detent, `compact` above that. Enemies: champion, hover and
- * whose turn only (never names; bans hidden until League reveals them).
+ * edges, one compact size however much room the picker leaves. An empty slot is an empty tile; the acting player's rings.
+ * Enemies: champion, hover and whose turn only (never names; bans hidden until League reveals them).
  */
 const props = defineProps<{
   cs: ChampSelectState
   stage: DraftStage
-  density: 'roomy' | 'peek' | 'compact'
   /** Your optimistic hover, a pick or a ban. */
   selectedId: number
   popping?: boolean
@@ -57,7 +55,7 @@ const portraitState = (e: EnemyMember) => (e.isActing && !e.isLocked ? ('enemy-a
 
 <template>
   <h1 class="lr-sr">Champion Select</h1>
-  <section class="lr-board" :class="density !== 'roomy' && `lr-board--${density}`" aria-label="Draft board">
+  <section class="lr-board" aria-label="Draft board">
     <div class="lr-board-sides">
       <h2 class="lr-status caption-1 lr-secondary"><StatusDot tone="blue" /><span>Your Team</span></h2>
       <h2 v-if="enemies.length" class="lr-status caption-1 lr-secondary"><span>Enemy Team</span><StatusDot tone="red" /></h2>
@@ -100,7 +98,6 @@ const portraitState = (e: EnemyMember) => (e.isActing && !e.isLocked ? ('enemy-a
               :champion-id="e.championId"
               :state="portraitState(e)"
               :intent="e.championId > 0 && !e.isLocked"
-              :order="e.pickOrder"
               :title="championName(e.championId)"
               :line="e.isActing && !e.isLocked ? 'Picking…' : undefined"
             />

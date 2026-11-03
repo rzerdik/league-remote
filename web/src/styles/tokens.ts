@@ -35,7 +35,6 @@ export const SIZE = {
   symbol: 22,
   champGrid: 64,
   champRow: 48,
-  champBoard: 56,
   champBan: 28,
   grabberW: 36,
   symbolXs: 12,

@@ -84,18 +84,11 @@
    middle. An empty slot shows its pick number, so the order needs no line of its own. Three densities, by how much of
    the screen the picker leaves: default (no picker), --peek (its low detent), --compact (its medium detent and up). */
 .lr-board {
-  --portrait: var(--champ-board);
-  --row: calc(var(--portrait) + var(--space-6));
+  --portrait: var(--champ-row);
+  --row: calc(var(--portrait) + var(--space-1));
   /* Rings cut their gap out of the screen's ground here: the board sits on it, not on a card. */
   --bg-elevated: var(--bg);
   padding: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-2)) var(--lr-inset-right) 0 var(--lr-inset-left);
-}
-.lr-board--peek {
-  --row: calc(var(--portrait) + var(--space-3));
-}
-.lr-board--compact {
-  --portrait: var(--champ-row);
-  --row: calc(var(--portrait) + var(--space-1));
 }
 .lr-board-sides {
   display: flex;
@@ -191,11 +184,6 @@ button.lr-slot:focus-visible {
 .lr-slot-spells .lr-spell {
   --s: var(--art-sm);
   flex: none;
-}
-.lr-slot-order {
-  display: grid;
-  place-items: center;
-  color: var(--label-secondary);
 }
 .lr-slot.is-you {
   width: calc(100% + var(--space-2));

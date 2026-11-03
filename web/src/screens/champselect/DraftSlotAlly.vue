@@ -89,7 +89,6 @@ const body = computed(() => ({
   state: you.value ? ('you' as const) : acting.value ? ('acting' as const) : null,
   intent: portraitId.value > 0 && !locked.value,
   popping: you.value && props.popping,
-  order: props.member.pickOrder,
   title: title.value,
   line: line.value,
   lineAccent: !!sent.value,

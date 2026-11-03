@@ -102,8 +102,8 @@ yours).
 
 **Draft board.** Champion Select fits one screen (`champselect/DraftBoard.vue`): both teams face each other with their
 bans above them, portraits on the screen's outer edges, your team's spells stacked beside them, names towards the
-middle. No line or strip for the order: an empty slot shows its pick number. A hover is the translucent portrait and no
-word. `density` follows the room the picker, Auto Pick section or Skin row leave (`roomy`, `peek`, `compact`); what
+middle. No line, strip or number for the order: an empty slot is an empty tile and the acting player's rings. A hover is
+the translucent portrait and no word. The board keeps one compact size (`champ-row`) throughout the draft; what
 doesn't fit under the board (the loadout behind the picker) scrolls. The title, More Options (Dodge) and chat
 are in the nav bar; spells and rune page share one line (`SpellSlots tray`). Bench modes (ARAM) keep the team lists under a
 large title: champions are dealt, so there is no draft to show.
