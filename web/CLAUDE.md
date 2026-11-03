@@ -38,7 +38,7 @@ sign-in, pairing answers "No PC in a demo"). Only pages without `?demo=` connect
 **Tokens, never literals.** In CSS use `var(--token)`; in script import `SIZE`, `SPACE`, `DURATION`, `SPRING`,
 `cssSize()`, `scaled()` from `src/styles/tokens.ts`. A value the tokens don't have gets a token in
 `design/tokens.json` (with a `usage` note), then `npm run tokens`. Allowed literals: `0`, percentages, `1fr`,
-`100dvh`, and the px stroke constants at the top of `components.css` (`--lr-hairline`, `--lr-stroke`, rings, blurs).
+`100dvh`, and the px stroke constants in `components/base.css` (`--lr-hairline`, `--lr-stroke`, rings).
 Named constants are fine for behaviour that isn't visual (a scan interval, a hysteresis in px).
 
 **Screens compose components; they don't style.** No `<style>` in `src/screens/*.vue`. A pattern used twice is a
@@ -61,7 +61,18 @@ the tokens — check any new pairing in all four.
 **Materials.** Glass (`.lr-glass`, `.lr-glass-thick`) only on floating controls: nav buttons, action bar, tab bar,
 banners, menus, partial sheets. Content (lists, cards, tips) is opaque `bg-elevated`. Never glass on glass: floating
 chrome hides while a modal sheet is up (`sheetStack.modal`). `.lr-glass-clear` / `LrButton variant="clear"` only over
-the camera.
+the camera, always over `dim-clear`. Glass reads `--lr-glass-fill` / `--lr-glass-fill-thick` (`glass.css`), never the
+colour tokens directly: they follow the glass amount, Reduce Transparency and Increase Contrast. Blur values are
+`material` tokens, composed into `--lr-glass-blur*` in `base.css`.
+
+Review every glass change against this list, at `?demo=materials&glass=0` (worst-case backdrop) and with
+`node scripts/check-glass-contrast.mjs` (from `web/`):
+
+- No `.lr-glass*` inside another `.lr-glass*` (except knobs while held).
+- No `opacity`, `filter`, `mask` or `will-change` on any ancestor of glass: it would blur only that ancestor's content.
+- Clear glass only inside the scanner, always over `dim-clear`.
+- Text on glass at 4.5:1 over the worst-case backdrop at glass amount 0.
+- Every new animation has a `prefers-reduced-motion` branch.
 
 **Connection states.** A screen that shows the PC's data starts with `<ConnectionEmptyState />` and puts its own
 content (loading, empty, lists) under `v-if="!connectionEmpty"` (`connection.ts`): offline, connecting, reconnecting,
