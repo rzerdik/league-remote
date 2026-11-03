@@ -103,12 +103,21 @@ function onThumbUp(e: PointerEvent) {
   const velocity = drag.vt.velocity()
   const hovered = drag.hovered
   drag = null
-  if (!dragging.value) return
+  if (!dragging.value) {
+    // Grabbed mid-settle and let go without moving: finish settling on its segment.
+    if (liveX.value !== null) settleOn(props.options.findIndex((o) => o.value === model.value), 0)
+    return
+  }
   dragging.value = false
-  swallowClick = true
-  const target = buttons[hovered]
+  // A cancelled gesture clicks nothing, so there is no click to swallow.
+  swallowClick = e.type === 'pointerup'
+  settleOn(hovered, velocity)
   const option = props.options[hovered]
-  if (!target || !option) {
+  if (option) select(option.value)
+}
+function settleOn(index: number, velocity: number) {
+  const target = buttons[index]
+  if (!target) {
     liveX.value = null
     return
   }
@@ -120,13 +129,14 @@ function onThumbUp(e: PointerEvent) {
     onUpdate: (x) => (liveX.value = x),
     onComplete: () => (liveX.value = null),
   })
-  select(option.value)
 }
 onBeforeUnmount(() => settle?.stop())
 
-function onSegmentClick(value: T) {
-  if (swallowClick) swallowClick = false
-  else select(value)
+function onSegmentClick(e: MouseEvent, value: T) {
+  // A keyboard activation (detail 0) is never the click that ends a drag.
+  const swallow = swallowClick && e.detail > 0
+  swallowClick = false
+  if (!swallow) select(value)
 }
 
 /** Arrow keys move the selection (and focus) like a native tab bar; Home / End jump to the ends. */
@@ -180,7 +190,7 @@ export function panelId(id: string): string {
       :aria-selected="o.value === model"
       :aria-controls="panelId(id)"
       :tabindex="o.value === model ? 0 : -1"
-      @click="onSegmentClick(o.value)"
+      @click="onSegmentClick($event, o.value)"
       @keydown="onKey($event, i)"
       @pointerdown="onThumbDown($event, o.value)"
       @pointermove="onThumbMove"

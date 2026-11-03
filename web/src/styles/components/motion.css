@@ -44,14 +44,14 @@
   from {
     opacity: 0;
     scale: 0.94;
-    filter: blur(4px);
+    filter: blur(var(--materialize-blur));
   }
 }
 @keyframes lr-materialize-out {
   to {
     opacity: 0;
     scale: 0.96;
-    filter: blur(2px);
+    filter: blur(var(--knob-blur));
   }
 }
 .lr-pop-enter-active {

@@ -90,8 +90,12 @@ export function useRefraction(el: Ref<HTMLElement | null>) {
   let timer: ReturnType<typeof setTimeout> | undefined
   let reveal: Spring | null = null
   let shownFor: HTMLElement | null = null
+  let builtW = 0
+  let builtH = 0
 
   function clear() {
+    builtW = 0
+    builtH = 0
     clearTimeout(timer)
     reveal?.stop()
     observer?.disconnect()
@@ -104,10 +108,13 @@ export function useRefraction(el: Ref<HTMLElement | null>) {
 
   /** Build the filter for the element's current size. The first build ramps the lensing up: glass materializes. */
   function build(target: HTMLElement) {
-    const { width, height } = target.getBoundingClientRect()
-    const w = Math.round(width)
-    const h = Math.round(height)
-    if (!w || !h) return
+    // Layout size: the box may be mid-materialize, scaled.
+    const w = target.offsetWidth
+    const h = target.offsetHeight
+    if (!w || !h || (w === builtW && h === builtH)) return
+    builtW = w
+    builtH = h
+    reveal?.stop()
     const style = getComputedStyle(target)
     const scale = Number(style.getPropertyValue('--refraction-scale')) || 0
     const bezel = parseFloat(style.getPropertyValue('--refraction-bezel')) || 0

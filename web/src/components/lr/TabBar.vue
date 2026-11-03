@@ -53,6 +53,9 @@ function onScroll() {
   // The anchor follows the scroll while it keeps going the way the bar already went, so a turn is measured from there.
   if (minimized.value ? travel > 0 : travel < 0) anchor = top
   else if (Math.abs(travel) >= MINIMIZE_TRAVEL) {
+    // Keyboard focus on another tab would drop to <body> as that tab hides.
+    const focus = document.activeElement
+    if (travel > 0 && bar.value?.contains(focus) && !focus?.classList.contains('is-selected')) return
     minimized.value = travel > 0
     anchor = top
   }

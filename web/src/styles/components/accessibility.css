@@ -83,6 +83,8 @@
   .lr-btn--glass,
   .lr-sheet,
   .chat-field,
+  .lr-edge-top,
+  .lr-edge-bottom,
   .lr-actionbar-row > .lr-btn:disabled {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

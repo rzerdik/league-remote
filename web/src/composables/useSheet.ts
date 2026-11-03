@@ -67,7 +67,8 @@ export function useSheet(o: UseSheetOptions) {
     const large = list.find((d) => d.id === 'large')
     if (!large) return 0
     const partial = list.at(-2)
-    if (!partial) return 1
+    // On a short screen a partial detent can be as tall as large.
+    if (!partial || partial.height >= large.height) return 1
     return Math.min(1, Math.max(0, (maxH() - y - partial.height) / (large.height - partial.height)))
   }
 

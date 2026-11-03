@@ -16,7 +16,8 @@
 }
 /* How far a sheet has risen from its highest partial detent to large, 0 to 1 (useSheet writes it on the sheet, per
    frame). Inset, corners and opacity follow it, so the sheet gets steadily more opaque and larger as it rises. Not
-   inherited: nothing inside recalculates. */
+   inherited: nothing inside recalculates. The inset does lay out per frame (16 px of width, on purpose: scaling would
+   shrink the text at every partial detent, and clipping would cut the rim). */
 @property --lr-sheet-rise {
   syntax: '<number>';
   inherits: false;
