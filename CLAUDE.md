@@ -61,5 +61,6 @@ Release build: `/publish-connector`.
 ## Agents and skills
 
 Subagents (`.claude/agents/`): `lcu-integrator`, `web-ui`, `test-writer`, `reviewer`. Skills (`.claude/skills/`):
-`/add-remote-command`, `/add-state-slice`, `/verify-lcu-endpoint`, `/publish-connector`.
+`/add-remote-command`, `/add-state-slice`, `/verify-lcu-endpoint`, `/publish-connector`; motion and material guidance
+from Emil Kowalski (MIT, notice in each folder): `/apple-design`, `/animation-performance`, `/review-animations`.
 Pass the safety rules to every subagent you start.
