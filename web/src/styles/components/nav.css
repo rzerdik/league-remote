@@ -17,8 +17,8 @@
   z-index: var(--z-edge);
   pointer-events: none;
   background: var(--edge-dim);
-  -webkit-backdrop-filter: var(--lr-blur-soft);
-  backdrop-filter: var(--lr-blur-soft);
+  -webkit-backdrop-filter: blur(var(--edge-blur-top));
+  backdrop-filter: blur(var(--edge-blur-top));
   /* A mask: only the alpha counts. */
   -webkit-mask-image: linear-gradient(#000 60%, transparent);
   mask-image: linear-gradient(#000 60%, transparent);

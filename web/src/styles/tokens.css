@@ -184,6 +184,7 @@
   --glass-press-scale: 1.04;
   --glass-glow-size: 120%;
   --edge-blur: 6px;
+  --edge-blur-top: 12px;
   --knob-blur: 2px;
   --font-size-large-title: min(2rem, 60px);
   --font-size-title-1: min(1.6471rem, 58px);
