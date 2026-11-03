@@ -14,15 +14,27 @@
   opacity: 1;
   pointer-events: auto;
 }
+/* How far a sheet has risen from its highest partial detent to large, 0 to 1 (useSheet writes it on the sheet, per
+   frame). Inset, corners and opacity follow it, so the sheet gets steadily more opaque and larger as it rises. Not
+   inherited: nothing inside recalculates. */
+@property --lr-sheet-rise {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
 .lr-sheet {
+  --lr-sheet-inset: calc(1 - var(--lr-sheet-rise));
   position: fixed;
-  left: max(var(--space-2), calc((100% - var(--lr-column)) / 2));
-  right: max(var(--space-2), calc((100% - var(--lr-column)) / 2));
-  bottom: max(var(--space-2), calc(var(--safe-bottom) - var(--space-6)));
+  left: max(calc(var(--space-2) * var(--lr-sheet-inset)), calc((100% - var(--lr-column)) / 2));
+  right: max(calc(var(--space-2) * var(--lr-sheet-inset)), calc((100% - var(--lr-column)) / 2));
+  bottom: calc(max(var(--space-2), calc(var(--safe-bottom) - var(--space-6))) * var(--lr-sheet-inset));
   z-index: var(--z-sheet);
   display: flex;
   flex-direction: column;
-  border-radius: var(--radius-xl);
+  isolation: isolate;
+  border-radius: calc(var(--radius-xl) + (var(--radius-sheet) - var(--radius-xl)) * var(--lr-sheet-rise))
+    calc(var(--radius-xl) + (var(--radius-sheet) - var(--radius-xl)) * var(--lr-sheet-rise))
+    calc(var(--radius-xl) * var(--lr-sheet-inset)) calc(var(--radius-xl) * var(--lr-sheet-inset));
   background: var(--lr-glass-fill-thick);
   -webkit-backdrop-filter: var(--lr-glass-blur-thick);
   backdrop-filter: var(--lr-glass-blur-thick);
@@ -30,20 +42,19 @@
   overflow: hidden;
   will-change: transform;
   outline: none;
-  transition:
-    left var(--dur-smooth) var(--spring-smooth),
-    right var(--dur-smooth) var(--spring-smooth),
-    bottom var(--dur-smooth) var(--spring-smooth),
-    border-radius var(--dur-smooth) var(--spring-smooth),
-    background-color var(--dur-smooth) var(--ease-fade),
-    opacity var(--dur-fade) var(--ease-fade);
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+/* The opaque surface fading in over the glass (useSheet sets its opacity: cheap, on the compositor). */
+.lr-sheet-backing {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--bg-elevated);
+  opacity: 0;
+  pointer-events: none;
 }
 .lr-sheet[data-detent='large'] {
-  left: max(0px, calc((100% - var(--lr-column)) / 2));
-  right: max(0px, calc((100% - var(--lr-column)) / 2));
-  bottom: 0;
-  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-  background: var(--bg-elevated);
   padding-bottom: var(--safe-bottom);
 }
 .lr-sheet-drag {
@@ -123,6 +134,10 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+/* Bolder and left-aligned, as alerts are since iOS 26. */
+.lr-alert h2 {
+  font-weight: 700;
 }
 .lr-alert p {
   color: var(--label-secondary);

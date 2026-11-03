@@ -30,6 +30,8 @@ const FLICK_VELOCITY = 300
 export interface UseSheetOptions {
   el: Ref<HTMLElement | null>
   body: Ref<HTMLElement | null>
+  /** The opaque layer behind the content: fades in as the sheet rises to large. */
+  backing: Ref<HTMLElement | null>
   detents: () => SheetDetent[]
   /** Modal sheets can be swiped down past the smallest detent to dismiss. */
   dismissible: () => boolean
@@ -59,11 +61,24 @@ export function useSheet(o: UseSheetOptions) {
     )
   }
 
+  /** 0 at or below the highest partial detent, 1 at large: inset, corners and opacity follow it (sheets.css). */
+  function rise(y: number): number {
+    const list = sorted()
+    const large = list.find((d) => d.id === 'large')
+    if (!large) return 0
+    const partial = list.at(-2)
+    if (!partial) return 1
+    return Math.min(1, Math.max(0, (maxH() - y - partial.height) / (large.height - partial.height)))
+  }
+
   function apply(y: number) {
     offset = y
     const el = o.el.value
     if (!el) return
     el.style.transform = `translate3d(0,${y}px,0)`
+    const r = String(rise(y))
+    el.style.setProperty('--lr-sheet-rise', r)
+    if (o.backing.value) o.backing.value.style.opacity = r
     const near = nearest(maxH() - y)
     if (near && near.id !== detent.value && y < hidden() - 1 && !travelling) {
       detent.value = near.id

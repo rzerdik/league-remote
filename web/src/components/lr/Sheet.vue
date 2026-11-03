@@ -12,7 +12,8 @@ export type DetentId = 'peek' | 'medium' | 'large'
  * Bottom sheet with detents. Non-modal (Champion Select picker): floats over the screen, no scrim. Modal (spell
  * picker, role and mode pickers, chat, Pair Again): a modal layer — scrim, everything else inert, focus moves in and
  * comes back on close — that closes by swipe down, the xmark button, a scrim tap and Escape. At partial detents it is
- * floating glass; at `large` it docks opaque. `confirmClose` (a modal editor with unsaved changes, like iOS's
+ * floating glass; rising to `large` it turns steadily more opaque and docks. Close leads, a confirming action trails
+ * (`head-trailing`); a modal sheet needs no Cancel. `confirmClose` (a modal editor with unsaved changes, like iOS's
  * isModalInPresentation): a swipe rubber-bands back and every way of closing emits `closeRequest` instead, so the
  * parent can ask "Discard Changes?" and close it itself.
  */
@@ -54,6 +55,7 @@ const emit = defineEmits<{
 const el = ref<HTMLElement | null>(null)
 const scrim = ref<HTMLElement | null>(null)
 const body = ref<HTMLElement | null>(null)
+const backing = ref<HTMLElement | null>(null)
 const titleId = useId()
 const rendered = ref(false)
 const scrimVisible = ref(false)
@@ -83,6 +85,7 @@ function heights(): SheetDetent[] {
 const sheet = useSheet({
   el,
   body,
+  backing,
   detents: heights,
   dismissible: () => props.modal && !props.confirmClose,
   onDetent: (id) => {
@@ -191,6 +194,7 @@ const showGrabber = () => props.grabber ?? (props.detents.length > 1 || props.mo
       tabindex="-1"
       @keydown="onKeydown"
     >
+      <div ref="backing" class="lr-sheet-backing" aria-hidden="true" />
       <div
         class="lr-sheet-drag"
         @pointerdown="sheet.handle.onPointerdown"
