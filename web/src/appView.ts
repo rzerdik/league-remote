@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { conversationById, conversationTitle } from './chat'
 import { isInGame, isLobbyPhase } from './gameflow'
-import { lobbyTitle } from './labels'
+import { lobbyTitle, queueLabel } from './labels'
 import { closeConversation, closeMatch, closePlayer, closePlayerMatch, closeSettingsView, nav, SETTINGS_VIEW_TITLE } from './navigation'
 import { postGamePhase } from './postGame'
 import { matchById, playerMatchById, playerProfile, resultLabel } from './profile'
@@ -59,6 +59,11 @@ export function goBack() {
   else closeConversation()
 }
 
+/** The draft board has no large title: the nav bar always carries the title, with the game mode under it. ARAM has one. */
+const draftBoardUp = computed(() => screen.value === 'champselect' && !pushed.value && !live.value?.champSelect?.benchEnabled)
+export const navInline = computed(() => !!openChat.value || draftBoardUp.value)
+export const navSubtitle = computed(() => (draftBoardUp.value ? queueLabel(live.value?.lobby?.queueId ?? null) : ''))
+
 export const navTitle = computed(() => {
   if (openPlayer.value) {
     if (openPlayerGame.value) return resultLabel(openPlayerGame.value.result)
@@ -83,6 +88,6 @@ export const navTitle = computed(() => {
     case 'postgame':
       return 'Game Over'
     default:
-      return 'Play'
+      return 'League Remote'
   }
 })

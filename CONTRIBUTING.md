@@ -15,7 +15,7 @@ npm --prefix web run dev -- --port 5179 --strictPort
 ```
 
 Open `http://localhost:5179/?demo=<scenario>` to see a screen with fake data and no PC. The scenarios are the
-`switch (scenario)` in `web/src/dev/demo/index.ts` plus `offline` and `pair` (for example `play`, `lobby`, `readycheck`,
+`switch (scenario)` in `web/src/dev/demo/index.ts` plus `offline`, `pair` and `materials` (for example `play`, `lobby`, `readycheck`,
 `pick`, `game`, `chat`, `profile`, `autopick`). Check new UI at 375 px, in light and dark.
 
 Running the real app uses ports 5080 and 5443. Do not start a second copy while one is running.

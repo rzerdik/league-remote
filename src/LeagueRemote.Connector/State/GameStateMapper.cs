@@ -27,7 +27,8 @@ internal static class GameStateMapper
         Invitations: InvitationMapper.MapReceived(s.ReceivedInvitations, s.Queues, s.PlayerNames),
         PostGame: s.GameflowPhase == GameflowPhases.EndOfGame && s.PostGame is { } p
             ? PostGameMapper.Map(p.Stats, p.LpChange, p.MasteryUpdate, p.Session, p.PlayerStatus)
-            : null);
+            : null,
+        ChampionLanes: ChampionLanesMapper.Map(s.ChampionPositions));
 
     public static ReadyCheckState? MapReadyCheck(JsonElement? json)
     {

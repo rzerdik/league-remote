@@ -103,7 +103,8 @@ export function champSelect(stage: CsStage): ClientState['champSelect'] {
       { kind: 'PickOrder', id: 11, cellId: 0, state: 'AVAILABLE' },
       { kind: 'Position', id: 12, cellId: 0, state: 'AVAILABLE' },
       { kind: 'PickOrder', id: 13, cellId: 1, state: 'SENT' },
-      { kind: 'Position', id: 14, cellId: 3, state: stage === 'pick' ? 'RECEIVED' : 'AVAILABLE' },
+      // `&swap=1` on `pick`: Lumen asks to swap roles (the banner covers the top of the board).
+      { kind: 'Position', id: 14, cellId: 3, state: stage === 'pick' && params.get('swap') === '1' ? 'RECEIVED' : 'AVAILABLE' },
     ],
     canDodge: true,
   }

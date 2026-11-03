@@ -84,6 +84,18 @@
     width var(--dur-snappy) var(--spring-snappy),
     height var(--dur-snappy) var(--spring-snappy);
 }
+/* While dragged between segments the thumb is a glass lens over the track. */
+.lr-segmented-thumb.is-dragging {
+  /* See-through, and still the thumb's own colour: the labels on it stay label. */
+  background: color-mix(in srgb, var(--segment-thumb) 55%, transparent);
+  -webkit-backdrop-filter: var(--lr-blur-thin);
+  backdrop-filter: var(--lr-blur-thin);
+  box-shadow: var(--glass-rim), var(--thumb-shadow);
+}
+/* The selected segment is the thumb's handle: a sideways drag moves it, a vertical one still scrolls the screen. */
+.lr-segment[aria-selected='true'] {
+  touch-action: pan-y;
+}
 /* 44-pt segments: the track's padding plus the segment make up --hit-min (and the hit region below reaches into the
    padding). Equal widths, like iOS: every segment grows from zero; one wraps to the next row only once its longest
    word no longer fits (large text). */
@@ -144,7 +156,7 @@
   background: var(--thumb);
   border: 0;
   box-shadow: var(--thumb-shadow);
-  transition: transform var(--dur-snappy) var(--spring-snappy);
+  transition: width var(--dur-snappy) var(--spring-snappy);
 }
 .lr-slider::-moz-range-thumb {
   width: var(--switch-thumb);
@@ -153,10 +165,29 @@
   background: var(--thumb);
   border: 0;
   box-shadow: var(--thumb-shadow);
+  transition: width var(--dur-snappy) var(--spring-snappy);
 }
+/* While held the thumb turns to glass and widens, like the switch's. */
 .lr-slider:active::-webkit-slider-thumb {
-  transform: scale(1.15);
+  width: var(--switch-thumb-pressed);
   background: var(--thumb-pressed);
+  -webkit-backdrop-filter: var(--lr-blur-thin);
+  backdrop-filter: var(--lr-blur-thin);
+  box-shadow: var(--glass-rim), var(--thumb-shadow);
+}
+.lr-slider:active::-moz-range-thumb {
+  width: var(--switch-thumb-pressed);
+  background: var(--thumb-pressed);
+  backdrop-filter: var(--lr-blur-thin);
+  box-shadow: var(--glass-rim), var(--thumb-shadow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lr-slider::-webkit-slider-thumb {
+    transition: none;
+  }
+  .lr-slider::-moz-range-thumb {
+    transition: none;
+  }
 }
 .lr-slider.is-muted {
   --lr-value: 0%;
@@ -266,13 +297,13 @@
   height: var(--symbol-xs);
 }
 
-/* Class filter (ClassFilter.vue): six icon toggles under the picker's search field, one on at a time. */
-.lr-class-filter {
+/* Lane filter (LaneFilter.vue): the League client's five lane icons under the picker's search field, one on at a time. */
+.lr-lane-filter {
   display: flex;
   gap: var(--space-1);
   margin-top: var(--space-2);
 }
-.lr-class-filter-btn {
+.lr-lane-filter-btn {
   flex: 1;
   min-width: 0;
   min-height: var(--hit-min);
@@ -287,16 +318,16 @@
     background var(--dur-snappy) var(--spring-snappy),
     color var(--dur-snappy) var(--spring-snappy);
 }
-.lr-class-filter-btn svg {
-  width: var(--symbol-sm);
-  height: var(--symbol-sm);
+.lr-lane-filter-btn svg {
+  width: var(--symbol-lg);
+  height: var(--symbol-lg);
 }
-.lr-class-filter-btn.is-selected {
+.lr-lane-filter-btn.is-selected {
   background: var(--accent-soft);
   color: var(--accent-text);
 }
 @media (prefers-reduced-motion: reduce) {
-  .lr-class-filter-btn {
+  .lr-lane-filter-btn {
     transition: none;
   }
 }

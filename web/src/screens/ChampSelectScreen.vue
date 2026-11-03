@@ -11,7 +11,7 @@ import ListSection from '../components/lr/ListSection.vue'
 import LrButton from '../components/lr/LrButton.vue'
 import { sheetStack } from '../composables/useSheet'
 import { autoPickGroupForQueue, type ChampSelectState, type RunePage } from '../contracts'
-import { byPickOrder, DRAFT_DOT, draftView, hasMemberActions, myTurnNow, pickTurns, upNextTag } from '../draft'
+import { byPickOrder, DRAFT_DOT, draftView, hasMemberActions, myTurnNow } from '../draft'
 import { queueLabel } from '../labels'
 import AutoPickBanner from './champselect/AutoPickBanner.vue'
 import AutoPickSection from './champselect/AutoPickSection.vue'
@@ -19,7 +19,6 @@ import BenchSection from './champselect/BenchSection.vue'
 import ChampionPicker from './champselect/ChampionPicker.vue'
 import DodgeSection from './champselect/DodgeSection.vue'
 import DraftBoard from './champselect/DraftBoard.vue'
-import DraftStatus from './champselect/DraftStatus.vue'
 import EnemyMemberRow from './champselect/EnemyMemberRow.vue'
 import LoadoutSection from './champselect/LoadoutSection.vue'
 import SwapRequest from './champselect/SwapRequest.vue'
@@ -81,26 +80,22 @@ const choice = useChampionChoice(() => props.cs, () => canAct.value)
 const { selectedId, myHoverId, popping, locking, lockDisabled, lockVerb, lockName, lockLabel } = choice
 
 /**
- * Once your champion is set, the loadout is what's left to do: it moves up, right under the pick order and the bench.
- * A keyed list, so Vue moves the one LoadoutSection instead of remounting it (an open spell or skin sheet, its busy
- * states stay), and the DOM order VoiceOver reads is the order on screen.
+ * ARAM's team lists: once your champion is set, the loadout is what's left to do, so it moves up under the bench. A keyed
+ * list, so Vue moves the one LoadoutSection instead of remounting it (an open spell or skin sheet, its busy states stay),
+ * and the DOM order VoiceOver reads is the order on screen.
  */
 const loadoutFirst = computed(() => !!me.value?.isLocked || stage.value === 'finalization' || stage.value === 'starting')
 const middle = computed(() => (loadoutFirst.value ? (['loadout', 'teams'] as const) : (['teams', 'loadout'] as const)))
 
-/** The pick order strip (draft modes only; blind pick has a single simultaneous turn). */
-const order = computed(() => pickTurns(props.cs, myHoverId.value))
-
 /**
  * The draft's status is always on screen in one place: the picker's turn header while the picker is up, the action
- * bar's status otherwise. Both name the turn being played with the acting side's colour; when yours comes is a tag in
- * the header ("You're Next") and the detail line in the bar.
+ * bar's status otherwise. Both name the turn being played with the acting side's colour; when yours comes is the bar's
+ * detail line.
  */
 const turnTitle = computed(() => {
   if (actionHot.value) return isBan.value ? 'Your Ban' : 'Your Pick'
   return draft.value.title
 })
-const turnUpNext = computed(() => (actionHot.value ? '' : upNextTag(draft.value)))
 const accessory = computed<ActionBarAccessory>(() => ({
   tone: DRAFT_DOT[draft.value.tone],
   title: draft.value.title,
@@ -112,8 +107,6 @@ const accessory = computed<ActionBarAccessory>(() => ({
 /** Never glass on glass: the picker steps aside while a modal sheet, the Dodge alert or a pushed profile is up. */
 const pickerHidden = computed(() => sheetStack.modal > 0 || !!props.covered || dodgeAlert.value)
 
-const myBans = computed(() => (props.cs.bans?.myTeamBans ?? []).filter((id) => id > 0))
-const theirBans = computed(() => (props.cs.bans?.theirTeamBans ?? []).filter((id) => id > 0))
 const myTeamOrdered = computed(() => byPickOrder(props.cs.myTeam))
 /** The enemy team in pick order, like yours (League hides their positions in most queues). */
 const theirTeamOrdered = computed(() => byPickOrder(props.cs.theirTeam ?? []))
@@ -130,59 +123,80 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
 
 <template>
   <div class="lr-content">
-    <LargeTitle title="Champion Select" compact>
-      <template v-if="queue">{{ queue }}</template>
-      <!-- On the title row; docks into the nav bar once the title collapses, so it stays reachable while the draft scrolls. -->
-      <template v-if="draftChat" #trailing>
-        <ChatButton :conversation="draftChat" @open="chatOpen = true" />
-      </template>
-    </LargeTitle>
+    <!-- Bench modes (ARAM): champions are dealt, so there is no draft to show: the team lists under a large title. -->
+    <template v-if="benchGame">
+      <LargeTitle title="Champion Select" compact>
+        <template v-if="queue">{{ queue }}</template>
+        <!-- On the title row; docks into the nav bar once the title collapses, so it stays reachable while the draft scrolls. -->
+        <template v-if="draftChat" #trailing>
+          <ChatButton :conversation="draftChat" @open="chatOpen = true" />
+        </template>
+      </LargeTitle>
 
-    <ListSection v-if="order.length" bare>
-      <DraftStatus :order="order" />
-    </ListSection>
+      <BenchSection :cs="cs" :stage="stage" @pending="benchSwapId = $event" />
 
-    <BenchSection v-if="benchGame" :cs="cs" :stage="stage" @pending="benchSwapId = $event" />
+      <template v-for="part in middle" :key="part">
+        <LoadoutSection v-if="part === 'loadout'" :me="me" :rune-pages="runePages" :aram="aramQueue" :skins="cs.skins" />
+        <template v-else>
+          <ListSection header="Your Team">
+            <TeamMemberRow
+              v-for="m in myTeamOrdered"
+              :key="m.cellId"
+              :member="m"
+              :stage="stage"
+              :offers="m.isLocalPlayer ? [] : rowOffers(m.cellId)"
+              :hover-id="m.isLocalPlayer ? myHoverId : 0"
+              :bench-swap-id="m.isLocalPlayer ? benchSwapId : null"
+              :popping="m.isLocalPlayer && popping"
+              :swap-busy="swapBusy"
+              :reserve-actions="hasRowActions"
+              @swap="swaps.send"
+            />
+          </ListSection>
 
-    <template v-for="part in middle" :key="part">
-      <LoadoutSection v-if="part === 'loadout'" :me="me" :rune-pages="runePages" :aram="aramQueue" :skins="cs.skins" />
-      <template v-else>
-        <ListSection header="Your Team">
-          <TeamMemberRow
-            v-for="m in myTeamOrdered"
-            :key="m.cellId"
-            :member="m"
-            :stage="stage"
-            :offers="m.isLocalPlayer ? [] : rowOffers(m.cellId)"
-            :hover-id="m.isLocalPlayer ? myHoverId : 0"
-            :bench-swap-id="m.isLocalPlayer ? benchSwapId : null"
-            :popping="m.isLocalPlayer && popping"
-            :swap-busy="swapBusy"
-            :reserve-actions="hasRowActions"
-            @swap="swaps.send"
-          />
-        </ListSection>
-
-        <ListSection v-if="showEnemies" header="Enemy Team">
-          <EnemyMemberRow v-for="e in theirTeamOrdered" :key="e.cellId" :enemy="e" />
-        </ListSection>
-
-        <DraftBoard :my-bans="myBans" :their-bans="theirBans" />
+          <ListSection v-if="showEnemies" header="Enemy Team">
+            <EnemyMemberRow v-for="e in theirTeamOrdered" :key="e.cellId" :enemy="e" />
+          </ListSection>
+        </template>
       </template>
     </template>
 
-    <AutoPickSection />
+    <!-- The draft on one screen: the title, the Dodge menu and the chat button are in the nav bar. -->
+    <template v-else>
+      <Teleport defer to="#lr-nav-trailing">
+        <span v-if="draftChat && !covered" class="lr-largetitle-dock">
+          <ChatButton :conversation="draftChat" @open="chatOpen = true" />
+        </span>
+      </Teleport>
+      <DraftBoard
+        :cs="cs"
+        :stage="stage"
+        :selected-id="selectedId"
+        :popping="popping"
+        :swap-busy="swapBusy"
+        :offers-for="rowOffers"
+        @swap="swaps.send"
+      />
+      <LoadoutSection :me="me" :rune-pages="runePages" :aram="aramQueue" :skins="cs.skins" tray />
+    </template>
 
-    <DodgeSection v-model:alert="dodgeAlert" :can-dodge="cs.canDodge" />
+    <AutoPickSection :class="{ 'lr-board-extra': !benchGame }" :quiet-header="!benchGame" />
 
-    <ChampionPicker :cs="cs" :can-act="canAct" :hidden="pickerHidden" :selected-id="selectedId" @select="choice.tap">
+    <DodgeSection v-model:alert="dodgeAlert" :can-dodge="cs.canDodge" :in-nav="!benchGame" :nav-hidden="covered" />
+
+    <ChampionPicker
+      :cs="cs"
+      :can-act="canAct"
+      :hidden="pickerHidden"
+      :selected-id="selectedId"
+      @select="choice.tap"
+    >
       <template #turn>
         <TurnHeader
           :title="turnTitle"
           :tone="actionHot ? (isBan ? 'ban' : 'pick') : null"
           :dot="DRAFT_DOT[actionHot ? (isBan ? 'you-ban' : 'you-pick') : draft.tone]"
           :seconds="showTimer ? timeLeft : null"
-          :up-next="turnUpNext"
         />
       </template>
     </ChampionPicker>
@@ -197,8 +211,7 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
       <template v-if="canAct && actionHot" #default>
         <LrButton
           :variant="isBan ? 'destructive' : 'prominent'"
-          size="lg"
-          block
+          size="sm"
           :leading="isBan ? BanIcon : LockIcon"
           :loading="locking"
           :disabled="lockDisabled"

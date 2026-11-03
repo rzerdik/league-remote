@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CircleAlertIcon, CircleDotIcon, PauseIcon, SparklesIcon, WandSparklesIcon } from '@lucide/vue'
 import { computed, type Component } from 'vue'
-import { autoPickRun, logKey, pauseAutoPick, presetChoiceLines, resumeAutoPick, roleTitle, runPreset } from '../../autoPick'
+import { autoPickRun, autoPickShown, logKey, pauseAutoPick, presetChoiceLines, resumeAutoPick, roleTitle, runPreset } from '../../autoPick'
 import ChampionIcon from '../../components/lr/ChampionIcon.vue'
 import IconTile, { type TileColor } from '../../components/lr/IconTile.vue'
 import ListRow from '../../components/lr/ListRow.vue'
@@ -14,10 +14,12 @@ import { tapFeedback } from '../../haptics'
 /**
  * Champion Select › Auto Pick: what the PC's automation does in this draft — on (for which role, with which preset),
  * paused for this game, or no preset for your role — with Pause / Resume, and its last few log lines. Hidden when it
- * is switched off or the queue isn't automated (status 'disabled' / 'unsupported'): nothing to say then.
+ * is switched off or the queue isn't automated (status 'disabled' / 'unsupported'): nothing to say then. `quietHeader`
+ * (the draft board): the header is for VoiceOver only, so the board keeps the screen.
  */
+defineProps<{ quietHeader?: boolean }>()
 const run = autoPickRun
-const visible = computed(() => !!run.value && (run.value.status === 'active' || run.value.status === 'paused' || run.value.status === 'no-preset'))
+const visible = autoPickShown
 
 const role = computed(() => (run.value?.role ? roleTitle(run.value.role, run.value.queueGroup) : ''))
 const title = computed(() => {
@@ -62,7 +64,8 @@ function onToggle() {
 </script>
 
 <template>
-  <ListSection v-if="visible && run" header="Auto Pick">
+  <ListSection v-if="visible && run" :header="quietHeader ? undefined : 'Auto Pick'">
+    <template v-if="quietHeader" #header><span class="lr-sr">Auto Pick</span></template>
     <ListRow
       :title="title"
       :icon="run.status === 'paused' ? PauseIcon : WandSparklesIcon"

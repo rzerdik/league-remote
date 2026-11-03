@@ -8,7 +8,7 @@
 //   · type styles grow with the text size up to their AX5 size (`maxFontSize`), so big styles grow less than body;
 //   · spacing grows up to dynamicType.spacingMaxScale × and sizes up to dynamicType.sizeMaxScale ×;
 //   · tokens marked `"dynamic": false` (bar chrome: the tab bar) stay fixed, as iOS bars do.
-//   Radii, z-index, durations and easings stay as authored.
+//   Radii, z-index, durations, easings and material values stay as authored.
 // - One class per type style (.large-title, .body, …) with SF Pro tracking.
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -46,6 +46,10 @@ for (const t of tokens.radius.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.zIndex.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.duration.tokens) constants.push(decl(t.name, t.value))
 for (const t of tokens.easing.tokens) constants.push(decl(t.name, t.value))
+for (const t of tokens.material.tokens) {
+  if (typeof t.value === 'string') constants.push(decl(t.name, t.value))
+  else for (const theme of THEMES) themed[theme].push(decl(t.name, t.value[theme]))
+}
 
 const NUMERALS = new Set(['clock-hero', 'clock-card', 'countdown', 'timer', 'code-digit'])
 const typeClasses = []

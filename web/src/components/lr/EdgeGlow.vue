@@ -8,7 +8,8 @@ import { computed, ref, watch } from 'vue'
  *
  * `beat` is the whole second left (from `useFinalSeconds`, counting down to 1; 0 = hidden). Each new value restarts one
  * lub-dub pulse, so it lands with the countdown tick sound. The glow grows from the first beat to the last: the window
- * isn't assumed, it is whatever the first beat was. Teleported to `<body>` so no transformed ancestor can clip it.
+ * isn't assumed, it is whatever the first beat was. Teleported to `<body>` so no transformed ancestor can clip it. It
+ * lies under sheets: while it shows, the champion picker thins its glass (`sheets.css`) so the light comes through.
  * Decorative (`aria-hidden`, no touches): the timer next to it already says the time; under Reduce Motion it holds
  * still.
  */

@@ -10,10 +10,14 @@ namespace LeagueRemote.Connector.State;
 /// </summary>
 internal sealed class GameStateReader(LcuClient client, PlayerNameResolver names, ChampionCatalog champions)
 {
+    /// <summary>Doesn't change during a connection, and every rebuild sends it: read until the client answers, then kept.</summary>
+    private System.Text.Json.JsonElement? _championPositions;
+
     public async Task<LcuSnapshot> ReadAsync(CancellationToken ct)
     {
         var phase = await client.GetGameflowPhaseAsync(ct);
-        var snapshot = new LcuSnapshot(phase, RunePages: await client.GetRunePagesAsync(ct));
+        _championPositions ??= (await OptionalRead.TryAsync(client.GetRecommendedChampionPositionsAsync, ct)).Json;
+        var snapshot = new LcuSnapshot(phase, RunePages: await client.GetRunePagesAsync(ct), ChampionPositions: _championPositions);
 
         // Where the phone offers game modes (Play, Lobby › Game Mode): the queues the client has enabled right now
         // (Quickplay, Arena and rotating modes come and go).

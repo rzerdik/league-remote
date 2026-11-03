@@ -41,7 +41,7 @@ const unavailable = computed(() => !!connectionEmpty.value || !!empty.value)
 
 <template>
   <div class="lr-content">
-    <LargeTitle title="Play">
+    <LargeTitle title="League Remote">
       <template v-if="!unavailable" #default>
         <StatusLine
           :tone="connectionLine.tone"

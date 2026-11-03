@@ -90,6 +90,8 @@ export const DURATION = {
   snappy: 440,
   smooth: 590,
   bouncy: 540,
+  menu: 470,
+  glow: 180,
   fade: 200,
   step: 250,
   shake: 420,
@@ -107,6 +109,8 @@ export const SPRING = {
   smooth: { response: 0.4, damping: 1 },
   snappy: { response: 0.3, damping: 1 },
   bouncy: { response: 0.4, damping: 0.8 },
+  menu: { response: 0.35, damping: 0.85 },
+  interactive: { response: 0.15, damping: 0.86 },
 } as const
 
 /** A size authored in px at the default text size, as CSS that grows with Dynamic Type like a size token. */

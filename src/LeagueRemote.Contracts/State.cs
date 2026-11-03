@@ -16,6 +16,7 @@ namespace LeagueRemote.Contracts;
 /// (champ select and in game).
 /// </param>
 /// <param name="PostGame">The post-game screen's summary while the gameflow phase is EndOfGame; null otherwise (or until the client has it).</param>
+/// <param name="ChampionLanes">The champions League recommends per lane, for the champion pickers' lane filter; null until the client answers.</param>
 public sealed record ClientState(
     bool LcuConnected,
     string GameflowPhase,
@@ -27,11 +28,23 @@ public sealed record ClientState(
     InGameState? InGame = null,
     IReadOnlyList<int>? AvailableQueueIds = null,
     IReadOnlyList<ReceivedInvitation>? Invitations = null,
-    PostGameSummary? PostGame = null)
+    PostGameSummary? PostGame = null,
+    ChampionLanes? ChampionLanes = null)
 {
     public static ClientState Disconnected() =>
         new(false, "None", null, null, null, [], DateTimeOffset.UtcNow);
 }
+
+/// <summary>
+/// Champion ids per lane, from League's <c>recommendedPositions</c>. Game data, nothing about a player. A champion can be
+/// listed under several lanes.
+/// </summary>
+public sealed record ChampionLanes(
+    IReadOnlyList<int> Top,
+    IReadOnlyList<int> Jungle,
+    IReadOnlyList<int> Middle,
+    IReadOnlyList<int> Bottom,
+    IReadOnlyList<int> Utility);
 
 /// <summary>
 /// The running game's loaded flag and clock, from Riot's Live Client Data API

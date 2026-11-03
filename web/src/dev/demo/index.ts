@@ -1,10 +1,11 @@
 // Dev-only: `?demo=<scenario>` fills the store with a fake client state so every screen can be reviewed in a browser
 // without the PC app or a League client. Loaded from main.ts only in `vite dev`; never part of a build. The scenarios
-// are the `switch` in state() below plus `offline` and `pair` (handled at the end of this file); each module documents
+// are the `switch` in state() below plus `offline`, `pair` and `materials` (handled at the end of this file); each module documents
 // its own options (`&game=`, `&auto=`, …).
-import { watchEffect } from 'vue'
+import { createApp, watchEffect } from 'vue'
 import type { ClientState, CommandResult } from '../../contracts'
 import { setFavouriteSkin } from '../../favouriteSkins'
+import { setGlassAmount } from '../../lib/glassAmount'
 import { nav } from '../../navigation'
 import { devPush, pushStatus, type PushStatus } from '../../push'
 import { devCommands } from '../../hub'
@@ -28,6 +29,7 @@ import { held, params, push, scenario, wait } from './core'
 import { demoFriends, demoRemoveFriend, friendRequestLater, friendsState } from './friends'
 import { demoInvite, invitingLobby, receivedInvites } from './invites'
 import { liveAram, liveOff, liveStart, startLiveGame } from './liveGame'
+import MaterialsPreview from './MaterialsPreview.vue'
 import { demoPlayer, demoSearch, openProfileDemo } from './players'
 import { demoPostGame, postGameStart, postGameToHistory } from './postGame'
 import { demoProfile, profileState } from './profile'
@@ -36,6 +38,9 @@ import { demoReconnect, demoRefresh, reconnect } from './reconnect'
 /** `&text=40` sets the root text size in px (≈ the largest accessibility size), for Dynamic Type checks. */
 const textSize = Number(params.get('text'))
 if (textSize > 0) document.documentElement.style.fontSize = `${textSize}px`
+/** `&glass=0` (…`1`) sets this phone's glass amount for the page; `&glass=default` clears a stored one. */
+const glassParam = params.get('glass')
+if (glassParam !== null) setGlassAmount(glassParam === 'default' ? null : Number(glassParam))
 
 function state(): ClientState | null {
   // Not listed here: `offline` (no state, the phone stays offline) and `pair` (nothing paired), both further down.
@@ -235,3 +240,9 @@ if (scenario && scenario !== 'pair') {
 // ?demo=pair: the PC is reachable (no "Offline" line under the code), nothing is paired. Demos never open the hub
 // connection (hub.ts), so nothing else would set it.
 if (scenario === 'pair') store.connection = 'connected'
+
+// ?demo=materials: the glass surfaces over a worst-case backdrop, on top of whatever the app shows.
+if (scenario === 'materials') {
+  const host = document.body.appendChild(document.createElement('div'))
+  createApp(MaterialsPreview).mount(host)
+}

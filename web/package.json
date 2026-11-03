@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "tokens": "node scripts/gen-tokens.mjs",
+    "contrast": "node scripts/check-glass-contrast.mjs",
     "build": "node scripts/gen-tokens.mjs && vue-tsc -b && vite build",
     "preview": "vite preview"
   },

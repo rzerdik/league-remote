@@ -14,37 +14,47 @@
   .lr-nav-title,
   .lr-sheet,
   .lr-call-btn > span:first-child,
-  .lr-banner-enter-active,
-  .lr-banner-leave-active,
   .lr-banner-move,
   .lr-rows-move,
-  .lr-cover-enter-active,
-  .lr-pop-enter-active,
-  .lr-pop-leave-active {
+  .lr-cover-enter-active {
     transition-property: opacity, background-color, color !important;
     transition-duration: var(--dur-fade) !important;
     transition-timing-function: var(--ease-fade) !important;
   }
   .lr-btn:active:not(:disabled),
   .lr-btn.is-pressed,
-  .lr-tab:active,
+  .lr-glass-interactive.lr-glass-interactive:is(:active:not(:disabled), .is-pressed),
   .lr-grid-tile:active,
   .lr-grid-tile.is-pressed,
   .lr-call-btn:active > span:first-child,
   .lr-call-btn.is-pressed > span:first-child,
   .lr-bans-enter-from,
   .lr-nav-title,
-  .lr-cover-enter-from,
-  .lr-pop-enter-from,
-  .lr-pop-leave-to,
-  .lr-banner-enter-from,
-  .lr-banner-leave-to {
+  .lr-cover-enter-from {
     transform: none !important;
   }
-  .lr-menu[data-state],
-  .lr-alert[data-state] {
+  /* What materializes cross-fades instead. */
+  .lr-menu[data-state='open'],
+  .lr-alert[data-state='open'],
+  .lr-banner-enter-active,
+  .lr-pop-enter-active {
     animation-name: lr-fade-in !important;
     animation-duration: var(--dur-fade) !important;
+  }
+  .lr-menu[data-state='closed'],
+  .lr-alert[data-state='closed'],
+  .lr-banner-leave-active,
+  .lr-pop-leave-active {
+    animation-name: lr-fade-out !important;
+    animation-duration: var(--dur-fade) !important;
+  }
+  .lr-glass-interactive::before {
+    display: none;
+  }
+  .lr-tabbar,
+  .lr-tab-strip,
+  .lr-tab-pill {
+    transition: none;
   }
   /* The spinner keeps turning. */
   .lr-spinner {
@@ -57,13 +67,40 @@
     opacity: 70%;
   }
 }
+/* Reduce Transparency (Chromium only: iOS Safari doesn't expose it) and Increase Contrast: the glass amount doesn't
+   apply, glass is at its most tinted. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root,
+  :root[data-glass-amount] {
+    --lr-glass-amount: 1;
+    --lr-glass-fill: var(--glass-tinted);
+    --lr-glass-fill-thick: var(--glass-tinted);
+  }
+}
 @media (prefers-reduced-transparency: reduce) {
   .lr-glass,
   .lr-glass-thick,
   .lr-btn--glass,
-  .lr-sheet {
-    background: var(--bg-elevated);
+  .lr-sheet,
+  .chat-field,
+  .lr-edge-top,
+  .lr-edge-bottom,
+  .lr-actionbar-row > .lr-btn:disabled {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+}
+/* Forced colours drop shadows and fills: a system-colour border draws the shape. */
+@media (forced-colors: active) {
+  .lr-glass,
+  .lr-glass-thick,
+  .lr-glass-clear,
+  .lr-btn--glass,
+  .lr-btn--clear,
+  .lr-sheet,
+  .chat-field {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 1px solid CanvasText;
   }
 }

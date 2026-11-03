@@ -4,7 +4,7 @@
  * The empty touchstart listener also makes iOS apply :active.
  */
 const PRESSABLE =
-  '.lr-btn, button.lr-row, .lr-row--action, .lr-menu-item, .lr-grid-tile, .lr-spell-slot, .lr-call-btn, .lr-segment'
+  '.lr-btn, .lr-tab, button.lr-row, .lr-row--action, .lr-menu-item, .lr-grid-tile, .lr-spell-slot, .lr-call-btn, .lr-segment'
 
 let installed = false
 
@@ -18,7 +18,14 @@ export function installPressStates(root: Document = document) {
     'pointerdown',
     (e) => {
       const el = (e.target as Element | null)?.closest?.(PRESSABLE) as HTMLButtonElement | null
-      if (el && !el.disabled && el.getAttribute('aria-disabled') !== 'true') el.classList.add('is-pressed')
+      if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return
+      el.classList.add('is-pressed')
+      // Glass lights up from under the finger: the point goes on this element only, never on a parent.
+      if (el.classList.contains('lr-glass-interactive')) {
+        const box = el.getBoundingClientRect()
+        el.style.setProperty('--lr-px', `${e.clientX - box.left}px`)
+        el.style.setProperty('--lr-py', `${e.clientY - box.top}px`)
+      }
     },
     { passive: true },
   )

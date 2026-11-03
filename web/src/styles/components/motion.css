@@ -37,17 +37,28 @@
 .lr-cover-leave-to {
   opacity: 0;
 }
-/* Glass materializes (accessory, swap banners): scale 0.96 → 1 with opacity. */
-.lr-pop-enter-active,
-.lr-pop-leave-active {
-  transition:
-    opacity var(--dur-snappy) var(--spring-snappy),
-    transform var(--dur-snappy) var(--spring-snappy);
+/* Glass materializes (menus, banners, the accessory): scale + opacity + a little blur of its own pixels. Never the
+   backdrop blur, which is too costly to animate. Leaving is faster than arriving. The `scale` property, not `transform`:
+   a banner being swiped keeps its inline translate. */
+@keyframes lr-materialize-in {
+  from {
+    opacity: 0;
+    scale: 0.94;
+    filter: blur(var(--materialize-blur));
+  }
 }
-.lr-pop-enter-from,
-.lr-pop-leave-to {
-  opacity: 0;
-  transform: translateY(var(--space-4)) scale(0.96);
+@keyframes lr-materialize-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+    filter: blur(var(--knob-blur));
+  }
+}
+.lr-pop-enter-active {
+  animation: lr-materialize-in var(--dur-menu) var(--spring-menu);
+}
+.lr-pop-leave-active {
+  animation: lr-materialize-out var(--dur-fade) var(--ease-fade) forwards;
 }
 /* List rows (party members) fade in and out in place, never sideways. */
 .lr-rows-enter-active,

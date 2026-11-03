@@ -36,10 +36,16 @@
   --on-tile: #ffffff;
   --ally: var(--blue);
   --enemy: var(--red);
-  --glass: rgba(255,255,255,0.58);
-  --glass-thick: rgba(250,250,252,0.82);
+  --glass: rgba(255,255,255,0.66);
+  --glass-thick: rgba(250,250,252,0.86);
+  --glass-ultraclear: rgba(255,255,255,0.55);
+  --glass-tinted: rgba(250,250,252,0.96);
+  --label-secondary-glass: rgba(0,0,0,0.8);
   --glass-clear: rgba(255,255,255,0.12);
   --scrim: rgba(0,0,0,0.35);
+  --dim-clear: rgba(0,0,0,0.35);
+  --glass-glow: rgba(255,255,255,0.6);
+  --edge-dim: rgba(255,255,255,0);
   --glow-pick: rgba(204,154,48,0.72);
   --glow-pick-soft: rgba(204,154,48,0.26);
   --glow-ban: rgba(255,56,60,0.66);
@@ -50,11 +56,12 @@
   --segment-thumb: #ffffff;
   --camera: #000000;
   --on-camera: #ffffff;
-  --glass-rim: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 0 0 0.5px rgba(255,255,255,0.6), 0 0 0 0.5px rgba(0,0,0,0.10);
+  --glass-rim: inset 0 1px 0 rgba(255,255,255,1), inset 0 0 0 0.5px rgba(255,255,255,0.7), inset 0 -0.5px 0 rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.14);
   --glass-lift: 0 8px 28px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.06);
   --sheet-lift: 0 -4px 40px rgba(0,0,0,0.16);
   --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
   --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  --glass-brightness: 100%;
   --font-sans: -apple-system, BlinkMacSystemFont, system-ui, "SF Pro Text", "Inter Variable", Inter, "Segoe UI", Roboto, sans-serif;
   --font-rounded: ui-rounded, "SF Pro Rounded", -apple-system, system-ui, "Inter Variable", Inter, sans-serif;
   --space-0-5: min(0.1176rem, 2.5px);
@@ -145,11 +152,13 @@
   --z-banner: 80;
   --z-alert: 90;
   --z-over-sheet: 50;
-  --z-edge-glow: 45;
+  --z-edge-glow: 30;
   --dur-press: 100ms;
   --dur-snappy: 440ms;
   --dur-smooth: 590ms;
   --dur-bouncy: 540ms;
+  --dur-menu: 470ms;
+  --dur-glow: 180ms;
   --dur-fade: 200ms;
   --dur-step: 250ms;
   --dur-shake: 420ms;
@@ -163,7 +172,21 @@
   --spring-smooth: linear(0, 0.086, 0.253, 0.427, 0.578, 0.697, 0.787, 0.853, 0.899, 0.932, 0.954, 0.97, 0.98, 0.987, 0.991, 0.994, 0.996, 0.998, 0.998, 1);
   --spring-snappy: linear(0, 0.086, 0.253, 0.427, 0.578, 0.697, 0.787, 0.853, 0.899, 0.932, 0.954, 0.969, 0.98, 0.987, 0.991, 0.994, 0.996, 0.998, 0.998, 1);
   --spring-bouncy: linear(0, 0.048, 0.159, 0.298, 0.44, 0.572, 0.686, 0.78, 0.854, 0.91, 0.95, 0.978, 0.996, 1.007, 1.013, 1.015, 1.015, 1.014, 1.012, 1.009, 1.007, 1.006, 1.004, 1.003, 1.002, 1);
+  --spring-menu: linear(0, 0.076, 0.236, 0.415, 0.578, 0.712, 0.814, 0.887, 0.937, 0.969, 0.988, 0.999, 1.004, 1.006, 1.006, 1.005, 1.004, 1.003, 1.002, 1);
   --ease-fade: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --glass-blur: 18px;
+  --glass-blur-thick: 28px;
+  --glass-saturate: 180%;
+  --glass-saturate-thick: 170%;
+  --glass-amount: 0.5;
+  --glass-press-scale: 1.04;
+  --glass-glow-size: 120%;
+  --refraction-scale: 70;
+  --refraction-bezel: 18px;
+  --edge-blur: 6px;
+  --edge-blur-top: 12px;
+  --knob-blur: 2px;
+  --materialize-blur: 4px;
   --font-size-large-title: min(2rem, 60px);
   --font-size-title-1: min(1.6471rem, 58px);
   --font-size-title-2: min(1.2941rem, 56px);
@@ -222,10 +245,16 @@
     --on-tile: #ffffff;
     --ally: var(--blue);
     --enemy: var(--red);
-    --glass: rgba(48,48,52,0.56);
-    --glass-thick: rgba(38,38,42,0.8);
+    --glass: rgba(48,48,52,0.62);
+    --glass-thick: rgba(38,38,42,0.84);
+    --glass-ultraclear: rgba(48,48,52,0.56);
+    --glass-tinted: rgba(30,30,33,0.95);
+    --label-secondary-glass: rgba(255,255,255,0.86);
     --glass-clear: rgba(255,255,255,0.08);
     --scrim: rgba(0,0,0,0.48);
+    --dim-clear: rgba(0,0,0,0.35);
+    --glass-glow: rgba(255,255,255,0.22);
+    --edge-dim: rgba(0,0,0,0.25);
     --glow-pick: rgba(230,185,92,0.78);
     --glow-pick-soft: rgba(230,185,92,0.3);
     --glow-ban: rgba(255,66,69,0.78);
@@ -236,11 +265,12 @@
     --segment-thumb: #636366;
     --camera: #000000;
     --on-camera: #ffffff;
-    --glass-rim: inset 0 0.5px 0 rgba(255,255,255,0.28), inset 0 0 0 0.5px rgba(255,255,255,0.10), 0 0 0 0.5px rgba(0,0,0,0.6);
+    --glass-rim: inset 0 0.5px 0 rgba(255,255,255,0.42), inset 0 0 0 0.5px rgba(255,255,255,0.12), inset 0 -0.5px 0 rgba(0,0,0,0.35), 0 0 0 0.5px rgba(0,0,0,0.7);
     --glass-lift: 0 8px 28px rgba(0,0,0,0.5);
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.6);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 70%;
   }
 }
 
@@ -282,8 +312,14 @@
     --enemy: var(--red);
     --glass: rgba(255,255,255,0.9);
     --glass-thick: rgba(255,255,255,0.97);
+    --glass-ultraclear: rgba(255,255,255,0.9);
+    --glass-tinted: rgba(255,255,255,0.97);
+    --label-secondary-glass: #48484a;
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.5);
+    --dim-clear: rgba(0,0,0,0.5);
+    --glass-glow: rgba(255,255,255,0);
+    --edge-dim: rgba(255,255,255,0);
     --glow-pick: rgba(184,128,20,0.9);
     --glow-pick-soft: rgba(184,128,20,0.4);
     --glow-ban: rgba(233,21,45,0.88);
@@ -299,6 +335,7 @@
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.25);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 100%;
   }
 }
 
@@ -340,8 +377,14 @@
     --enemy: var(--red);
     --glass: rgba(40,40,44,0.86);
     --glass-thick: rgba(30,30,32,0.95);
+    --glass-ultraclear: rgba(40,40,44,0.86);
+    --glass-tinted: rgba(30,30,32,0.95);
+    --label-secondary-glass: #c7c7cc;
     --glass-clear: rgba(0,0,0,0.6);
     --scrim: rgba(0,0,0,0.6);
+    --dim-clear: rgba(0,0,0,0.5);
+    --glass-glow: rgba(255,255,255,0);
+    --edge-dim: rgba(0,0,0,0.35);
     --glow-pick: rgba(242,203,120,0.95);
     --glow-pick-soft: rgba(242,203,120,0.45);
     --glow-ban: rgba(255,97,101,0.95);
@@ -357,6 +400,7 @@
     --sheet-lift: 0 -4px 40px rgba(0,0,0,0.7);
     --thumb-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16);
     --camera-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    --glass-brightness: 100%;
   }
 }
 

@@ -1,6 +1,27 @@
 /* ───────────────────────── Liquid Glass ─────────────────────────
    Controls layer only (nav buttons, action bar, banners, menus, partial sheets).
    Never on list sections, cards or other content. */
+
+/* The fills every glass surface reads. At the default they are the tokens themselves; a phone with its own glass
+   amount (lib/glassAmount.ts sets data-glass-amount) mixes ultraclear → glass → tinted. Reduce Transparency and
+   Increase Contrast override this in accessibility.css. */
+:root {
+  --lr-glass-amount: var(--glass-amount);
+  --lr-glass-fill: var(--glass);
+  --lr-glass-fill-thick: var(--glass-thick);
+}
+:root[data-glass-amount] {
+  --lr-glass-fill: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--glass-ultraclear), var(--glass) calc(min(var(--lr-glass-amount), 0.5) * 200%)),
+    var(--glass-tinted) calc(max(var(--lr-glass-amount) - 0.5, 0) * 200%)
+  );
+  --lr-glass-fill-thick: color-mix(
+    in srgb,
+    color-mix(in srgb, var(--glass-ultraclear), var(--glass-thick) calc(min(var(--lr-glass-amount), 0.5) * 200%)),
+    var(--glass-tinted) calc(max(var(--lr-glass-amount) - 0.5, 0) * 200%)
+  );
+}
 .lr-glass,
 .lr-glass-thick,
 .lr-glass-clear {
@@ -9,16 +30,87 @@
   box-shadow: var(--glass-rim), var(--glass-lift);
 }
 .lr-glass {
-  background: var(--glass);
+  background: var(--lr-glass-fill);
 }
 .lr-glass-thick {
-  background: var(--glass-thick);
+  background: var(--lr-glass-fill-thick);
   -webkit-backdrop-filter: var(--lr-glass-blur-thick);
   backdrop-filter: var(--lr-glass-blur-thick);
+}
+/* Secondary text inside glass stays legible over whatever shows through. */
+.lr-glass,
+.lr-glass-thick,
+.lr-btn--glass,
+.lr-sheet:not([data-detent='large']) {
+  --label-secondary: var(--label-secondary-glass);
 }
 .lr-glass-clear {
   background: var(--glass-clear);
   color: var(--on-camera);
+  /* Text on clear glass is bold and bright, and keeps its edge over a white feed. */
+  font-weight: 600;
+  text-shadow: var(--camera-shadow);
+}
+/* Icon buttons side by side on glass share one capsule: one surface, one backdrop sample. Put `lr-glass-group lr-glass`
+   on the wrapper and icon-only LrButtons in it; never text and icons together. */
+.lr-glass-group {
+  display: inline-flex;
+  padding: var(--space-0-5);
+  border-radius: var(--radius-full);
+}
+.lr-glass-group > .lr-btn {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+/* An inner shape concentric with its parent: the parent publishes --lr-r-outer and --lr-pad on the element (or an
+   ancestor); with neither set it keeps a fixed fallback. Squircles where the browser has them (a squircle reads smaller
+   than a circular corner of the same radius: only use them with a radius bumped to match). */
+.lr-concentric {
+  border-radius: max(var(--lr-r-min, var(--radius-md)), calc(var(--lr-r-outer, 0px) - var(--lr-pad, 0px)));
+}
+@supports (corner-shape: squircle) {
+  .lr-squircle {
+    corner-shape: squircle;
+  }
+}
+/* Pressed glass (LrButton glass, clear, prominent; tabs): it swells, light blooms from under the finger
+   (--lr-px / --lr-py, written by pressStates on this element), and it bounces back on release. */
+.lr-glass-interactive.lr-glass-interactive {
+  position: relative;
+  /* The glow lies between the fill and the label, so the label keeps its contrast. */
+  isolation: isolate;
+  transition:
+    transform var(--dur-bouncy) var(--spring-bouncy),
+    opacity var(--dur-fade) var(--ease-fade),
+    visibility var(--dur-fade) var(--ease-fade),
+    color var(--dur-fade) var(--ease-fade),
+    background-color var(--dur-fade) var(--ease-fade);
+}
+.lr-glass-interactive::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--lr-px, 50%) var(--lr-py, 50%),
+    var(--glass-glow),
+    transparent var(--glass-glow-size)
+  );
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-glass-interactive:is(:active:not(:disabled), .is-pressed)::before {
+  opacity: 1;
+  transition-duration: var(--dur-glow);
+}
+.lr-glass-interactive.lr-glass-interactive:is(:active:not(:disabled), .is-pressed) {
+  transform: scale(var(--glass-press-scale));
+  transition-duration: var(--dur-press);
+  filter: none;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .lr-glass,

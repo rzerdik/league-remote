@@ -140,7 +140,7 @@ public sealed class PhoneServerTests : IAsyncLifetime
         // the generated silent audio clip. Nothing inline but styles, nothing framed.
         var csp = SecurityHeaders.ContentSecurityPolicy;
         Assert.Contains("script-src 'self' 'wasm-unsafe-eval';", csp);
-        Assert.Contains("img-src 'self' blob: https://ddragon.leagueoflegends.com;", csp);
+        Assert.Contains("img-src 'self' blob: data: https://ddragon.leagueoflegends.com;", csp);
         Assert.Contains("connect-src 'self' wss: https://ddragon.leagueoflegends.com;", csp);
         Assert.Contains("media-src 'self' blob:;", csp);
         Assert.Contains("frame-ancestors 'none'", csp);

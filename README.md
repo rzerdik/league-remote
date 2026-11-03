@@ -15,13 +15,14 @@ and chat, from the couch.
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A small Windows app runs next to your League client. Your phone opens it as a web app over your home Wi-Fi.
-Game data and commands stay on your network. Only push notifications use the internet, through your browser's push
-service.
+Game data and commands stay on your network. The only internet use is push notifications, through your browser's push
+service, and champion art and data from Riot's Data Dragon.
 
 ## Features
 
 - **Game flow:** accept or decline the ready check, pick a queue, make a lobby, start or cancel the search, leave or dodge.
-- **Champion select:** hover, lock in, ban, swap picks and roles, ARAM bench and rerolls, spells, runes, skins and chromas.
+- **Champion select:** the whole draft on one screen, hover, lock in, ban, filter by lane, swap picks and roles, ARAM bench
+  and rerolls, spells, runes, skins and chromas.
 - **Auto pick and ban:** presets per queue and role that the PC applies for you. See [docs/auto-pick.md](docs/auto-pick.md).
 - **Auto Accept:** the PC accepts the ready check for you, after a moment to decline. Off by default.
 - **Social:** chat, friends, friend requests, lobby invites.

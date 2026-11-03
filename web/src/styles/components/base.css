@@ -11,11 +11,13 @@
   --lr-nav-h: var(--control-lg);
   --lr-margin: var(--space-5);
   --lr-column: 640px;
-  --lr-glass-blur: blur(14px) saturate(180%);
-  --lr-glass-blur-thick: blur(28px) saturate(170%);
-  /* The soft fade behind the action bar; the switch thumb's glass while pressed. */
-  --lr-blur-soft: blur(6px);
-  --lr-blur-thin: blur(2px);
+  /* Backdrop filters, composed from the material tokens. */
+  --lr-glass-blur: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(var(--glass-brightness));
+  --lr-glass-blur-thick: blur(var(--glass-blur-thick)) saturate(var(--glass-saturate-thick))
+    brightness(var(--glass-brightness));
+  /* The soft scroll edges; a knob's glass while it is held. */
+  --lr-blur-soft: blur(var(--edge-blur));
+  --lr-blur-thin: blur(var(--knob-blur));
   /* Strokes stay in px at every text size. */
   --lr-hairline: 0.5px;
   --lr-stroke: 2px;

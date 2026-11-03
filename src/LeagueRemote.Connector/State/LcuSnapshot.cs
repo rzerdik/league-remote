@@ -22,7 +22,8 @@ internal sealed record LcuSnapshot(
     JsonElement? Queues = null,
     JsonElement? ReceivedInvitations = null,
     JsonElement? SkinCarousel = null,
-    PostGameReads? PostGame = null);
+    PostGameReads? PostGame = null,
+    JsonElement? ChampionPositions = null);
 
 /// <summary>The post-game screen's reads (EndOfGame phase only), mapped by <see cref="PostGameMapper"/>.</summary>
 internal sealed record PostGameReads(

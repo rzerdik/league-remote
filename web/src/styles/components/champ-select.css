@@ -35,12 +35,168 @@
   color: var(--label-tertiary);
 }
 
-/* ───────────────────────── Draft board (bans) ───────────────────────── */
-.lr-bans {
+/* Spells and rune page on one line of the draft's Loadout list. */
+.lr-tray {
+  min-height: var(--row-min);
   display: flex;
+  align-items: center;
   gap: var(--space-1);
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  padding: 0 var(--space-4) 0 var(--space-3);
+}
+.lr-tray:not(:last-child) {
+  box-shadow: inset 0 calc(-1 * var(--lr-hairline)) 0 var(--separator);
+}
+.lr-tray-spell,
+.lr-tray-rune {
+  height: var(--hit-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.lr-tray-spell {
+  width: var(--hit-min);
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+.lr-tray-rune {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+  text-align: left;
+}
+.lr-tray-rune .body {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ───────────────────────── Draft board (Champion Select on one screen) ─────────────────────────
+   Both teams face each other: portraits on the screen's outer edges, spells stacked beside them, names towards the
+   middle. An empty slot shows its pick number, so the order needs no line of its own. Three densities, by how much of
+   the screen the picker leaves: default (no picker), --peek (its low detent), --compact (its medium detent and up). */
+.lr-board {
+  --portrait: var(--champ-row);
+  --row: calc(var(--portrait) + var(--space-1));
+  /* Rings cut their gap out of the screen's ground here: the board sits on it, not on a card. */
+  --bg-elevated: var(--bg);
+  padding: calc(var(--lr-nav-top) + var(--lr-nav-h) + var(--space-2)) var(--lr-inset-right) 0 var(--lr-inset-left);
+}
+.lr-board-sides {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+.lr-board-sides h2 {
+  margin: 0;
+}
+.lr-board-bans,
+.lr-board-rows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-3);
+}
+.lr-board-bans {
+  margin-bottom: var(--space-3);
+}
+.lr-ban-tiles {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lr-ban-tiles .lr-champ {
+  --s: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.lr-slots {
+  display: grid;
+  grid-auto-rows: minmax(var(--row), auto);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lr-slot {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+.lr-slot--enemy {
+  flex-direction: row-reverse;
+}
+button.lr-slot {
+  cursor: pointer;
+}
+button.lr-slot:focus-visible {
+  outline: var(--lr-stroke) solid var(--accent);
+  outline-offset: var(--lr-ring-gap);
+  border-radius: var(--radius-md);
+}
+.lr-slot .lr-champ {
+  --s: var(--portrait);
+  flex: none;
+}
+.lr-slot-text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-0-5);
+  padding-left: var(--space-1);
+}
+.lr-slot-text > span {
+  max-width: 100%;
+}
+.lr-slot--enemy .lr-slot-text {
+  align-items: flex-end;
+  padding-left: 0;
+  padding-right: var(--space-1);
+  text-align: right;
+}
+.lr-slot-spells {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-0-5);
+}
+.lr-slot-spells .lr-spell {
+  --s: var(--art-sm);
+  flex: none;
+}
+.lr-slot.is-you {
+  width: calc(100% + var(--space-2));
+  margin-left: calc(-1 * var(--space-2));
+  padding-left: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+}
+.lr-slot.is-you .lr-slot-text > :first-child {
+  color: var(--accent-text);
+}
+.lr-section.lr-board-extra {
+  margin-top: var(--space-3);
 }
 
 /* ───────────────────────── Champion picker sheet ───────────────────────── */
@@ -54,7 +210,7 @@
    above it. A mask, not a band of colour or glass: the sheet is glass at partial detents and opaque at large, and
    this reads right on both (only the alpha counts). */
 .lr-picker-body--action {
-  padding-bottom: calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px) + var(--lr-keyboard, 0px) + var(--control-lg) + var(--space-4));
+  padding-bottom: calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px) + var(--lr-keyboard, 0px) + var(--control-sm) + var(--space-4));
 }
 
 /* ───────────────────────── Turn header (top of the champion picker) ───────────────────────── */
@@ -82,63 +238,4 @@
 }
 .lr-turn--ban .lr-turn-text {
   color: var(--red-text);
-}
-
-/* ───────────────────────── Draft status (who is acting, pick order) ───────────────────────── */
-.lr-draft {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  padding: var(--space-4) var(--space-5);
-  background: var(--bg-elevated);
-  border-radius: var(--radius-card);
-}
-/* One row at any width: each turn grows with its slot count, portraits shrink down to fit. */
-.lr-draft-order {
-  --pad: var(--space-0-5);
-  display: flex;
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.lr-draft-turn {
-  flex: var(--n, 1) 1 0;
-  min-width: 0;
-  max-width: calc(var(--n, 1) * (var(--champ-ban) + var(--pad)) + var(--pad));
-  display: flex;
-  gap: var(--pad);
-  padding: var(--pad) var(--pad) var(--space-1);
-  border-radius: calc(var(--radius-xs) + var(--pad));
-  box-shadow: inset 0 calc(-1 * var(--lr-stroke)) 0 var(--side);
-  transition: background var(--dur-fade) var(--ease-fade);
-}
-.lr-draft-turn.is-ally {
-  --side: var(--ally);
-}
-.lr-draft-turn.is-enemy {
-  --side: var(--enemy);
-}
-.lr-draft-turn.is-now {
-  background: var(--fill-secondary);
-}
-.lr-draft-slot {
-  position: relative;
-  display: block;
-  flex: 1 1 0;
-  min-width: 0;
-  border-radius: var(--radius-xs);
-}
-.lr-draft-slot .lr-champ {
-  --s: 100%;
-  height: auto;
-  aspect-ratio: 1;
-}
-.lr-draft-slot.is-acting::after {
-  content: '';
-  position: absolute;
-  inset: calc(-1 * var(--lr-ring-gap));
-  border-radius: calc(var(--radius-xs) + var(--lr-ring-gap));
-  box-shadow: 0 0 0 var(--lr-stroke) var(--side);
-  animation: lr-pulse var(--dur-pulse) var(--ease-fade) infinite;
 }
