@@ -33,7 +33,7 @@ function choose(tab: Tab) {
         v-for="item in ITEMS"
         :key="item.tab"
         type="button"
-        class="lr-tab"
+        class="lr-tab lr-glass-interactive"
         :class="{ 'is-selected': nav.tab === item.tab }"
         :aria-current="nav.tab === item.tab ? 'page' : undefined"
         :aria-label="badges[item.tab] > 0 ? `${item.label}, ${badges[item.tab]} unread` : undefined"

@@ -51,6 +51,42 @@
   font-weight: 600;
   text-shadow: var(--camera-shadow);
 }
+/* Pressed glass (LrButton glass, clear, prominent; tabs): it swells, light blooms from under the finger
+   (--lr-px / --lr-py, written by pressStates on this element), and it bounces back on release. */
+.lr-glass-interactive {
+  position: relative;
+  /* The glow lies between the fill and the label, so the label keeps its contrast. */
+  isolation: isolate;
+  transition:
+    transform var(--dur-bouncy) var(--spring-bouncy),
+    opacity var(--dur-fade) var(--ease-fade),
+    color var(--dur-fade) var(--ease-fade),
+    background-color var(--dur-fade) var(--ease-fade);
+}
+.lr-glass-interactive::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--lr-px, 50%) var(--lr-py, 50%),
+    var(--glass-glow),
+    transparent var(--glass-glow-size)
+  );
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-fade);
+}
+.lr-glass-interactive:is(:active:not(:disabled), .is-pressed)::before {
+  opacity: 1;
+  transition-duration: var(--dur-glow);
+}
+.lr-glass-interactive.lr-glass-interactive:is(:active:not(:disabled), .is-pressed) {
+  transform: scale(var(--glass-press-scale));
+  transition-duration: var(--dur-press);
+  filter: none;
+}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .lr-glass,
   .lr-glass-thick {

@@ -34,6 +34,7 @@ const props = withDefaults(
       `lr-btn--${props.variant}`,
       props.size !== 'md' && `lr-btn--${props.size}`,
       { 'lr-btn--block': props.block, 'lr-btn--icon': !!props.icon, 'lr-btn--danger': props.danger },
+      { 'lr-glass-interactive': props.variant === 'glass' || props.variant === 'clear' || props.variant === 'prominent' },
     ]"
     :disabled="props.disabled || props.loading"
     :aria-label="props.ariaLabel"

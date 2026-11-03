@@ -27,7 +27,7 @@
   }
   .lr-btn:active:not(:disabled),
   .lr-btn.is-pressed,
-  .lr-tab:active,
+  .lr-glass-interactive.lr-glass-interactive:is(:active:not(:disabled), .is-pressed),
   .lr-grid-tile:active,
   .lr-grid-tile.is-pressed,
   .lr-call-btn:active > span:first-child,
@@ -45,6 +45,9 @@
   .lr-alert[data-state] {
     animation-name: lr-fade-in !important;
     animation-duration: var(--dur-fade) !important;
+  }
+  .lr-glass-interactive::before {
+    display: none;
   }
   /* The spinner keeps turning. */
   .lr-spinner {

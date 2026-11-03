@@ -39,15 +39,7 @@
   background: transparent;
   color: var(--label-secondary);
   cursor: pointer;
-  transition:
-    background-color var(--dur-fade) var(--ease-fade),
-    color var(--dur-fade) var(--ease-fade),
-    transform var(--dur-snappy) var(--spring-snappy);
   -webkit-touch-callout: none;
-}
-.lr-tab:active {
-  transform: scale(0.94);
-  transition-duration: var(--dur-press);
 }
 .lr-tab.is-selected {
   color: var(--accent-text);
