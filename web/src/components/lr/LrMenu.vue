@@ -69,7 +69,7 @@ function select(item: MenuItem) {
           <DropdownMenuSeparator v-if="item === 'separator'" class="lr-menu-sep" />
           <DropdownMenuItem
             v-else
-            class="lr-menu-item body"
+            class="lr-menu-item lr-concentric body"
             :class="{ 'lr-menu-item--danger': item.destructive }"
             :disabled="item.disabled"
             :role="choice ? 'menuitemradio' : 'menuitem'"

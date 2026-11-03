@@ -184,6 +184,8 @@
 /* ───────────────────────── Menu (anchored, grows from its trigger) ───────────────────────── */
 .lr-menu {
   --pad: var(--space-2);
+  --lr-r-outer: var(--radius-xl);
+  --lr-pad: var(--pad);
   min-width: var(--menu-min);
   max-width: min(var(--menu-max), calc(100vw - var(--space-4) * 2));
   max-height: var(--reka-dropdown-menu-content-available-height, 70vh);
@@ -207,8 +209,6 @@
   min-height: var(--hit-min);
   padding: 0 var(--space-4) 0 var(--space-3);
   border: 0;
-  /* Concentric with the menu: its radius minus its padding. */
-  border-radius: calc(var(--radius-xl) - var(--pad));
   background: transparent;
   color: var(--label);
   text-align: left;
