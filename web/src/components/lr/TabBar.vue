@@ -23,6 +23,16 @@ const ITEMS: { tab: Tab; label: string; icon: Component }[] = [
 const selectedIndex = computed(() => Math.max(0, ITEMS.findIndex((i) => i.tab === nav.tab)))
 const bar = ref<HTMLElement | null>(null)
 useRefraction(bar)
+/** The bar's expanded width, measured off a ruler that never minimizes: the tabs keep their layout at every width. */
+const ruler = ref<HTMLElement | null>(null)
+const stripWidth = ref<string | undefined>()
+const rulerObserver = new ResizeObserver(([entry]) => {
+  if (entry) stripWidth.value = `${entry.contentRect.width}px`
+})
+onMounted(() => {
+  if (ruler.value) rulerObserver.observe(ruler.value)
+})
+onBeforeUnmount(() => rulerObserver.disconnect())
 
 /** Scroll travel (px) in one direction before the bar changes: a finger resting on the list doesn't flip it. */
 const MINIMIZE_TRAVEL = 24
@@ -79,25 +89,33 @@ function tabLabel(item: (typeof ITEMS)[number]): string | undefined {
 <template>
   <!-- In <body>, beside the teleported sheets, like the action bar. -->
   <Teleport to="body">
-    <nav ref="bar" class="lr-tabbar lr-glass" :class="{ 'is-minimized': minimized }" aria-label="Tabs" :style="{ '--lr-tab-index': minimized ? 0 : selectedIndex }">
-      <span class="lr-tab-pill" aria-hidden="true" />
-      <button
-        v-for="item in ITEMS"
-        v-show="!minimized || nav.tab === item.tab"
-        :key="item.tab"
-        type="button"
-        class="lr-tab lr-glass-interactive"
-        :class="{ 'is-selected': nav.tab === item.tab }"
-        :aria-current="nav.tab === item.tab ? 'page' : undefined"
-        :aria-label="tabLabel(item)"
-        @click="choose(item.tab)"
-      >
-        <span class="lr-tab-icon">
-          <component :is="item.icon" :stroke-width="nav.tab === item.tab ? 2.25 : 1.75" aria-hidden="true" />
-          <Badge :count="badges[item.tab]" on aria-hidden="true" />
-        </span>
-        <span class="tab-label">{{ item.label }}</span>
-      </button>
+    <span ref="ruler" class="lr-tabbar-ruler" aria-hidden="true" />
+    <nav
+      ref="bar"
+      class="lr-tabbar lr-glass"
+      :class="{ 'is-minimized': minimized }"
+      aria-label="Tabs"
+      :style="{ '--lr-tab-index': selectedIndex, '--lr-strip-w': stripWidth }"
+    >
+      <div class="lr-tab-strip">
+        <span class="lr-tab-pill" aria-hidden="true" />
+        <button
+          v-for="item in ITEMS"
+          :key="item.tab"
+          type="button"
+          class="lr-tab lr-glass-interactive"
+          :class="{ 'is-selected': nav.tab === item.tab }"
+          :aria-current="nav.tab === item.tab ? 'page' : undefined"
+          :aria-label="tabLabel(item)"
+          @click="choose(item.tab)"
+        >
+          <span class="lr-tab-icon">
+            <component :is="item.icon" :stroke-width="nav.tab === item.tab ? 2.25 : 1.75" aria-hidden="true" />
+            <Badge :count="badges[item.tab]" on aria-hidden="true" />
+          </span>
+          <span class="tab-label">{{ item.label }}</span>
+        </button>
+      </div>
     </nav>
   </Teleport>
 </template>

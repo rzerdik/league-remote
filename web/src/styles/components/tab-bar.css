@@ -7,6 +7,7 @@
   --lr-tabbar-h: var(--tabbar-h);
   --lr-tabbar-gap: var(--space-4);
   --lr-tabbar-left: max(calc(var(--lr-tabbar-gap) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
+  --lr-tabbar-right: max(calc(var(--lr-tabbar-gap) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
   --lr-chrome-bottom: max(calc(var(--safe-bottom) + var(--space-1)), var(--space-5));
 }
 :root.lr-has-tabbar {
@@ -16,23 +17,46 @@
 .lr-tabbar {
   position: fixed;
   left: var(--lr-tabbar-left);
-  right: max(calc(var(--lr-tabbar-gap) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
+  right: var(--lr-tabbar-right);
   bottom: var(--lr-chrome-bottom);
   z-index: var(--z-chrome);
   height: var(--lr-tabbar-h);
-  display: grid;
-  /* One equal column per tab, however many there are. */
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  align-items: stretch;
-  padding: var(--space-1);
   border-radius: var(--radius-full);
+  overflow: clip;
   transform: translateY(calc(-1 * var(--lr-keyboard, 0px)));
   transition: right var(--dur-snappy) var(--spring-snappy);
 }
-/* Minimized: only the current tab, at the leading edge. */
+/* Always as wide as the bar when expanded (TabBar.vue reads it into --lr-strip-w on the bar). */
+.lr-tabbar-ruler {
+  position: fixed;
+  left: var(--lr-tabbar-left);
+  right: var(--lr-tabbar-right);
+  height: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* The tabs keep their full-width layout while the capsule narrows around them: nothing squeezes or reflows. */
+.lr-tab-strip {
+  --lr-tab-w: calc((var(--lr-strip-w, 100%) - 2 * var(--space-1)) / 5);
+  position: relative;
+  width: var(--lr-strip-w, 100%);
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: stretch;
+  padding: var(--space-1);
+  transition: transform var(--dur-snappy) var(--spring-snappy);
+}
+/* Minimized: only the current tab, at the leading edge, in a capsule its own width. */
 .lr-tabbar.is-minimized {
-  right: calc(100% - var(--lr-tabbar-left) - var(--tabbar-min-w));
+  right: calc(100% - var(--lr-tabbar-left) - (var(--lr-strip-w, 100%) - 2 * var(--space-1)) / 5 - 2 * var(--space-1));
+}
+.lr-tabbar.is-minimized .lr-tab-strip {
+  transform: translateX(calc(var(--lr-tab-index, 0) * var(--lr-tab-w) * -1));
+}
+.lr-tabbar.is-minimized .lr-tab:not(.is-selected) {
+  opacity: 0;
+  visibility: hidden;
 }
 /* The selection: one pill that slides between the tabs (transform only). */
 .lr-tab-pill {
@@ -40,14 +64,11 @@
   top: var(--space-1);
   bottom: var(--space-1);
   left: var(--space-1);
-  width: calc((100% - 2 * var(--space-1)) / 5);
+  width: var(--lr-tab-w);
   border-radius: var(--radius-full);
   background: var(--fill-tertiary);
   transform: translateX(calc(var(--lr-tab-index, 0) * 100%));
   transition: transform var(--dur-snappy) var(--spring-snappy);
-}
-.lr-tabbar.is-minimized .lr-tab-pill {
-  width: calc(100% - 2 * var(--space-1));
 }
 .lr-tab {
   display: flex;

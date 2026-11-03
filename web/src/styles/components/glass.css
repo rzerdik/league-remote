@@ -77,13 +77,14 @@
 }
 /* Pressed glass (LrButton glass, clear, prominent; tabs): it swells, light blooms from under the finger
    (--lr-px / --lr-py, written by pressStates on this element), and it bounces back on release. */
-.lr-glass-interactive {
+.lr-glass-interactive.lr-glass-interactive {
   position: relative;
   /* The glow lies between the fill and the label, so the label keeps its contrast. */
   isolation: isolate;
   transition:
     transform var(--dur-bouncy) var(--spring-bouncy),
     opacity var(--dur-fade) var(--ease-fade),
+    visibility var(--dur-fade) var(--ease-fade),
     color var(--dur-fade) var(--ease-fade),
     background-color var(--dur-fade) var(--ease-fade);
 }

@@ -52,6 +52,7 @@
     display: none;
   }
   .lr-tabbar,
+  .lr-tab-strip,
   .lr-tab-pill {
     transition: none;
   }

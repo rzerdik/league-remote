@@ -60,7 +60,6 @@ export const SIZE = {
   codeBox: 64,
   codeDash: 12,
   tabbarH: 62,
-  tabbarMinW: 76,
   switchW: 64,
   switchH: 28,
   switchThumb: 38,

@@ -38,18 +38,19 @@
   opacity: 0;
 }
 /* Glass materializes (menus, banners, the accessory): scale + opacity + a little blur of its own pixels. Never the
-   backdrop blur, which is too costly to animate. Leaving is faster than arriving. */
+   backdrop blur, which is too costly to animate. Leaving is faster than arriving. The `scale` property, not `transform`:
+   a banner being swiped keeps its inline translate. */
 @keyframes lr-materialize-in {
   from {
     opacity: 0;
-    transform: scale(0.94);
+    scale: 0.94;
     filter: blur(4px);
   }
 }
 @keyframes lr-materialize-out {
   to {
     opacity: 0;
-    transform: scale(0.96);
+    scale: 0.96;
     filter: blur(2px);
   }
 }
