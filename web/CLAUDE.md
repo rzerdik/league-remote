@@ -65,6 +65,21 @@ the camera, always over `dim-clear`. Glass reads `--lr-glass-fill` / `--lr-glass
 colour tokens directly: they follow the glass amount, Reduce Transparency and Increase Contrast. Blur values are
 `material` tokens, composed into `--lr-glass-blur*` in `base.css`.
 
+
+**Liquid Glass rules.** Apple's rules and the reasons behind them are in `design/liquid-glass/` (start at
+`reference/01-material.md`; `reference/03-web-implementation.md` has the recipes). Apple publishes no blur, opacity or
+radius numbers except the 35% under clear glass: every value here is tuned by eye, so never present one as Apple's, and
+take any new metric from Apple's UI Kit.
+
+- Tiers: opaque (`glass-tinted`, no blur: Reduce Transparency, Increase Contrast), frosted (the real look on iPhone),
+  refractive (`useRefraction`: Chromium only, tab bar and action bar capsule only). Nothing may depend on the third.
+- `--lr-glass-amount` (`lib/glassAmount.ts`, per phone, no Settings row): 0 ultraclear, 0.5 default, 1 tinted. A page
+  can't read iOS 27's slider or, in Safari, Reduce Transparency. Without a stored amount no `color-mix()` runs.
+- Text on glass: `label`, and `label-secondary` resolves to `label-secondary-glass` inside every glass surface.
+- At most four glass surfaces on screen. Several icon buttons side by side share one `.lr-glass-group` capsule; never
+  text and icons in one group.
+- Only knobs turn to glass inside content, only while held (switch, slider, segmented thumb).
+
 Review every glass change against this list, at `?demo=materials&glass=0` (worst-case backdrop) and with
 `node scripts/check-glass-contrast.mjs` (from `web/`):
 
@@ -98,9 +113,13 @@ else. Touch targets ≥ 44pt (`--hit-min`; pad small visuals with an `::after` h
 `--safe-*`; screen edges via `--lr-inset-left/right`. Concentric corners: inner radius = outer radius − padding.
 
 **Motion.** Respond on pointer-down (`installPressStates`, `:active`). CSS transitions pair a duration token with
-its easing token (`var(--dur-snappy) var(--spring-snappy)`). Anything a finger drives (sheet, banner, edge swipe)
-uses `animateSpring` from `lib/spring.ts` with `SPRING.*`, starts from the live value and takes the release velocity.
-`spring-bouncy` only after momentum (a flick, the lock-in pop). Things leave the way they came. Under
+its easing token (`var(--dur-snappy) var(--spring-snappy)`). Anything a finger drives (sheet, banner, edge swipe,
+segmented thumb) uses `animateSpring` from `lib/spring.ts` with `SPRING.*`, starts from the live value and takes the
+release velocity. `spring-bouncy` only after momentum (a flick, the lock-in pop) and when pressed glass lets go.
+Pressed glass (`.lr-glass-interactive`: LrButton glass, clear, prominent; tabs) swells to `glass-press-scale` with a glow
+from the touch point (`pressStates` writes `--lr-px` / `--lr-py` on that element); gray and plain buttons press down.
+Menus, banners and the accessory materialize with the shared `lr-materialize-in` / `-out` keyframes on `spring-menu`
+(scale, opacity, a small blur of their own pixels); never animate a backdrop blur. Things leave the way they came. Under
 `prefers-reduced-motion` everything becomes a `dur-fade` cross-fade (handled in `styles/components/` and
 `lib/spring.ts`); the spinner keeps turning. Countdowns step linearly (`dur-step`), never on a spring.
 
@@ -118,9 +137,9 @@ Ahri"); `…` means in progress or more choices; no exclamation marks, no plumbi
 
 | Component | Use for |
 | --- | --- |
-| `NavBar` | App chrome (App.vue). `LargeTitle #trailing` buttons dock into its `#lr-nav-trailing` once the title collapses. `subtitle` under the inline title (the draft board's game mode); a screen's own leading button teleports into `#lr-nav-leading`. |
+| `NavBar` | App chrome (App.vue). Draws the top scroll edge (`.lr-edge-top`) once content scrolls under it. `LargeTitle #trailing` buttons dock into its `#lr-nav-trailing` once the title collapses. `subtitle` under the inline title (the draft board's game mode); a screen's own leading button teleports into `#lr-nav-leading`. |
 | `LargeTitle` | The one large title per screen (a screen kept mounted under a pushed view — Champion Select under a player's profile — keeps its own, hidden: the nav bar follows the title on screen); default slot = subtitle line (often a `StatusLine`). `compact`: a one-line `title-2` title over a `footnote` subtitle, only for a time-critical screen (ARAM's Champion Select); it wraps at large text. Screen buttons (Add Friend, `ChatButton` in Lobby / ARAM) go in `#trailing` (`<template v-if="…" #trailing>`): on the title row, top-aligned with its first line, docked into the nav bar once the title collapses. If the title's longest word and the button don't fit side by side (large text), the button moves to its own row above the title. Don't teleport screen buttons into `#lr-nav-trailing` yourself. |
-| `TabBar` | App chrome (App.vue). Badges from `nav.badges`. |
+| `TabBar` | App chrome (App.vue). Badges from `nav.badges`. One selection pill slides between the tabs. Scrolling down minimizes it to the current tab at the leading edge; scrolling up or tapping that tab brings it back. |
 | `ActionBar` | The screen's primary action(s) + optional status `accessory` (queue / turn status, `countdown` or count-up `value`). `overSheet` for Champion Select's full-width Lock In over the picker (the picker's body then fades out above the button: `.lr-picker-body--action`; a label whose last part may drop: `<span class="lr-fit-label"><span>Lock In</span><span>&nbsp;Ahri</span></span>` shows "Lock In Ahri" when it fits, "Lock In" when it doesn't — never a truncated name). The accessory's `tone` is any dot tone, `announce` adds the 10 / 5 s announcements; at large text its words wrap and the timer moves under them. `#accessory-action`: when the screen's one action belongs to the status (Cancel next to Finding Match, Leave next to Waiting for Leader), one labelled `LrButton variant="gray" size="sm"` on the capsule instead of a button row (opaque fill: the capsule is glass); at large text it takes its own row under the status. The bar publishes its height as `--lr-actionbar-h` and `.lr-content` pads for it, so screens need no padding class. A labelled secondary button after the `block` primary keeps its own width (Find Match · Leave) and wraps onto its own row, a size smaller, at large text; no icon-only ✕ for an action that isn't a dismissal. |
 | `LrButton` | Every button. `prominent` (one per screen) · `glass` (floating) · `gray` (in content, alerts) · `destructive` · `success` · `plain` · `clear` (camera). `icon` = icon-only circle (needs `ariaLabel`), `leading`, `loading`, `pressed` (toggle), `size` sm/md/lg, `block`. |
 | `ListSection` + `ListRow` | Inset-grouped lists. Row: `icon`+`tileColor`, `#lead` (Avatar, ChampionIcon), `value`+`valueTone`, `#trailing`, `chevron` / `popUp` / `checked` / `busy`, `tappable`, `menu` (pop-up Menu row), default slot for a full-width control (slider). `bare` section for one card. Trailing content stays on the title's line while the title's longest word fits beside it (at large text sizes: about seven characters of it, and only there do titles hyphenate) and wraps under it after that, a value together with its marker (pop-up, chevron, checkmark); a one-line subtitle truncates instead of widening the row. A disabled row grays its value too. Lists inside a sheet: `body-class="lr-sheet-body--lists"` on the `Sheet`, or they are inset twice. |
@@ -134,7 +153,7 @@ Ahri"); `…` means in progress or more choices; no exclamation marks, no plumbi
 | `RankIcon` | A rank's emblem in a row's `#lead` (Ranked sections, a friend's rank) or the post-game result card: the client's own art from the PC app (`/rank-emblems/{tier}.png`), a gray trophy tile centred in the same slot when unranked or the art is missing, so rows line up either way. |
 | `LrProgress` | Determinate progress bar (XP to the next level). |
 | `StatGrid` | Value-over-label stat cells as one list item (a team's totals, your live K / D / A, CS, gold); `spoken` for values VoiceOver misreads, `accent` tints one. Fewer columns at large text. |
-| `LrSegmented` | iOS segmented control switching views of one screen (In Game: Overview · Scoreboard · Events): capsule track, sliding thumb (`segment-thumb`), equal-width segments with a 44-pt hit region, tabs for VoiceOver (`tabId()` / `panelId()` for the panel), arrow keys; wraps into rows at large text. `v-model`, `aria-label`. |
+| `LrSegmented` | iOS segmented control switching views of one screen (In Game: Overview · Scoreboard · Events): capsule track, sliding thumb (`segment-thumb`, draggable as a glass lens), equal-width segments with a 44-pt hit region, tabs for VoiceOver (`tabId()` / `panelId()` for the panel), arrow keys; wraps into rows at large text. `v-model`, `aria-label`. |
 | `PickerGrid` | Grid of art tiles to pick from (champions, spells, the ARAM bench) with the selection ring: four columns, fewer at large text; a long name wraps under its art. `disabled` stops every tile (a swap on its way); an item's `unavailable` grays and disables that one (a bench champion you can't play). |
 | `LaneFilter` | The champion pickers' lane filter: the League client's five lane icons (Top, Jungle, Mid, Bot, Support) under the search field, one at a time; tapping the active one clears it. Lists come from the client (`lanes.ts`, `ClientState.championLanes`); the pickers leave the filter out while it hasn't answered. |
 | `SpellSlots` | The two summoner spell slots of a list (an `li`) + the spell picker sheet; picking the other slot's spell swaps them; emits `change(spell1, spell2)` (Loadout sends it, an auto pick preset keeps it). `spells` (ARAM: `spellsForMode('ARAM')`), `placeholder` for an empty slot; the slots stack at large text. `tray`: icons only, with the default slot beside them (the draft's rune page). |
@@ -143,9 +162,9 @@ Ahri"); `…` means in progress or more choices; no exclamation marks, no plumbi
 | `CountdownRing` | The Ready Check ring. |
 | `CallButton` | Ready Check Accept / Decline. Its focus ring is round, around the circle. |
 | `LiveGameCard` | In Game hero clock; with a `result` the card leads with "Victory" / "Defeat" (large, green / red text) over the stopped clock and drops the Live eyebrow (the screen's title says "Game Over"; objective and buff timers go away); default slot beside the clock (the live kill score, one unbreakable "5 – 3"; the clock is `clock-card` then, `clock-hero` when alone), under it when the two don't fit (large text). |
-| `Sheet` | Bottom sheet with detents. `modal` = a modal layer (scrim, inert background, focus, Escape / swipe / ✕ close). Non-modal for the champion picker. `confirmClose` (like iOS `isModalInPresentation`): ✕ / Escape / scrim / swipe ask the parent instead of closing (the swipe springs back) — use it for unsaved edits with a "Discard Changes?" `LrAlert`. A sideways swipe in the body never drags the sheet (a horizontal carousel inside scrolls instead: `champselect/SkinPicker.vue`). |
+| `Sheet` | Bottom sheet with detents: opacity, inset and corners follow the drag between the highest partial detent and `large`. Close leads, a confirming action trails (`head-trailing`). `modal` = a modal layer (scrim, inert background, focus, Escape / swipe / ✕ close). Non-modal for the champion picker. `confirmClose` (like iOS `isModalInPresentation`): ✕ / Escape / scrim / swipe ask the parent instead of closing (the swipe springs back) — use it for unsaved edits with a "Discard Changes?" `LrAlert`. A sideways swipe in the body never drags the sheet (a horizontal carousel inside scrolls instead: `champselect/SkinPicker.vue`). |
 | `LrAlert` | Irreversible confirmations only (Unpair, Leave Party). |
-| `LrMenu` | Pop-up menu from its trigger (row actions, rune page via `ListRow menu`). |
+| `LrMenu` | Pop-up menu from its trigger (row actions, rune page via `ListRow menu`). Icons on all items of a group or none; destructive items sort last by themselves; no submenus. |
 | `BannerHost` | App chrome. Feed it with `toast()`; actionable banners teleport into `#lr-banners-actions`. At most two cards show (action banners count): older toasts fold into an "N More" capsule (tap to unfold); at large text sizes toasts show their title only. |
 | `ActionBanner` | A request to answer (swap, lobby invite): icon, question, Decline + the positive verb. Teleport into `#lr-banners-actions` inside `<TransitionGroup name="lr-pop">`. Without `actionLabel` only the decline button shows (the auto lock-in's Cancel); `iconTone="red"` for a ban; `#message` slot for text VoiceOver mustn't hear every second (a countdown). |
 | `Tip` | TipKit-style one-feature hint, dismissible; the ✕ has its own column, and at large text sizes the text moves under the symbol row. Action labels name the object ("Turn On Notifications"). |

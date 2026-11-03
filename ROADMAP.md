@@ -16,8 +16,8 @@ Update this file in the same change as the work it describes.
 - **Live game:** game clock, scoreboard, objective and buff timers, events.
 - **Post-game:** result, LP and mastery, Play Again.
 - **Alerts:** Web Push with per-phone choices, and the client's own sounds and music.
-- **Phone app:** iOS-style design system, light and dark, large text, Increase Contrast, Reduce Motion, VoiceOver, demo
-  scenarios for every screen.
+- **Phone app:** iOS-style design system on Liquid Glass as of iOS 27, light and dark, large text, Increase Contrast,
+  Reduce Motion, VoiceOver, demo scenarios for every screen.
 - **PC app:** one `LeagueRemote.exe` with a tray menu: HTTPS with a local certificate authority, pairing by QR, code or
   link, several phones, Start with Windows, Allow on Private Networks, rolling log files, optional `settings.json`.
 
