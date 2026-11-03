@@ -183,6 +183,8 @@
   --glass-amount: 0.5;
   --glass-press-scale: 1.04;
   --glass-glow-size: 120%;
+  --refraction-scale: 70;
+  --refraction-bezel: 18px;
   --edge-blur: 6px;
   --edge-blur-top: 12px;
   --knob-blur: 2px;

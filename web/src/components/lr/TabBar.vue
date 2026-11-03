@@ -2,6 +2,7 @@
 import { CircleUserIcon, Gamepad2Icon, MessageCircleIcon, SettingsIcon, UsersIcon } from '@lucide/vue'
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component } from 'vue'
 import { badges } from '../../badges'
+import { useRefraction } from '../../composables/useRefraction'
 import { haptic } from '../../haptics'
 import { nav, selectTab, type Tab } from '../../navigation'
 import Badge from './Badge.vue'
@@ -20,6 +21,8 @@ const ITEMS: { tab: Tab; label: string; icon: Component }[] = [
   { tab: 'settings', label: 'Settings', icon: SettingsIcon },
 ]
 const selectedIndex = computed(() => Math.max(0, ITEMS.findIndex((i) => i.tab === nav.tab)))
+const bar = ref<HTMLElement | null>(null)
+useRefraction(bar)
 
 /** Scroll travel (px) in one direction before the bar changes: a finger resting on the list doesn't flip it. */
 const MINIMIZE_TRAVEL = 24
@@ -76,7 +79,7 @@ function tabLabel(item: (typeof ITEMS)[number]): string | undefined {
 <template>
   <!-- In <body>, beside the teleported sheets, like the action bar. -->
   <Teleport to="body">
-    <nav class="lr-tabbar lr-glass" :class="{ 'is-minimized': minimized }" aria-label="Tabs" :style="{ '--lr-tab-index': minimized ? 0 : selectedIndex }">
+    <nav ref="bar" class="lr-tabbar lr-glass" :class="{ 'is-minimized': minimized }" aria-label="Tabs" :style="{ '--lr-tab-index': minimized ? 0 : selectedIndex }">
       <span class="lr-tab-pill" aria-hidden="true" />
       <button
         v-for="item in ITEMS"

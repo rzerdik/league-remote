@@ -3,6 +3,11 @@
  * `?demo=materials`: the glass surfaces over the worst backdrop there is, busy champion art with a white region
  * (`&glass=0`, `0.5` or `1` for the glass amount). `scripts/check-glass-contrast.mjs` has the numbers.
  */
+import { ref } from 'vue'
+import { useRefraction } from '../../composables/useRefraction'
+
+const lens = ref<HTMLElement | null>(null)
+useRefraction(lens)
 </script>
 
 <template>
@@ -14,6 +19,10 @@
       <div class="surface lr-glass">
         <span class="headline">glass</span>
         <span class="subheadline lr-secondary">Secondary text on regular glass</span>
+      </div>
+      <div ref="lens" class="surface lr-glass capsule">
+        <span class="headline">glass + rim lensing</span>
+        <span class="subheadline lr-secondary">Chromium only: plain glass elsewhere</span>
       </div>
       <div class="surface lr-glass-thick">
         <span class="headline">glass-thick</span>
@@ -74,6 +83,9 @@ img {
   gap: var(--space-1);
   padding: var(--space-5);
   border-radius: var(--radius-xl);
+}
+.capsule {
+  border-radius: var(--radius-full);
 }
 .clear {
   background: var(--dim-clear);

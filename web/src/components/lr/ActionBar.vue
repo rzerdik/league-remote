@@ -5,6 +5,7 @@ let measuredBy: object | null = null
 
 <script setup lang="ts">
 import { Comment, Fragment, onBeforeUnmount, onMounted, ref, useSlots, type VNode } from 'vue'
+import { useRefraction } from '../../composables/useRefraction'
 import { sheetStack } from '../../composables/useSheet'
 import ActivityIndicator from './ActivityIndicator.vue'
 import StatusDot, { type DotTone } from './StatusDot.vue'
@@ -44,6 +45,8 @@ function hasContent(nodes: VNode[] | undefined): boolean {
 
 const HEIGHT_VAR = '--lr-actionbar-h'
 const bar = ref<HTMLElement | null>(null)
+const capsule = ref<HTMLElement | null>(null)
+useRefraction(capsule)
 const self = {}
 let observer: ResizeObserver | null = null
 onMounted(() => {
@@ -70,7 +73,7 @@ onBeforeUnmount(() => {
   <div class="lr-edge-bottom" :class="{ 'lr-edge-bottom--over-sheet': overSheet }" aria-hidden="true" />
   <div ref="bar" v-show="!sheetStack.modal" class="lr-actionbar" :class="{ 'lr-actionbar--over-sheet': overSheet }">
     <Transition name="lr-pop">
-      <div v-if="accessory" class="lr-accessory lr-glass">
+      <div v-if="accessory" ref="capsule" class="lr-accessory lr-glass">
         <!-- The live region is the status alone: VoiceOver mustn't hear the button again with every change. -->
         <div class="lr-accessory-status" role="status">
           <ActivityIndicator v-if="accessory.busy" decorative />
