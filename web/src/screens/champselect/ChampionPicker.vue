@@ -13,7 +13,7 @@ import { cssSize, SIZE } from '../../styles/tokens'
 /**
  * The non-modal champion picker of your pick or ban: the turn header (`turn` slot), search, lane filter and the grid
  * of what League lets you pick or ban. It rises to medium when your turn starts and rests at peek before it; peek keeps
- * the header and search above the full-width Lock In button (SIZE.pickerPeek), which floats over the sheet on your own
+ * the header and search above the small Lock In button (SIZE.pickerPeek), which floats over the sheet on your own
  * turn: then the grid scrolls clear of it and fades out above it. `hidden` steps it aside without losing its place
  * (never glass on glass). `detent` tells the screen how much room the draft board has.
  */

@@ -210,7 +210,7 @@ button.lr-slot:focus-visible {
    above it. A mask, not a band of colour or glass: the sheet is glass at partial detents and opaque at large, and
    this reads right on both (only the alpha counts). */
 .lr-picker-body--action {
-  padding-bottom: calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px) + var(--lr-keyboard, 0px) + var(--control-lg) + var(--space-4));
+  padding-bottom: calc(var(--lr-chrome-bottom) + var(--lr-tabbar-space, 0px) + var(--lr-keyboard, 0px) + var(--control-sm) + var(--space-4));
 }
 
 /* ───────────────────────── Turn header (top of the champion picker) ───────────────────────── */

@@ -48,7 +48,16 @@
   overflow: hidden;
   will-change: transform;
   outline: none;
-  transition: opacity var(--dur-fade) var(--ease-fade);
+  transition:
+    opacity var(--dur-fade) var(--ease-fade),
+    background-color var(--dur-fade) var(--ease-fade);
+}
+/* The final seconds: the picker thins to regular glass and lets bright light through, so the EdgeGlow behind it shines
+   through. What it covers is the dark draft board, so text keeps its contrast. */
+body:has(> .lr-edge-glow) .lr-sheet {
+  background: var(--lr-glass-fill);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 /* The opaque surface fading in over the glass (useSheet sets its opacity: cheap, on the compositor). */
 .lr-sheet-backing {

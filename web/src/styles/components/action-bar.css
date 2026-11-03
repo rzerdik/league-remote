@@ -25,6 +25,15 @@
 .lr-actionbar-row > .lr-btn {
   flex: 1;
 }
+/* Over the picker (Lock In, Ban): a small capsule in the middle, its label's width, so the grid stays in view. */
+.lr-actionbar--over-sheet .lr-actionbar-row {
+  justify-content: center;
+}
+.lr-actionbar--over-sheet .lr-actionbar-row > .lr-btn {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
 /* A secondary button after the primary (block) one keeps its own width (Leave next to Find Match): the primary takes
    all the room left over. When both no longer fit (large text) the secondary one wraps onto its own row and spans it.
    An icon button keeps its circle. */

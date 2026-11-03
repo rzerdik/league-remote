@@ -211,8 +211,7 @@ const hasRowActions = computed(() => props.cs.myTeam.some((m) => hasMemberAction
       <template v-if="canAct && actionHot" #default>
         <LrButton
           :variant="isBan ? 'destructive' : 'prominent'"
-          size="lg"
-          block
+          size="sm"
           :leading="isBan ? BanIcon : LockIcon"
           :loading="locking"
           :disabled="lockDisabled"
