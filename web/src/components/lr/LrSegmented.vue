@@ -1,10 +1,14 @@
 <script setup lang="ts" generic="T extends string">
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { haptic } from '../../haptics'
+import { animateSpring, reduceMotion, VelocityTracker, type Spring } from '../../lib/spring'
+import { SPRING } from '../../styles/tokens'
 
 /**
  * iOS segmented control switching between views of one screen (In Game: Overview · Scoreboard · Events). A capsule
- * track with a thumb that slides to the selected segment (spring-snappy; a cross-fade under Reduce Motion). Tabs for
- * VoiceOver: `role="tablist"`, the selected one `aria-selected`, arrow keys move between them. The panel it switches is
+ * track with a thumb that slides to the selected segment (spring-snappy; a cross-fade under Reduce Motion). Drag the
+ * thumb sideways and it follows the finger as a glass lens, then settles on the nearest segment with the release
+ * velocity (under Reduce Motion it hops between segments; not while the segments wrap). Tabs for VoiceOver: `role="tablist"`, the selected one `aria-selected`, arrow keys move between them. The panel it switches is
  * the parent's: give it `role="tabpanel"`, `:id="panelId(id)"` and `:aria-labelledby="tabId(id, value)"`.
  * At large text sizes the segments wrap onto more rows (never truncate) and the track becomes a rounded rectangle.
  */
@@ -40,6 +44,89 @@ watch(model, () => void nextTick(() => measure(true)))
 
 function select(value: T) {
   model.value = value
+}
+
+// ----- dragging the thumb -----
+/** Travel (px) before a press on the selected segment becomes a drag. */
+const HYSTERESIS = 4
+/** The thumb's x while the finger has it or it settles afterwards; null when it rests on its segment. */
+const liveX = ref<number | null>(null)
+const dragging = ref(false)
+const thumbTransform = computed(() => `translate(${liveX.value ?? thumb.value?.x ?? 0}px, ${thumb.value?.y ?? 0}px)`)
+let drag: { pointer: number; startX: number; grabX: number; vt: VelocityTracker; hovered: number } | null = null
+let settle: Spring | null = null
+/** A drag's release also clicks the segment it started on: that click must not select it again. */
+let swallowClick = false
+
+/** The segment whose middle is nearest to a thumb at `x`. */
+function nearestIndex(x: number): number {
+  let best = 0
+  let distance = Infinity
+  buttons.forEach((b, i) => {
+    if (!b) return
+    const d = Math.abs(b.offsetLeft - x)
+    if (d < distance) [best, distance] = [i, d]
+  })
+  return best
+}
+
+function onThumbDown(e: PointerEvent, value: T) {
+  swallowClick = false
+  if (value !== model.value || wrapped.value || !thumb.value) return
+  settle?.stop()
+  drag = { pointer: e.pointerId, startX: e.clientX, grabX: liveX.value ?? thumb.value.x, vt: new VelocityTracker(), hovered: -1 }
+  drag.vt.add(e.clientX)
+}
+
+function onThumbMove(e: PointerEvent) {
+  if (!drag || drag.pointer !== e.pointerId || !thumb.value) return
+  const dx = e.clientX - drag.startX
+  if (!dragging.value) {
+    if (Math.abs(dx) < HYSTERESIS) return
+    dragging.value = true
+    placed.value = false
+    ;(e.currentTarget as Element).setPointerCapture?.(e.pointerId)
+  }
+  drag.vt.add(e.clientX)
+  const last = buttons[props.options.length - 1]
+  const x = Math.min(last?.offsetLeft ?? 0, Math.max(buttons[0]?.offsetLeft ?? 0, drag.grabX + dx))
+  const over = nearestIndex(x)
+  if (over !== drag.hovered) {
+    if (drag.hovered >= 0) haptic('selection')
+    drag.hovered = over
+  }
+  liveX.value = reduceMotion.value ? (buttons[over]?.offsetLeft ?? x) : x
+}
+
+function onThumbUp(e: PointerEvent) {
+  if (!drag || drag.pointer !== e.pointerId) return
+  const velocity = drag.vt.velocity()
+  const hovered = drag.hovered
+  drag = null
+  if (!dragging.value) return
+  dragging.value = false
+  swallowClick = true
+  const target = buttons[hovered]
+  const option = props.options[hovered]
+  if (!target || !option) {
+    liveX.value = null
+    return
+  }
+  settle = animateSpring({
+    from: liveX.value ?? target.offsetLeft,
+    to: target.offsetLeft,
+    velocity,
+    ...SPRING.snappy,
+    onUpdate: (x) => (liveX.value = x),
+    onComplete: () => (liveX.value = null),
+  })
+  select(option.value)
+}
+onBeforeUnmount(() => settle?.stop())
+
+function onSegmentClick(value: T) {
+  if (swallowClick) swallowClick = false
+  else select(value)
 }
 
 /** Arrow keys move the selection (and focus) like a native tab bar; Home / End jump to the ends. */
@@ -78,8 +165,8 @@ export function panelId(id: string): string {
     <span
       v-if="thumb"
       class="lr-segmented-thumb"
-      :class="{ 'is-sliding': placed }"
-      :style="{ transform: `translate(${thumb.x}px, ${thumb.y}px)`, width: `${thumb.w}px`, height: `${thumb.h}px` }"
+      :class="{ 'is-sliding': placed && liveX === null, 'is-dragging': dragging }"
+      :style="{ transform: thumbTransform, width: `${thumb.w}px`, height: `${thumb.h}px` }"
       aria-hidden="true"
     />
     <button
@@ -93,8 +180,12 @@ export function panelId(id: string): string {
       :aria-selected="o.value === model"
       :aria-controls="panelId(id)"
       :tabindex="o.value === model ? 0 : -1"
-      @click="select(o.value)"
+      @click="onSegmentClick(o.value)"
       @keydown="onKey($event, i)"
+      @pointerdown="onThumbDown($event, o.value)"
+      @pointermove="onThumbMove"
+      @pointerup="onThumbUp"
+      @pointercancel="onThumbUp"
     >
       {{ o.label }}
     </button>
