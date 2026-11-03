@@ -51,6 +51,19 @@
   font-weight: 600;
   text-shadow: var(--camera-shadow);
 }
+/* Icon buttons side by side on glass share one capsule: one surface, one backdrop sample. Put `lr-glass-group lr-glass`
+   on the wrapper and icon-only LrButtons in it; never text and icons together. */
+.lr-glass-group {
+  display: inline-flex;
+  padding: var(--space-0-5);
+  border-radius: var(--radius-full);
+}
+.lr-glass-group > .lr-btn {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
 /* Pressed glass (LrButton glass, clear, prominent; tabs): it swells, light blooms from under the finger
    (--lr-px / --lr-py, written by pressStates on this element), and it bounces back on release. */
 .lr-glass-interactive {
