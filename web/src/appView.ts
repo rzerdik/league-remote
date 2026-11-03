@@ -88,6 +88,6 @@ export const navTitle = computed(() => {
     case 'postgame':
       return 'Game Over'
     default:
-      return 'Play'
+      return 'League Remote'
   }
 })
