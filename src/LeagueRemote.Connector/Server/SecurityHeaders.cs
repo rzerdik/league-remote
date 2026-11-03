@@ -14,7 +14,8 @@ internal static class SecurityHeaders
     /// <list type="bullet">
     /// <item><c>script-src</c>: own bundles only, no inline scripts; <c>'wasm-unsafe-eval'</c> for the self-hosted ZXing QR decoder.</item>
     /// <item><c>style-src 'unsafe-inline'</c>: Vue's <c>:style</c> bindings and the setup page's own stylesheet.</item>
-    /// <item><c>img-src</c>: Data Dragon art; <c>blob:</c> for the QR decoder's image fallback.</item>
+    /// <item><c>img-src</c>: Data Dragon art; <c>blob:</c> for the QR decoder's image fallback; <c>data:</c> for the
+    /// displacement map the phone generates for rim refraction on Chromium.</item>
     /// <item><c>media-src blob:</c>: the generated silent clip that keeps iOS audio alive in the background.</item>
     /// <item><c>connect-src</c>: the hub (<c>wss:</c> spelled out: older Safari didn't count WebSockets as <c>'self'</c>)
     /// and Data Dragon JSON.</item>
@@ -25,7 +26,7 @@ internal static class SecurityHeaders
         "default-src 'self'; "
         + "script-src 'self' 'wasm-unsafe-eval'; "
         + "style-src 'self' 'unsafe-inline'; "
-        + "img-src 'self' blob: https://ddragon.leagueoflegends.com; "
+        + "img-src 'self' blob: data: https://ddragon.leagueoflegends.com; "
         + "media-src 'self' blob:; "
         + "font-src 'self'; "
         + "connect-src 'self' wss: https://ddragon.leagueoflegends.com; "
