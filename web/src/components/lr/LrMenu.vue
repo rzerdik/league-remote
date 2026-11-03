@@ -33,6 +33,19 @@ const props = withDefaults(
 )
 const open = defineModel<boolean>('open', { default: false })
 const choice = computed(() => props.items.some((i) => i !== 'separator' && i.checked !== undefined))
+/** Destructive items go last in their group, whatever order they were built in. */
+const ordered = computed(() => {
+  const out: (MenuItem | 'separator')[] = []
+  let destructive: MenuItem[] = []
+  for (const item of props.items) {
+    if (item !== 'separator' && item.destructive) destructive.push(item)
+    else if (item === 'separator') {
+      out.push(...destructive, item)
+      destructive = []
+    } else out.push(item)
+  }
+  return [...out, ...destructive]
+})
 
 function select(item: MenuItem) {
   haptic('selection')
@@ -52,7 +65,7 @@ function select(item: MenuItem) {
         :collision-padding="SPACE.space4"
       >
         <DropdownMenuLabel v-if="title" class="lr-menu-title footnote">{{ title }}</DropdownMenuLabel>
-        <template v-for="(item, i) in items" :key="i">
+        <template v-for="(item, i) in ordered" :key="i">
           <DropdownMenuSeparator v-if="item === 'separator'" class="lr-menu-sep" />
           <DropdownMenuItem
             v-else
