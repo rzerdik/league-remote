@@ -6,6 +6,7 @@
 :root {
   --lr-tabbar-h: var(--tabbar-h);
   --lr-tabbar-gap: var(--space-4);
+  --lr-tabbar-left: max(calc(var(--lr-tabbar-gap) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
   --lr-chrome-bottom: max(calc(var(--safe-bottom) + var(--space-1)), var(--space-5));
 }
 :root.lr-has-tabbar {
@@ -14,7 +15,7 @@
 }
 .lr-tabbar {
   position: fixed;
-  left: max(calc(var(--lr-tabbar-gap) + var(--safe-left)), calc((100% - var(--lr-column)) / 2));
+  left: var(--lr-tabbar-left);
   right: max(calc(var(--lr-tabbar-gap) + var(--safe-right)), calc((100% - var(--lr-column)) / 2));
   bottom: var(--lr-chrome-bottom);
   z-index: var(--z-chrome);
@@ -27,6 +28,26 @@
   padding: var(--space-1);
   border-radius: var(--radius-full);
   transform: translateY(calc(-1 * var(--lr-keyboard, 0px)));
+  transition: right var(--dur-snappy) var(--spring-snappy);
+}
+/* Minimized: only the current tab, at the leading edge. */
+.lr-tabbar.is-minimized {
+  right: calc(100% - var(--lr-tabbar-left) - var(--tabbar-min-w));
+}
+/* The selection: one pill that slides between the tabs (transform only). */
+.lr-tab-pill {
+  position: absolute;
+  top: var(--space-1);
+  bottom: var(--space-1);
+  left: var(--space-1);
+  width: calc((100% - 2 * var(--space-1)) / 5);
+  border-radius: var(--radius-full);
+  background: var(--fill-tertiary);
+  transform: translateX(calc(var(--lr-tab-index, 0) * 100%));
+  transition: transform var(--dur-snappy) var(--spring-snappy);
+}
+.lr-tabbar.is-minimized .lr-tab-pill {
+  width: calc(100% - 2 * var(--space-1));
 }
 .lr-tab {
   display: flex;
@@ -43,7 +64,6 @@
 }
 .lr-tab.is-selected {
   color: var(--accent-text);
-  background: var(--fill-tertiary);
 }
 .lr-tab-icon {
   position: relative;

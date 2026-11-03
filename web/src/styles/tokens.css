@@ -112,6 +112,7 @@
   --code-box: min(3.7647rem, 96px);
   --code-dash: min(0.7059rem, 18px);
   --tabbar-h: 62px;
+  --tabbar-min-w: 76px;
   --switch-w: min(3.7647rem, 96px);
   --switch-h: min(1.6471rem, 42px);
   --switch-thumb: min(2.2353rem, 57px);

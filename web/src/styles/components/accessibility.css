@@ -51,6 +51,10 @@
   .lr-glass-interactive::before {
     display: none;
   }
+  .lr-tabbar,
+  .lr-tab-pill {
+    transition: none;
+  }
   /* The spinner keeps turning. */
   .lr-spinner {
     animation: lr-spin var(--dur-spin) steps(8) infinite !important;
